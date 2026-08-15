@@ -1,8 +1,16 @@
-# DeepSeek Harness
+# oh-my-deep-seek-harness
 
 [English](README.md) | 中文
 
-DeepSeek Harness（`dsh`）是由 [DeepSeek AI](https://deepseek.com) 开发的开源 agent harness（智能体框架）。
+`oh-my-deep-seek-harness` 是优先安全审查的 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 下游发行版，主要面向英语用户与集成维护者。安全审查需要更多时间时，本发行版会有意落后于上游。
+
+本发行版优先关注 Pi 与 Oh My Pi（OMP）、Hermes Agent、OpenClaw 和 9Router 的互操作性。[当前集成状态](docs/fork/integrations.md)会明确区分可用路径与兼容性目标。
+
+> [!IMPORTANT]
+>
+> “已审查”版本表示其锁定的上游提交通过了本仓库记录的检查，并不表示软件不存在漏洞。详见[安全政策](SECURITY.md)与[上游接收政策](docs/fork/upstream-intake.md)。
+
+DeepSeek Harness（`dsh`）是由 [DeepSeek AI](https://deepseek.com) 开发的开源 agent harness（智能体框架）。面向 Hermes 的产品和插件思路受到 [Yuan Chenglu 的 `oh-my-deepseek-harness`](https://github.com/yuanchenglu/oh-my-deepseek-harness) 启发。完整署名见 [CREDITS.md](CREDITS.md)。本下游项目独立维护，未获任一上游项目背书。
 
 它采用**一切皆插件**的架构，并由 [Cordis](https://github.com/cordiverse/cordis) 驱动，其设计参见论文 [_A Programming Paradigm for Spatiotemporal Composability_](https://github.com/cordiverse/paper)。
 
@@ -27,8 +35,8 @@ npx @deepseek-ai/dsh web
 如需从仓库源码运行：
 
 ```sh
-git clone https://github.com/deepseek-ai/deepseek-harness.git
-cd deepseek-harness
+git clone https://github.com/trulyprivate/oh-my-deep-seek-harness.git
+cd oh-my-deep-seek-harness
 pnpm install
 pnpm run build
 pnpm dsh web

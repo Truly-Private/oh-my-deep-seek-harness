@@ -1,0 +1,10 @@
+# Merge this section into $DSH_HOME/settings.yaml.
+llm-pi-ai:
+  providers:
+    9router:
+      displayName: 9Router
+      apiKeyEnv: NINE_ROUTER_API_KEY
+      api: openai-completions
+      baseURL: http://127.0.0.1:20128/v1
+      models:
+        - id: replace-with-an-exact-9router-model-id

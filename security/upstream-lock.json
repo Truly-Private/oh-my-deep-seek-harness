@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "primary": {
+    "name": "DeepSeek Harness",
+    "url": "https://github.com/deepseek-ai/deepseek-harness.git",
+    "branch": "master",
+    "commit": "47f943859bef60e4160492346772ded9b24f765a"
+  },
+  "inspiration": {
+    "name": "oh-my-deepseek-harness",
+    "url": "https://github.com/yuanchenglu/oh-my-deepseek-harness.git",
+    "commit": "de9e880c19cdd37166caf3912fbbb794ed388c32"
+  },
+  "review": {
+    "status": "candidate",
+    "reviewedCommit": null,
+    "reviewedAt": null,
+    "evidence": []
+  },
+  "policy": {
+    "automaticMerge": false,
+    "humanApprovalRequired": true,
+    "releaseRequiresReviewedStatus": true
+  }
+}

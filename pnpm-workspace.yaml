@@ -27,6 +27,18 @@ linkWorkspacePackages: true
 overrides:
   '@deepseek-ai/cosmokit': 'link:vendor/cosmokit'
   '@deepseek-ai/schemastery': 'link:vendor/schemastery'
+  '@hono/node-server': 1.19.15
+  # Downstream security floor: keep transitive consumers on advisory-fixed
+  # releases while their direct parents catch up.
+  brace-expansion: 5.0.9
+  fast-uri: 3.1.5
+  hono: 4.12.34
+  ip-address: 10.3.1
+  js-yaml: 4.3.1
+  nanoid: 3.3.18
+  postcss: 8.5.23
+  protobufjs: 7.6.5
+  undici: 7.29.0
 
 peerDependencyRules:
   allowedVersions:
