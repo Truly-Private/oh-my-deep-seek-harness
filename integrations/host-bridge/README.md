@@ -44,7 +44,10 @@ Run `/dsh-bridge-status` to confirm discovery. OMP 17.3.4 requires Bun 1.3.14 or
 
 ## Verify
 
+Install the repository-pinned Node, Bun, Python, and pnpm versions through Moonrepo proto, then run the focused checks:
+
 ```bash
+proto install
 pnpm --filter @truly-private/dsh-host-bridge typecheck
 pnpm --filter @truly-private/dsh-host-bridge test
 ```

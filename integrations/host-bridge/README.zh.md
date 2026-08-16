@@ -44,7 +44,10 @@ omp --extension /absolute/path/to/oh-my-deep-seek-harness/integrations/host-brid
 
 ## 验证
 
+先通过 Moonrepo proto 安装仓库固定的 Node、Bun、Python 与 pnpm 版本，再运行聚焦检查：
+
 ```bash
+proto install
 pnpm --filter @truly-private/dsh-host-bridge typecheck
 pnpm --filter @truly-private/dsh-host-bridge test
 ```

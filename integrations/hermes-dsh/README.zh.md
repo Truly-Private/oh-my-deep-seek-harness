@@ -25,8 +25,11 @@ ACP 子进程不会继承主目录变量或凭证。请把每个必需的变量�
 
 ## 验证
 
+运行插件测试前，先通过 Moonrepo proto 安装仓库固定的 Python 版本：
+
 ```bash
-python3 -W error::ResourceWarning -m unittest discover -s integrations/hermes-dsh/tests -v
+proto install python
+python -W error::ResourceWarning -m unittest discover -s integrations/hermes-dsh/tests -v
 ```
 
 该插件可以用于不会请求新审批的 ACP 任务。在 Hermes 公开相应能力，并且仓库通过真实插件处理函数证明交互式审批与主机取消之前，完整主机桥接仍是兼容性目标。

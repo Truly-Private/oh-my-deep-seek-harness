@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/architecture/2026-08-15-host-agent-acp-bridges.md
-2026-08-15-host-agent-acp-bridges.md: e1ec8c48ff78ad3a11675299facd54e508409a4a
-2026-08-15-host-agent-acp-bridges.zh.md: b0688e87c757e297c8118c7fe02218331c13d10a
+2026-08-15-host-agent-acp-bridges.md: 9383705c8d017e785cc2d740116ec3355872b712
+2026-08-15-host-agent-acp-bridges.zh.md: c4a36e19a92d57e103320ec2d705b0a36d7b25ea

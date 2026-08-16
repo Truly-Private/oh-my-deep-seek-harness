@@ -25,8 +25,11 @@ Home-directory variables and credentials are not inherited by the ACP child. Add
 
 ## Verify
 
+Install the repository-pinned Python version through Moonrepo proto before running the plugin tests:
+
 ```bash
-python3 -W error::ResourceWarning -m unittest discover -s integrations/hermes-dsh/tests -v
+proto install python
+python -W error::ResourceWarning -m unittest discover -s integrations/hermes-dsh/tests -v
 ```
 
 The plugin is usable for ACP tasks that do not request a new approval. It remains a compatibility target for the full host bridge until Hermes exposes and the repository proves interactive approvals and host cancellation through the real plugin handler.
