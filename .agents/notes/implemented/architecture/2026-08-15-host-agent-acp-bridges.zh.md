@@ -12,7 +12,7 @@ Pi、Oh My Pi 与 Hermes 可以和 DeepSeek Harness 共享模型端点，但不�
 
 下游基于现有仅自动化 ACP 服务器提供候选主机原生适配器。Pi 与 OMP 使用独立 TypeScript 入口并共享一个拥有进程的 ACP 客户端；Hermes 使用通过 `plugin.yaml` 注册的 Python 标准库 ACP 客户端。每个模型可见工具只接受 `prompt`。启动器参数、规范工作区根目录、环境变量允许清单、权限预设、请求超时与清理宽限时间都是不可变的部署配置。
 
-语言无关的版本 1 结果区分 `completed`、`canceled`、`denied`、`failed` 与 `incompatible`，并提供稳定错误代码与清理状态。十四个 JSON fixture 驱动两种语言客户端执行所需的跨主机场景。无密钥测试运行脚本化 ACP 子进程，证明 UTF-8 结果、权限结果、有界启动与提示请求、协作式与强制取消清理、识别符号链接的工作区检查、环境变量过滤、协议失败与并发隔离。
+语言无关的版本 1 结果区分 `completed`、`canceled`、`denied`、`failed` 与 `incompatible`，并提供稳定错误代码与清理状态。十四个 JSON fixture 驱动两种语言客户端执行所需的跨主机场景。无密钥测试运行脚本化 ACP 子进程，证明 UTF-8 结果、权限结果、有界启动与提示请求、协作式与强制取消清理、识别符号链接的工作区检查、环境变量过滤、协议失败与并发隔离。一项聚焦快照通过真实 Pi SDK 加载扩展，并针对同一 ACP fixture 执行活动的主机包装 `dsh_delegate` 工具。
 
 Pi 与 OMP 通过各自主机确认界面显示 ACP 权限请求，并在没有界面时保持关闭。Hermes 0.16.0 插件处理函数既不公开交互式审批回调，也不公开中止信号，因此 Hermes 插件默认拒绝权限请求，并且在完整审批与主机取消语义方面仍不完整。集成状态参考按照[已审查下游接收策略](../process/2026-08-15-reviewed-downstream-intake.md)把这些路径标为候选，而不是完整桥接。
 

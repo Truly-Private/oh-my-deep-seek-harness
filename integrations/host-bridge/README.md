@@ -49,4 +49,4 @@ pnpm --filter @truly-private/dsh-host-bridge typecheck
 pnpm --filter @truly-private/dsh-host-bridge test
 ```
 
-The keyless suite uses a scripted ACP process and covers UTF-8 results, permission outcomes, cancellation, forced process-tree cleanup, canonical workspace checks, environment allowlisting, protocol failures, and concurrent sessions. Real provider execution still needs the configured DSH credential, and the downstream remains a candidate.
+The keyless suite uses a scripted ACP process and covers UTF-8 results, permission outcomes, cancellation, forced process-tree cleanup, canonical workspace checks, environment allowlisting, protocol failures, and concurrent sessions. A focused snapshot also loads the extension through the real Pi SDK, retrieves the active `dsh_delegate` tool, and executes it against that ACP fixture. Real provider execution still needs the configured DSH credential, and the downstream remains a candidate.
