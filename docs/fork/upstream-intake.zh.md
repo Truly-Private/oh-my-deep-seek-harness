@@ -2,7 +2,7 @@
 
 [English](upstream-intake.md) | 中文
 
-本参考定义 `oh-my-deep-seek-harness` 如何接收 DeepSeek Harness 更新。本发行版优先选择已知且经过审查的提交，而不是自动与上游 `master` 同步。
+本参考定义 `oh-my-deepseek-harness` 如何接收 DeepSeek Harness 更新。本发行版优先选择已知且经过审查的提交，而不是自动与上游 `master` 同步。
 
 ## 信任锚点
 

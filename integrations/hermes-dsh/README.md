@@ -9,7 +9,7 @@ This opt-in candidate plugin registers `dsh_delegate` in Hermes Agent and drives
 Hermes supports a plugin subdirectory inside a Git repository:
 
 ```bash
-hermes plugins install Truly-Private/oh-my-deep-seek-harness/integrations/hermes-dsh --no-enable
+hermes plugins install Truly-Private/oh-my-deepseek-harness/integrations/hermes-dsh --no-enable
 hermes plugins enable dsh-bridge
 ```
 

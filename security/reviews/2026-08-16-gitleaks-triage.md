@@ -4,7 +4,7 @@ Review state: `candidate`
 
 Primary upstream commit: `47f943859bef60e4160492346772ded9b24f765a`
 
-Failed workflow run: [Security review 31932376497](https://github.com/Truly-Private/oh-my-deep-seek-harness/actions/runs/31932376497)
+Failed workflow run: [Security review 31932376497](https://github.com/Truly-Private/oh-my-deepseek-harness/actions/runs/31932376497)
 
 ## Evidence
 
