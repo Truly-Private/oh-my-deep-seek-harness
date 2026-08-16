@@ -1,0 +1,10 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Translation pairing records contain reviewed Git blob hashes, not credentials."
+targetRules = ["generic-api-key"]
+condition = "AND"
+regexTarget = "match"
+paths = ['''(^|/)[^/]+\.i18n\.yaml$''']
+regexes = ['''^(?:[A-Za-z0-9_-]+\.md|[A-Za-z0-9_-]+\.zh\.md):[ \t]+[0-9a-f]{40}[ \t]*$''']

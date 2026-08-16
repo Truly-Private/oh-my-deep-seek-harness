@@ -12,7 +12,7 @@ Status: implemented
 
 本发行版在 [`security/upstream-lock.json`](../../../../security/upstream-lock.json) 中记录精确的 DeepSeek Harness 源提交与审查状态。[`verify-upstream-lock.mjs`](../../../../scripts/security/verify-upstream-lock.mjs) 仅接受指定的 DeepSeek 与灵感来源仓库，要求主源提交是当前检出的祖先，禁止自动合并政策，并在证据未对应同一主源提交时拒绝 `reviewed` 状态。
 
-上游接收使用候选拉取请求和人工批准。自动化通过 [`security-review.yml`](../../../../.github/workflows/security-review.yml) 运行来源验证、依赖审查、依赖漏洞审计、秘密扫描与 CodeQL，但不能改变审查状态、合并、打标签或发布。[接收参考](../../../../docs/fork/upstream-intake.md)负责维护流程，根目录[安全政策](../../../../SECURITY.md)负责面向用户定义“已审查”的含义与限制。
+上游接收使用候选拉取请求和人工批准。自动化通过 [`security-review.yml`](../../../../.github/workflows/security-review.yml) 运行来源验证、依赖审查、依赖漏洞审计、秘密扫描与 CodeQL，但不能改变审查状态、合并、打标签或发布。继承的秘密扫描发现遵循[精确处置政策](2026-08-16-inherited-secret-scan-dispositions.md)，该政策保留全历史扫描并拒绝未记录的例外。[接收参考](../../../../docs/fork/upstream-intake.md)负责维护流程，根目录[安全政策](../../../../SECURITY.md)负责面向用户定义“已审查”的含义与限制。
 
 [集成状态参考](../../../../docs/fork/integrations.md)将模型提供方互操作性与主机智能体互操作性分开报告。可执行测试覆盖进程清理、结构化数据、取消、工作区限制、秘密与审批之前，目标仍标记为兼容性目标。这可以防止把共享 DeepSeek 或 9Router 端点表述为已经完成 Hermes、OpenClaw、Pi 或 OMP 桥接。
 

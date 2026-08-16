@@ -1,0 +1,14 @@
+0d96676f3593b17541ff046ae93055ca3e17a6dd:apps/web/tests/models-settings.e2e.ts:generic-api-key:88
+708d3132cfb7c4b7982ded2718a27db968aabac9:packages/session-projection/session-projection/src/index.ts:generic-api-key:8
+70febffe1ad87f539cc50e0f5ea1d1cde5b0dc91:packages/telemetry/session-telemetry/tests/redact.spec.ts:generic-api-key:16
+cf2e18411244f837999bcf934ba383a21ec8661d:packages/telemetry/session-telemetry-otel/tests/loader-composition.e2e.ts:generic-api-key:27
+cf2e18411244f837999bcf934ba383a21ec8661d:packages/telemetry/session-telemetry/tests/redact.spec.ts:gcp-api-key:26
+cf2e18411244f837999bcf934ba383a21ec8661d:packages/telemetry/session-telemetry/tests/redact.spec.ts:jwt:27
+cf9eade39d5019ccbbd90e0f1a969274074ea691:packages/client/ui-models/tests/components.spec.tsx:generic-api-key:1091
+e8f5c0b51bc2c68d132517cd7018f678d70424ad:examples/desktop/src/renderer/tracing-index-model.js:generic-api-key:356
+fe668a6dfe5c9c64453eb78b8f167eb1407c0eb9:packages/sdk/telemetry/tests/payload.spec.ts:generic-api-key:23
+fe668a6dfe5c9c64453eb78b8f167eb1407c0eb9:packages/sdk/telemetry/tests/payload.spec.ts:generic-api-key:24
+fe668a6dfe5c9c64453eb78b8f167eb1407c0eb9:packages/sdk/telemetry/tests/reporter.spec.ts:generic-api-key:43
+fe668a6dfe5c9c64453eb78b8f167eb1407c0eb9:packages/sdk/telemetry/tests/secret-redactor.spec.ts:generic-api-key:100
+fe668a6dfe5c9c64453eb78b8f167eb1407c0eb9:packages/sdk/telemetry/tests/secret-redactor.spec.ts:generic-api-key:137
+fe668a6dfe5c9c64453eb78b8f167eb1407c0eb9:packages/sdk/telemetry/tests/secret-redactor.spec.ts:generic-api-key:139
