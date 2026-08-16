@@ -20,6 +20,7 @@ GitHub reported 24 open alerts on the downstream default branch before this chan
 - Runtime versions were installed through Moonrepo proto from `.prototools`.
 - The regenerated lockfile passed the repository supply-chain policy during installation.
 - The lockfile contains Mermaid 11.16.1, Vite 6.4.3 or 8.0.16, DOMPurify 3.4.13, and esbuild 0.25.12 or 0.28.1.
+- The source-worker compatibility test passed under Node 24.19.0 and Node 26.7.0 with the repository test runner on Vite 8.0.16; the website remains on the patched Vite 6.4.3 line.
 - `pnpm audit --audit-level low` reported no known vulnerabilities, and the production audit reported zero low, moderate, high, or critical findings.
 - Twelve security validator tests passed, including the inherited-history Gitleaks policy tests.
 - The documentation site tests passed 43 tests, the VitePress build completed with the Vite 6.4.3 floor, and 2,314 internal fragment references resolved.
