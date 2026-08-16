@@ -75,6 +75,9 @@ interface DeepSeekDefaultsServer {
   close(): Promise<void>
 }
 
+const DEEPSEEK_DEFAULTS_KEEP_ALIVE_INTERVAL_MS = 100
+const DEEPSEEK_DEFAULTS_KEEP_ALIVE_COUNT = 11
+
 /** Serve one deterministic DeepSeek-compatible response while retaining its request body. */
 async function deepseekDefaultsServer(): Promise<DeepSeekDefaultsServer> {
   const requests: JsonObject[] = []
@@ -85,11 +88,13 @@ async function deepseekDefaultsServer(): Promise<DeepSeekDefaultsServer> {
     request.on('end', () => {
       requests.push(JSON.parse(body) as JsonObject)
       response.writeHead(200, { 'content-type': 'text/event-stream' })
-      let keepAlives = 3
+      // Keep the comment-only stream open longer than its idle timeout while
+      // leaving a tenfold scheduling margin between heartbeats and timeout.
+      let keepAlives = DEEPSEEK_DEFAULTS_KEEP_ALIVE_COUNT
       const write = (): void => {
         if (keepAlives-- > 0) {
           response.write(': keep-alive\n\n')
-          setTimeout(write, 60)
+          setTimeout(write, DEEPSEEK_DEFAULTS_KEEP_ALIVE_INTERVAL_MS)
           return
         }
         response.end([
@@ -99,7 +104,7 @@ async function deepseekDefaultsServer(): Promise<DeepSeekDefaultsServer> {
           '',
         ].join('\n\n'))
       }
-      setTimeout(write, 60)
+      setTimeout(write, DEEPSEEK_DEFAULTS_KEEP_ALIVE_INTERVAL_MS)
     })
   })
   await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve))

@@ -74,6 +74,20 @@
         "@deepseek-ai/.+"
       ]
     },
+    "integrations/host-bridge": {
+      "entry": [
+        "tests/**/*.test.ts",
+        "tests/**/*.snapshot.ts"
+      ],
+      "project": [
+        "src/**/*.ts",
+        "test-support/**/*.ts",
+        "tests/**/*.ts"
+      ],
+      "ignoreDependencies": [
+        "tsx"
+      ]
+    },
     "packages/util/home": {
       "entry": [
         "tests/**/*.spec.ts"

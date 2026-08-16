@@ -27,24 +27,26 @@ describe('CI workflow', () => {
     }
   })
 
-  it('keeps a required Wine Windows job, a non-blocking native Windows job with failover, and a master-only standby', () => {
+  it('keeps required hosted Windows jobs, a non-blocking native job with failover, and a master-only standby', () => {
     const workflow = loadWorkflow('.github/workflows/ci.yml')
     if (!isRecord(workflow.jobs)
       || !isRecord(workflow.jobs.windows)
       || !isRecord(workflow.jobs['windows-native'])
       || !isRecord(workflow.jobs['wine-apt-cache'])
       || !isRecord(workflow.jobs['serial-windows'])
+      || !isRecord(workflow.jobs['serial-windows-selfhosted'])
       || !isRecord(workflow.jobs['node-24'])
       || !isRecord(workflow.jobs['node-24-coverage'])
       || !isRecord(workflow.jobs['node-24-consumers'])
       || !isRecord(workflow.jobs['all-checks-passed'])) {
-      throw new TypeError('CI workflow must define windows, windows-native, wine-apt-cache, serial-windows, node-24, node-24-coverage, node-24-consumers, and all-checks-passed jobs')
+      throw new TypeError('CI workflow must define windows, windows-native, wine-apt-cache, serial-windows, serial-windows-selfhosted, node-24, node-24-coverage, node-24-consumers, and all-checks-passed jobs')
     }
 
     const windows = workflow.jobs.windows
     const windowsNative = workflow.jobs['windows-native']
     const wineAptCache = workflow.jobs['wine-apt-cache']
     const serialWindows = workflow.jobs['serial-windows']
+    const serialWindowsSelfhosted = workflow.jobs['serial-windows-selfhosted']
     const node24 = workflow.jobs['node-24']
     const node24Coverage = workflow.jobs['node-24-coverage']
     const node24Consumers = workflow.jobs['node-24-consumers']
@@ -69,9 +71,13 @@ describe('CI workflow', () => {
     expect(windowsNative['runs-on']).not.toContain('DSH_CI_FAILOVER_LINUX')
     expect(windowsNative['runs-on']).toContain('self-hosted')
     expect(windowsNative['runs-on']).toContain('dsh-win-ci')
-    expect(windowsNative['runs-on']).toContain('dsh-windows-2025-16core')
+    expect(windowsNative['runs-on']).toContain('windows-latest')
     expect(windowsNative.name).toBe('windows node 24 / native complete')
     expect(windowsNative.if).toBe("github.event_name == 'pull_request'")
+    expect(windowsNative.env).toMatchObject({
+      DSH_COVERAGE_MAX_WORKERS: '1',
+      DSH_GATE_CONCURRENCY: '1',
+    })
     const nativeCommandSteps = (windowsNative.steps as unknown[]).filter((step): step is Record<string, unknown> & { run: string } => (
       isRecord(step) && typeof step.run === 'string'
     ))
@@ -81,15 +87,21 @@ describe('CI workflow', () => {
     expect(wineAptCache.if).toBe("github.event_name == 'push' && github.ref == 'refs/heads/master'")
     expect(wineAptCache['runs-on']).toBe('ubuntu-latest')
 
-    // serial-windows: master-only standby, self-hosted, non-blocking.
-    expect(serialWindows.if).toBe("github.event_name == 'push' && github.ref == 'refs/heads/master'")
-    expect(serialWindows['runs-on']).toEqual(['self-hosted', 'dsh-win-ci', 'windows'])
-    expect(serialWindows.name).toBe('serial / windows (self-hosted standby)')
+    // serial-windows: required hosted reference job.
+    expect(serialWindows.if).toBe("github.event_name == 'pull_request'")
+    expect(serialWindows['runs-on']).toBe('windows-latest')
+    expect(serialWindows.name).toBe('serial / windows')
+
+    // serial-windows-selfhosted: master-only standby, self-hosted, non-blocking.
+    expect(serialWindowsSelfhosted.if).toBe("github.event_name == 'push' && github.ref == 'refs/heads/master'")
+    expect(serialWindowsSelfhosted['runs-on']).toEqual(['self-hosted', 'dsh-win-ci', 'windows'])
+    expect(serialWindowsSelfhosted.name).toBe('serial / windows (self-hosted standby)')
 
     // Aggregate: Wine `windows` required, native `windows-native` excluded.
     expect(aggregate.needs).toContain('windows')
     expect(aggregate.needs).not.toContain('windows-native')
-    expect(aggregate.needs).not.toContain('serial-windows')
+    expect(aggregate.needs).toContain('serial-windows')
+    expect(aggregate.needs).not.toContain('serial-windows-selfhosted')
 
     // Linux failover is a separate switch: the three required Linux workers
     // and the verdict job resolve their pool through DSH_CI_FAILOVER_LINUX,
@@ -124,7 +136,7 @@ describe('CI workflow', () => {
 
     // Neither drill may carry a job-level group: it would not exempt the job
     // from run-scoped cancellation.
-    for (const name of ['serial-linux-selfhosted', 'serial-windows']) {
+    for (const name of ['serial-linux-selfhosted', 'serial-windows-selfhosted']) {
       const job = workflow.jobs[name]
       if (!isRecord(job)) throw new TypeError(`${name} must be defined`)
       expect(job.concurrency).toBeUndefined()
@@ -156,7 +168,7 @@ describe('CI workflow', () => {
       })
       .map(([name]) => name)
       .sort()
-    expect(pushReachable).toEqual(['serial-linux-selfhosted', 'serial-windows', 'wine-apt-cache'])
+    expect(pushReachable).toEqual(['serial-linux-selfhosted', 'serial-windows-selfhosted', 'wine-apt-cache'])
 
     // Why workflow_dispatch must keep cancelling: each benchmark fans out to a
     // dozen larger runners at once, in this same group on master. If it stopped
@@ -372,7 +384,7 @@ describe('Python release workflows', () => {
 })
 
 describe('Issue lifecycle workflow', () => {
-  it('uses explicit review handoff events without rerunning when a draft becomes ready', () => {
+  it('limits project automation to upstream and uses explicit review handoff events', () => {
     const lifecycle = loadWorkflow('.github/workflows/issue-lifecycle.yml')
     const lifecyclePullRequest = workflowEvent(lifecycle, 'pull_request')
     const lifecycleReview = workflowEvent(lifecycle, 'pull_request_review')
@@ -384,7 +396,7 @@ describe('Issue lifecycle workflow', () => {
     expect(lifecyclePullRequest.types).toContain('review_requested')
     expect(lifecycleReview.types).toEqual(['submitted'])
     expect(lifecycleJob.if).toBe(
-      "${{ github.event_name != 'pull_request_review' || (github.event.action == 'submitted' && github.event.review.state == 'changes_requested') }}",
+      "${{ github.repository == 'deepseek-harness/deepseek-harness' && (github.event_name != 'pull_request_review' || (github.event.action == 'submitted' && github.event.review.state == 'changes_requested')) }}",
     )
     expect(policyPullRequest.types).toContain('ready_for_review')
   })

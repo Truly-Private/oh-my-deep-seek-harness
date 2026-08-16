@@ -30,7 +30,7 @@ export interface BridgeRequest {
   workspaceRoot: string | null
 }
 
-export interface BridgeError {
+interface BridgeError {
   code: BridgeErrorCode
   message: string
   retryable: boolean
