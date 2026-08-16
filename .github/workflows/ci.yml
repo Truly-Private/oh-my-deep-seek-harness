@@ -15,11 +15,13 @@ on:
           - larger-runner-benchmark
           - consolidated-runner-benchmark
 
-# Cancel a superseded run on every event EXCEPT push. A push run carries the two
-# self-hosted standby drills, which take longer than the interval between master
-# merges, so cancelling supersedes a drill before it reaches a verdict and the
-# lane yields no readiness evidence. Must be decided here: cancellation applies
-# to the whole superseded run, so a job-level group cannot exempt its job.
+# Cancel a superseded run on every event EXCEPT push. A push run can carry the
+# two optional self-hosted standby drills. When enabled through the
+# DSH_CI_STANDBY_DRILLS repository variable, they take longer than the interval
+# between master merges, so cancelling supersedes a drill before it reaches a
+# verdict and the lane yields no readiness evidence. Must be decided here:
+# cancellation applies to the whole superseded run, so a job-level group cannot
+# exempt its job.
 # Negated rather than `== 'pull_request'` so workflow_dispatch keeps cancelling:
 # a re-dispatched runner benchmark holds up to 12 larger runners for 15 minutes
 # and shares this group with the drills on master, so queueing it would delay
@@ -557,8 +559,9 @@ jobs:
           DSH_SNAPSHOT_MAX_CONCURRENCY: '1'
         run: pnpm run check:ci:linux-primary
 
-  # Hot-standby drill for the in-house self-hosted pool: every master move
-  # re-runs the complete unsharded aggregate on the persistent 64-core VM,
+  # Optional hot-standby drill for an in-house self-hosted pool. Setting the
+  # DSH_CI_STANDBY_DRILLS repository variable to 'enabled' makes every master
+  # move re-run the complete unsharded aggregate on the persistent 64-core VM,
   # continuously proving that environment can take over a required lane if
   # the hosted pools degrade (the switch is then setting the writer-manageable
   # DSH_CI_FAILOVER_LINUX variable — see the failover runbook, no merge required).
@@ -571,7 +574,10 @@ jobs:
   # tool caches make them redundant (and saving here would poison the hosted
   # cache namespace with self-hosted paths).
   serial-linux-selfhosted:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: >-
+      github.event_name == 'push'
+      && github.ref == 'refs/heads/master'
+      && vars.DSH_CI_STANDBY_DRILLS == 'enabled'
     name: serial / linux (self-hosted standby)
     runs-on: [self-hosted, linux, x64, vm-backup]
     steps:
@@ -679,9 +685,10 @@ jobs:
           DSH_PUBLINT_CONCURRENCY: '1'
         run: pnpm run check:ci:windows-complete
 
-  # Hot-standby drill for the in-house self-hosted Windows pool: every master
-  # move re-runs the complete unsharded Windows gate inventory on the persistent
-  # VM, continuously proving that environment can take over the required
+  # Optional hot-standby drill for an in-house self-hosted Windows pool. Setting
+  # DSH_CI_STANDBY_DRILLS to 'enabled' makes every master move re-run the complete
+  # unsharded Windows gate inventory on the persistent VM, continuously proving
+  # that environment can take over the required
   # `windows` lane if the hosted pool degrades (the switch is setting the
   # writer-manageable DSH_CI_FAILOVER_WINDOWS variable — see the failover
   # runbook, no merge required). Push-triggered, so this lane always executes
@@ -691,7 +698,10 @@ jobs:
   # and tool caches make them redundant (and saving here would poison the
   # hosted cache namespace with self-hosted paths).
   serial-windows-selfhosted:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: >-
+      github.event_name == 'push'
+      && github.ref == 'refs/heads/master'
+      && vars.DSH_CI_STANDBY_DRILLS == 'enabled'
     name: serial / windows (self-hosted standby)
     runs-on: [self-hosted, dsh-win-ci, windows]
     timeout-minutes: 60

@@ -10,7 +10,7 @@ Status: implemented
 
 ## 决策
 
-必需的 Linux 作业和真实 Windows 作业默认使用 GitHub 托管 runner，同时保留现有仓库变量开关，以便切换到私有故障转移池。托管作业的并发度降低，以适配标准 runner。完整的原生 Windows 清单一次只运行一个门禁和一个覆盖率 worker：并发运行两个门禁时，所有测试断言均已完成，但插桩覆盖率期间丢失了一个 Vitest fork；同一份完整清单采用 Windows 串行参考作业的执行方式后通过。Linux、macOS 和 Windows 串行参考作业在拉取请求中运行，并加入 `all checks passed` 汇总；自托管 Linux 和 Windows lane 使用不同的作业标识，继续作为 `master` 推送后的备用演练。
+必需的 Linux 作业和真实 Windows 作业默认使用 GitHub 托管 runner，同时保留现有仓库变量开关，以便切换到私有故障转移池。托管作业的并发度降低，以适配标准 runner。完整的原生 Windows 清单一次只运行一个门禁和一个覆盖率 worker：并发运行两个门禁时，所有测试断言均已完成，但插桩覆盖率期间丢失了一个 Vitest fork；同一份完整清单采用 Windows 串行参考作业的执行方式后通过。Linux、macOS 和 Windows 串行参考作业在拉取请求中运行，并加入 `all checks passed` 汇总。自托管 Linux 和 Windows lane 保留各自的 `master` 推送备用作业标识，但只在仓库变量 `DSH_CI_STANDBY_DRILLS` 为 `enabled` 时运行；没有这些 runner 的公共下游仓库因此会跳过作业，而不会让默认分支运行无限期排队。
 
 文档工具链为 Mermaid、Vite、DOMPurify 和 esbuild 设置已修复安全公告的版本下限。网站使用 Vite 6.4.3，而仓库测试运行器显式保留 Vite 8.0.16，使 Vitest 在 Node 24 和 Node 26 上保持其源模块运行器行为。pnpm 将 VitePress 保留的 Vite 5 范围覆盖为 Vite 6.4.3，并将传递依赖 DOMPurify 保持在 3.4.13。由于 Vite 5 依赖已移除，生成的锁文件不再包含 esbuild 0.21.5。[`2026-08-16-release-blockers.md`](../../../../security/reviews/2026-08-16-release-blockers.md)记录告警与版本处置的对应关系，并在 GitHub 针对此确切提交完成评估前保留远程验证待办状态。
 
