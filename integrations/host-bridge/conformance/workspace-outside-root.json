@@ -1,0 +1,1 @@
+{"name":"workspace-outside-root","scenario":"workspace","expectedStatus":"denied","expectedError":"BRIDGE_WORKSPACE_OUTSIDE_ROOT"}

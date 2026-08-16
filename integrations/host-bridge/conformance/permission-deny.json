@@ -1,0 +1,1 @@
+{"name":"permission-deny","scenario":"permission","expectedStatus":"denied","expectedError":"BRIDGE_APPROVAL_DENIED"}

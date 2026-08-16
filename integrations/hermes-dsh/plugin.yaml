@@ -1,0 +1,8 @@
+manifest_version: 1
+name: dsh-bridge
+version: 0.1.0-candidate.0
+description: Candidate DeepSeek Harness ACP delegation tool with fail-closed permissions.
+author: Truly Private
+kind: standalone
+provides_tools:
+  - dsh_delegate
