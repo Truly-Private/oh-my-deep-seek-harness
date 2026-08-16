@@ -28,8 +28,11 @@ jobs:
       - name: Verify upstream lock
         run: node scripts/security/verify-upstream-lock.mjs
 
-      - name: Test upstream lock validator
-        run: node --test scripts/security/verify-upstream-lock.test.mjs scripts/security/audit-production-dependencies.test.mjs
+      - name: Verify Gitleaks dispositions
+        run: node scripts/security/verify-gitleaks-policy.mjs
+
+      - name: Test security validators
+        run: node --test scripts/security/verify-upstream-lock.test.mjs scripts/security/verify-gitleaks-policy.test.mjs scripts/security/audit-production-dependencies.test.mjs
 
   dependency-review:
     if: github.event_name == 'pull_request'
@@ -68,6 +71,9 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Verify Gitleaks dispositions
+        run: node scripts/security/verify-gitleaks-policy.mjs
+
       - name: Install pinned Gitleaks binary
         env:
           GITLEAKS_VERSION: 8.30.1
@@ -81,7 +87,7 @@ jobs:
           tar --extract --gzip --file "$archive" --directory "$RUNNER_TEMP" gitleaks
 
       - name: Scan full repository history
-        run: '"$RUNNER_TEMP/gitleaks" git --redact --verbose'
+        run: '"$RUNNER_TEMP/gitleaks" git --config .gitleaks.toml --redact --verbose'
 
   codeql:
     name: CodeQL / ${{ matrix.language }}
