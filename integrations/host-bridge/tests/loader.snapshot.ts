@@ -23,6 +23,7 @@ it('loads the candidate extension through the real Pi RPC host and executes its 
       [
         '--filter', '@truly-private/dsh-host-bridge', 'exec', 'pi',
         '--mode', 'rpc', '--offline', '--no-session', '--no-extensions',
+        '--api-key', 'no-network-loader-placeholder', '--model', 'openai/gpt-4o',
         '--extension', extensionPath,
       ],
       {

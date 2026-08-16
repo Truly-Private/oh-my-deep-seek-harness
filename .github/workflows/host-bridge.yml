@@ -57,7 +57,10 @@ jobs:
           DSH_BRIDGE_ARGS_JSON: '[]'
         run: |
           printf '%s\n' '{"type":"get_commands","id":"loader-pi"}' |
-            pnpm --filter @truly-private/dsh-host-bridge exec pi --mode rpc --offline --no-session --no-extensions --extension "$GITHUB_WORKSPACE/integrations/host-bridge/src/pi/index.ts" |
+            pnpm --filter @truly-private/dsh-host-bridge exec pi --mode rpc --offline --no-session --no-extensions \
+              --api-key no-network-loader-placeholder \
+              --model openai/gpt-4o \
+              --extension "$GITHUB_WORKSPACE/integrations/host-bridge/src/pi/index.ts" |
             grep 'dsh-bridge-status'
 
       - name: Load the OMP extension through the real RPC host
