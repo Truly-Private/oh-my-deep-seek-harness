@@ -19,10 +19,9 @@ it('loads the candidate extension through the real Pi SDK and executes its activ
   try {
     const baseEnv = buildChildEnvironment([], process.env)
     const execution = spawnSync(
-      process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm',
+      process.execPath,
       [
-        '--filter', '@truly-private/dsh-host-bridge', 'exec', 'tsx',
-        hostToolSmoke, extensionPath, profile, workspace,
+        '--import', tsxLoader, hostToolSmoke, extensionPath, profile, workspace,
       ],
       {
         cwd: repositoryRoot,
