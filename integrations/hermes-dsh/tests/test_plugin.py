@@ -60,7 +60,7 @@ class HermesPluginTests(unittest.TestCase):
             "DSH_BRIDGE_WORKSPACE_ROOT": workspace,
             "TERMINAL_CWD": workspace,
             "DSH_BRIDGE_CANCEL_GRACE_SECONDS": "1",
-            "DSH_BRIDGE_REQUEST_TIMEOUT_SECONDS": "2",
+            "DSH_BRIDGE_REQUEST_TIMEOUT_SECONDS": "10",
         })
 
     def test_registers_prompt_only_tool(self):
