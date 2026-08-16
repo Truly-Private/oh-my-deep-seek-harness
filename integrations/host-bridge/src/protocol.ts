@@ -19,6 +19,7 @@ export type BridgeErrorCode =
   | 'BRIDGE_PROTOCOL'
   | 'BRIDGE_CHILD_NOT_FOUND'
   | 'BRIDGE_CHILD_EXITED'
+  | 'BRIDGE_REQUEST_TIMEOUT'
   | 'BRIDGE_CLEANUP_FAILED'
 
 export interface BridgeRequest {
@@ -57,6 +58,7 @@ export interface BridgeConfig {
   envAllowlist: string[]
   permission: 'interactive' | 'allow' | 'reject'
   cancelGraceMs: number
+  requestTimeoutMs: number
 }
 
 export type PermissionDecision = (request: {
@@ -79,7 +81,7 @@ export function bridgeFailure(
     sessionId,
     status,
     content: [],
-    error: { code, message, retryable: code === 'BRIDGE_CHILD_EXITED' || code === 'BRIDGE_CLEANUP_FAILED' },
+    error: { code, message, retryable: code === 'BRIDGE_CHILD_EXITED' || code === 'BRIDGE_REQUEST_TIMEOUT' || code === 'BRIDGE_CLEANUP_FAILED' },
     meta: { host, adapterVersion: ADAPTER_VERSION, acpVersion: null, cleanup },
   }
 }

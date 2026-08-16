@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write integrations/hermes-dsh/README.md
-README.md: 6b1904314d4d19c759c988e2da22ca30e6dafe8e
-README.zh.md: e2163bfa363613e306efa964af5391cb888beb04
+README.md: e99fdad36ac0133b18cc1d328ee346e2aaffa702
+README.zh.md: 6badb365c1eb11f11faf154c1c52770b158ffd3c

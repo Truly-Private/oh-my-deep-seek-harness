@@ -29,5 +29,6 @@ export function readBridgeConfig(env: NodeJS.ProcessEnv = process.env): BridgeCo
       .filter(name => name.length > 0),
     permission,
     cancelGraceMs: positiveInteger(env.DSH_BRIDGE_CANCEL_GRACE_MS, 3_000),
+    requestTimeoutMs: positiveInteger(env.DSH_BRIDGE_REQUEST_TIMEOUT_MS, 30_000),
   }
 }

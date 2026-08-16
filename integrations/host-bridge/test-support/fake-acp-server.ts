@@ -23,6 +23,7 @@ if (scenario === 'malformed') {
 function makeAgent(connection: AgentSideConnection): Agent {
   return {
     initialize(_request: InitializeRequest): Promise<InitializeResponse> {
+      if (scenario === 'hang-initialize') return new Promise(() => {})
       return Promise.resolve({
         protocolVersion: scenario === 'bad-version' ? 0 : PROTOCOL_VERSION,
         agentCapabilities: { loadSession: false, promptCapabilities: { image: false, audio: false, embeddedContext: false } },
@@ -30,6 +31,7 @@ function makeAgent(connection: AgentSideConnection): Agent {
       })
     },
     newSession(_request: NewSessionRequest): Promise<NewSessionResponse> {
+      if (scenario === 'hang-session') return new Promise(() => {})
       if (scenario === 'missing-session') return Promise.resolve({} as NewSessionResponse)
       return Promise.resolve({ sessionId: `fixture-${process.pid}` })
     },
@@ -54,6 +56,7 @@ function makeAgent(connection: AgentSideConnection): Agent {
         })
       }
       const prompt = request.prompt.filter(block => block.type === 'text').map(block => block.text).join('')
+      if (scenario === 'noisy-stderr') process.stderr.write('x'.repeat(1024 * 1024))
       const text = scenario === 'echo-env'
         ? `${process.env.BRIDGE_TEST_ALLOWED ?? '<unset>'}|${process.env.BRIDGE_TEST_SECRET ?? '<unset>'}`
         : `fixture: ${prompt}`

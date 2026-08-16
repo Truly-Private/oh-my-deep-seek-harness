@@ -27,12 +27,41 @@ function messageOf(error: unknown): string {
   return error instanceof Error ? error.message : String(error)
 }
 
+function isAborted(signal: AbortSignal | undefined): boolean {
+  return signal?.aborted === true
+}
+
+class BridgeRequestTimeoutError extends Error {
+  constructor(readonly operation: string) {
+    super(`ACP request timed out: ${operation}`)
+  }
+}
+
+async function awaitAcp<T>(operation: Promise<T>, aborted: Promise<void>, timeoutMs: number, name: string): Promise<T> {
+  let timeout: NodeJS.Timeout | undefined
+  const timedOut = new Promise<never>((_resolve, reject) => {
+    timeout = setTimeout(() => reject(new BridgeRequestTimeoutError(name)), timeoutMs)
+  })
+  try {
+    return await Promise.race([
+      operation,
+      aborted.then(() => { throw new DOMException('The host canceled the ACP request.', 'AbortError') }),
+      timedOut,
+    ])
+  } finally {
+    if (timeout !== undefined) clearTimeout(timeout)
+  }
+}
+
 function classifyStartupError(host: BridgeHost, callId: string, error: unknown): BridgeResult {
   if (error instanceof WorkspaceError) {
     return bridgeFailure(host, callId, error.code === 'BRIDGE_WORKSPACE_OUTSIDE_ROOT' ? 'denied' : 'incompatible', error.code, error.message)
   }
   if (error instanceof EnvironmentError) {
     return bridgeFailure(host, callId, 'denied', error.code, error.message)
+  }
+  if (error instanceof BridgeRequestTimeoutError) {
+    return bridgeFailure(host, callId, 'failed', 'BRIDGE_REQUEST_TIMEOUT', error.message)
   }
   const code = (error as NodeJS.ErrnoException).code
   if (code === 'ENOENT') {
@@ -49,7 +78,7 @@ export async function runBridge(
   signal: AbortSignal | undefined,
   decidePermission: PermissionDecision,
 ): Promise<BridgeResult> {
-  if (signal?.aborted === true) {
+  if (isAborted(signal)) {
     return bridgeFailure(host, request.callId, 'canceled', 'BRIDGE_CANCELED', 'The host canceled before ACP startup.')
   }
   let workspace: string
@@ -69,6 +98,9 @@ export async function runBridge(
   let canceled: boolean = signal?.aborted ?? false
   let output = ''
 
+  let abortResolve: (() => void) | undefined
+  const aborted = new Promise<void>(resolve => { abortResolve = resolve })
+
   const makeClient = (_agent: AcpAgent): Client => ({
     sessionUpdate(params: SessionNotification): Promise<void> {
       const update = params.update
@@ -80,10 +112,14 @@ export async function runBridge(
       if (config.permission === 'allow') {
         allow = true
       } else if (config.permission === 'interactive') {
-        const decision = await decidePermission({
-          title: params.toolCall.title ?? 'DeepSeek Harness permission request',
-          options: params.options.map(option => ({ optionId: option.optionId, name: option.name, kind: option.kind })),
-        })
+        const decision = await Promise.race([
+          decidePermission({
+            title: params.toolCall.title ?? 'DeepSeek Harness permission request',
+            options: params.options.map(option => ({ optionId: option.optionId, name: option.name, kind: option.kind })),
+          }),
+          aborted.then(() => undefined),
+        ])
+        if (canceled) return { outcome: { outcome: 'cancelled' } }
         if (decision === undefined) approvalFailure = 'unavailable'
         else if (!decision) approvalFailure = 'denied'
         allow = decision === true
@@ -107,37 +143,44 @@ export async function runBridge(
     ),
   )
 
-  let abortResolve: (() => void) | undefined
-  const aborted = new Promise<void>(resolve => { abortResolve = resolve })
   const onAbort = (): void => {
     canceled = true
     abortResolve?.()
     if (sessionId !== null) void connection.cancel({ sessionId }).catch(() => {})
   }
   signal?.addEventListener('abort', onAbort, { once: true })
+  if (isAborted(signal)) onAbort()
   const spawnError = new Promise<never>((_resolve, reject) => child.once('error', reject))
 
   let result: BridgeResult
   try {
     if (canceled) throw new DOMException('The host canceled before ACP startup.', 'AbortError')
-    const initialized = await Promise.race([
-      connection.initialize({ protocolVersion: PROTOCOL_VERSION, clientCapabilities: {} }),
-      spawnError,
-    ])
+    const initialized = await awaitAcp(
+      Promise.race([connection.initialize({ protocolVersion: PROTOCOL_VERSION, clientCapabilities: {} }), spawnError]),
+      aborted,
+      config.requestTimeoutMs,
+      'initialize',
+    )
     acpVersion = String(initialized.protocolVersion)
     if (initialized.protocolVersion !== PROTOCOL_VERSION) {
       result = bridgeFailure(host, request.callId, 'incompatible', 'BRIDGE_ACP_CAPABILITY', `Unsupported ACP version: ${initialized.protocolVersion}`)
     } else {
-      const session = await Promise.race([connection.newSession({ cwd: workspace, mcpServers: [] }), spawnError])
+      const session = await awaitAcp(
+        Promise.race([connection.newSession({ cwd: workspace, mcpServers: [] }), spawnError]),
+        aborted,
+        config.requestTimeoutMs,
+        'session/new',
+      )
       if (typeof session.sessionId !== 'string' || session.sessionId.length === 0) throw new Error('ACP session/new returned no session id')
       sessionId = session.sessionId
       if (canceled) onAbort()
       const prompt = connection.prompt({ sessionId, prompt: [{ type: 'text', text: request.prompt }] })
-      const promptResult = await Promise.race([
-        prompt,
-        aborted.then(() => ({ stopReason: 'cancelled' as const })),
-        spawnError,
-      ])
+      const promptResult = await awaitAcp(
+        Promise.race([prompt, spawnError]),
+        aborted,
+        config.requestTimeoutMs,
+        'session/prompt',
+      )
       if (canceled) {
         result = bridgeFailure(host, request.callId, 'canceled', 'BRIDGE_CANCELED', 'The host canceled the delegated task.', 'clean', sessionId)
       } else if (approvalFailure === 'unavailable') {

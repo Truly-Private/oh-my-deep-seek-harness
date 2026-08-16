@@ -84,6 +84,12 @@ describe('host extension registration', () => {
     expect(() => registerOmpBridge({ registerCommand: vi.fn(), zod: {} } as never)).toThrow('BRIDGE_HOST_VERSION')
   })
 
+  it('fails at load when a host lacks another required extension API', () => {
+    Object.assign(process.env, bridgeEnv)
+    expect(() => registerPiBridge({ registerTool: vi.fn() } as never)).toThrow('BRIDGE_HOST_VERSION')
+    expect(() => registerOmpBridge({ registerTool: vi.fn(), registerCommand: vi.fn(), zod: {} } as never)).toThrow('BRIDGE_HOST_VERSION')
+  })
+
   for (const host of ['pi', 'omp'] as const) {
     it(`executes UTF-8 ACP success through the registered ${host} tool`, async () => {
       const loaded = await loadedTool(host, 'success')

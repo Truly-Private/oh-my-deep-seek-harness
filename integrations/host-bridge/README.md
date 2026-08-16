@@ -13,11 +13,14 @@ export DSH_BRIDGE_COMMAND=pnpm
 export DSH_BRIDGE_ARGS_JSON='["--dir","/absolute/path/to/oh-my-deep-seek-harness","run","demo:acp"]'
 export DSH_BRIDGE_WORKSPACE_ROOT=/absolute/path/to/allowed/workspace
 export DSH_BRIDGE_ENV_ALLOWLIST=DEEPSEEK_API_KEY
+export DSH_BRIDGE_REQUEST_TIMEOUT_MS=30000
 ```
 
 `DSH_BRIDGE_PERMISSION=interactive` is the default. Pi and OMP show each ACP permission request through their confirmation UI and fail closed when no UI is available. `allow` and `reject` are deployment presets set outside model input; use `allow` only where the surrounding host already provides an equivalent approval policy.
 
 The child receives only locale, executable-search, temporary-directory, and required Windows runtime variables by default. Home-directory variables and credentials are excluded; add each required name, such as `DEEPSEEK_API_KEY` or `DSH_HOME`, to `DSH_BRIDGE_ENV_ALLOWLIST` explicitly.
+
+`DSH_BRIDGE_REQUEST_TIMEOUT_MS` bounds each ACP request and defaults to 30 seconds. `DSH_BRIDGE_CANCEL_GRACE_MS` bounds graceful process cleanup and defaults to 3 seconds. A request timeout returns the retryable `BRIDGE_REQUEST_TIMEOUT` result; host cancellation remains `BRIDGE_CANCELED` and reaches startup, approval, and prompt waits.
 
 ## Load in Pi
 

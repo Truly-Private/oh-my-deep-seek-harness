@@ -3,7 +3,14 @@ import { createHostExecutor } from '../adapter.ts'
 
 /** Register the candidate DeepSeek Harness delegation tool for Oh My Pi. */
 export default function registerOmpBridge(omp: ExtensionAPI): void {
-  if (typeof omp.registerTool !== 'function') throw new Error('BRIDGE_HOST_VERSION: OMP registerTool is unavailable')
+  if (
+    typeof omp.registerTool !== 'function'
+    || typeof omp.registerCommand !== 'function'
+    || typeof omp.zod?.object !== 'function'
+    || typeof omp.zod?.string !== 'function'
+  ) {
+    throw new Error('BRIDGE_HOST_VERSION: OMP requires registerTool, registerCommand, and zod schema builders')
+  }
   const execute = createHostExecutor('omp')
   const z = omp.zod
   omp.registerTool({

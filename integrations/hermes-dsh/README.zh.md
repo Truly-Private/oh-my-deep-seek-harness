@@ -19,6 +19,8 @@ hermes plugins enable dsh-bridge
 
 使用[共享桥接包](../host-bridge/README.md)记录的同一组 `DSH_BRIDGE_COMMAND`、`DSH_BRIDGE_ARGS_JSON`、`DSH_BRIDGE_WORKSPACE_ROOT` 与 `DSH_BRIDGE_ENV_ALLOWLIST` 设置。Hermes 0.16.0 不会向插件工具处理函数传递交互式审批回调或中止信号，因此插件默认拒绝 ACP 权限请求。已经执行等效审批的外部部署可以设置 `DSH_BRIDGE_PERMISSION=allow`；模型永远不能调用这个预设。
 
+Python 客户端还接受 `DSH_BRIDGE_REQUEST_TIMEOUT_SECONDS` 和 `DSH_BRIDGE_CANCEL_GRACE_SECONDS`，默认值分别为 30 秒和 3 秒。其取消与进程树行为已通过内部事件完成一致性测试，但 Hermes 0.16.0 的插件处理函数无法提供该事件。
+
 ACP 子进程不会继承主目录变量或凭证。请把每个必需的变量名称明确加入 `DSH_BRIDGE_ENV_ALLOWLIST`。
 
 ## 验证

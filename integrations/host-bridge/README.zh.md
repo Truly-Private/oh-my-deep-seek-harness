@@ -13,11 +13,14 @@ export DSH_BRIDGE_COMMAND=pnpm
 export DSH_BRIDGE_ARGS_JSON='["--dir","/absolute/path/to/oh-my-deep-seek-harness","run","demo:acp"]'
 export DSH_BRIDGE_WORKSPACE_ROOT=/absolute/path/to/allowed/workspace
 export DSH_BRIDGE_ENV_ALLOWLIST=DEEPSEEK_API_KEY
+export DSH_BRIDGE_REQUEST_TIMEOUT_MS=30000
 ```
 
 `DSH_BRIDGE_PERMISSION=interactive` 是默认值。Pi 与 OMP 通过各自的确认界面显示每个 ACP 权限请求，并在没有界面时保持关闭。`allow` 与 `reject` 是在模型输入之外设置的部署预设；只有外围主机已提供等效审批策略时才使用 `allow`。
 
 子进程默认只接收区域设置、可执行文件搜索、临时目录和 Windows 必需的运行时变量。主目录变量和凭证均会排除；请把每个必需名称（例如 `DEEPSEEK_API_KEY` 或 `DSH_HOME`）明确加入 `DSH_BRIDGE_ENV_ALLOWLIST`。
+
+`DSH_BRIDGE_REQUEST_TIMEOUT_MS` 限制每个 ACP 请求，默认为 30 秒。`DSH_BRIDGE_CANCEL_GRACE_MS` 限制优雅进程清理，默认为 3 秒。请求超时会返回可重试的 `BRIDGE_REQUEST_TIMEOUT` 结果；主机取消仍返回 `BRIDGE_CANCELED`，并会中断启动、审批和提示等待。
 
 ## 在 Pi 中加载
 

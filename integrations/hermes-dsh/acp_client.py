@@ -37,7 +37,7 @@ def _failure(call_id: str, code: str, message: str, status: str = "failed", clea
         "sessionId": session_id,
         "status": status,
         "content": [],
-        "error": {"code": code, "message": message, "retryable": code in {"BRIDGE_CHILD_EXITED", "BRIDGE_CLEANUP_FAILED"}},
+        "error": {"code": code, "message": message, "retryable": code in {"BRIDGE_CHILD_EXITED", "BRIDGE_REQUEST_TIMEOUT", "BRIDGE_CLEANUP_FAILED"}},
         "meta": {
             "host": "hermes",
             "adapterVersion": ADAPTER_VERSION,
@@ -122,7 +122,14 @@ class _Connection:
                     outcome = {"outcome": "cancelled"}
                 self._send({"jsonrpc": "2.0", "id": message["id"], "result": {"outcome": outcome}})
 
-    def request(self, method: str, params: dict[str, Any], timeout: float = 30.0) -> dict[str, Any]:
+    def request(
+        self,
+        method: str,
+        params: dict[str, Any],
+        timeout: float = 30.0,
+        cancel_event: threading.Event | None = None,
+        session_id: str | None = None,
+    ) -> dict[str, Any]:
         request_id = self.next_id
         self.next_id += 1
         inbox: queue.Queue[dict[str, Any]] = queue.Queue(maxsize=1)
@@ -131,13 +138,17 @@ class _Connection:
         deadline = time.monotonic() + timeout
         try:
             while True:
+                if cancel_event is not None and cancel_event.is_set():
+                    if session_id is not None:
+                        self._send({"jsonrpc": "2.0", "method": "session/cancel", "params": {"sessionId": session_id}})
+                    raise AcpFailure("BRIDGE_CANCELED", "The host canceled the delegated task.", "canceled")
                 if self.protocol_failure.is_set():
                     raise AcpFailure("BRIDGE_PROTOCOL", "The ACP child returned malformed JSON.")
                 if self.process.poll() is not None:
                     raise AcpFailure("BRIDGE_CHILD_EXITED", f"The ACP child exited during: {method}")
                 remaining = deadline - time.monotonic()
                 if remaining <= 0:
-                    raise AcpFailure("BRIDGE_CHILD_EXITED", f"ACP request timed out: {method}")
+                    raise AcpFailure("BRIDGE_REQUEST_TIMEOUT", f"ACP request timed out: {method}")
                 try:
                     message = inbox.get(timeout=min(0.1, remaining))
                     break
@@ -179,7 +190,7 @@ def _cleanup(process: subprocess.Popen[str], grace: float) -> str:
             return "failed"
 
 
-def run(prompt: str, call_id: str) -> dict[str, Any]:
+def run(prompt: str, call_id: str, cancel_event: threading.Event | None = None) -> dict[str, Any]:
     """Run one Hermes ACP delegation and return the version 1 result."""
     try:
         workspace = _workspace()
@@ -213,7 +224,7 @@ def run(prompt: str, call_id: str) -> dict[str, Any]:
             env=_child_env(),
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
             text=True,
             encoding="utf-8",
             start_new_session=os.name != "nt",
@@ -228,15 +239,31 @@ def run(prompt: str, call_id: str) -> dict[str, Any]:
     acp_version = None
     result: dict[str, Any]
     try:
-        initialized = connection.request("initialize", {"protocolVersion": VERSION, "clientCapabilities": {}}, request_timeout)
+        initialized = connection.request(
+            "initialize",
+            {"protocolVersion": VERSION, "clientCapabilities": {}},
+            request_timeout,
+            cancel_event,
+        )
         acp_version = initialized.get("protocolVersion")
         if acp_version != VERSION:
             raise AcpFailure("BRIDGE_ACP_CAPABILITY", f"Unsupported ACP version: {acp_version}", "incompatible")
-        session = connection.request("session/new", {"cwd": workspace, "mcpServers": []}, request_timeout)
+        session = connection.request(
+            "session/new",
+            {"cwd": workspace, "mcpServers": []},
+            request_timeout,
+            cancel_event,
+        )
         session_id = session.get("sessionId")
         if not isinstance(session_id, str) or not session_id:
             raise AcpFailure("BRIDGE_PROTOCOL", "ACP session/new returned no session id.")
-        prompted = connection.request("session/prompt", {"sessionId": session_id, "prompt": [{"type": "text", "text": prompt}]}, request_timeout)
+        prompted = connection.request(
+            "session/prompt",
+            {"sessionId": session_id, "prompt": [{"type": "text", "text": prompt}]},
+            request_timeout,
+            cancel_event,
+            session_id,
+        )
         if connection.approval_failure == "unavailable":
             raise AcpFailure("BRIDGE_APPROVAL_UNAVAILABLE", "Hermes has no interactive approval callback for plugin tools.", "incompatible")
         if connection.approval_failure == "denied":
@@ -257,7 +284,7 @@ def run(prompt: str, call_id: str) -> dict[str, Any]:
     except AcpFailure as error:
         result = _failure(call_id, error.code, str(error), error.status, session_id=session_id)
     cleanup = _cleanup(process, cancel_grace)
-    for stream in (process.stdout, process.stderr):
+    for stream in (process.stdin, process.stdout, process.stderr):
         if stream is not None:
             stream.close()
     if cleanup == "failed":

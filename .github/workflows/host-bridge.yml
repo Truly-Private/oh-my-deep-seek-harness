@@ -48,6 +48,9 @@ jobs:
       - name: Run Hermes Python plugin tests
         run: python3 -W error::ResourceWarning -m unittest discover -s integrations/hermes-dsh/tests -v
 
+      - name: Replay the real Pi loader snapshot
+        run: pnpm exec vitest run --config vitest.snapshot.config.ts integrations/host-bridge/tests/loader.snapshot.ts
+
       - name: Load the Pi extension through the real RPC host
         env:
           DSH_BRIDGE_COMMAND: node

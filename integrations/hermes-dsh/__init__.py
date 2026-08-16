@@ -33,6 +33,8 @@ def _handle_delegate(args, **kwargs):
 
 def register(ctx) -> None:
     """Register the opt-in ``dsh_delegate`` tool with Hermes."""
+    if not callable(getattr(ctx, "register_tool", None)):
+        raise RuntimeError("BRIDGE_HOST_VERSION: Hermes register_tool is unavailable")
     ctx.register_tool(
         name="dsh_delegate",
         toolset="dsh",

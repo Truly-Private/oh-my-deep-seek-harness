@@ -4,7 +4,9 @@ import { createHostExecutor } from '../adapter.ts'
 
 /** Register the candidate DeepSeek Harness delegation tool for Pi. */
 export default function registerPiBridge(pi: ExtensionAPI): void {
-  if (typeof pi.registerTool !== 'function') throw new Error('BRIDGE_HOST_VERSION: Pi registerTool is unavailable')
+  if (typeof pi.registerTool !== 'function' || typeof pi.registerCommand !== 'function') {
+    throw new Error('BRIDGE_HOST_VERSION: Pi requires registerTool and registerCommand')
+  }
   const execute = createHostExecutor('pi')
   pi.registerTool({
     name: 'dsh_delegate',

@@ -28,6 +28,7 @@ async function setup(scenario: string, changes: Partial<BridgeConfig> = {}) {
     envAllowlist: [],
     permission: 'interactive',
     cancelGraceMs: 250,
+    requestTimeoutMs: 500,
     ...changes,
   }
   return { root, config }
@@ -65,6 +66,33 @@ describe('ACP bridge core', () => {
     setTimeout(() => controller.abort(), 150)
     const result = await runBridge('pi', request(root), config, controller.signal, async () => true)
     expect(result).toMatchObject({ status: 'canceled', error: { code: 'BRIDGE_CANCELED' } })
+  })
+
+  for (const scenario of ['hang-initialize', 'hang-session'] as const) {
+    it(`honors host cancellation while ACP ${scenario.slice(5)} is pending`, async () => {
+      const { root, config } = await setup(scenario)
+      const controller = new AbortController()
+      setTimeout(() => controller.abort(), 100)
+      const result = await runBridge('pi', request(root), config, controller.signal, async () => true)
+      expect(result).toMatchObject({ status: 'canceled', error: { code: 'BRIDGE_CANCELED' } })
+      expect(result.meta.cleanup).not.toBe('failed')
+    })
+  }
+
+  it('bounds an ACP request when the host does not cancel', async () => {
+    const { root, config } = await setup('hang-initialize', { requestTimeoutMs: 100 })
+    const result = await runBridge('pi', request(root), config, undefined, async () => true)
+    expect(result).toMatchObject({ status: 'failed', error: { code: 'BRIDGE_REQUEST_TIMEOUT', retryable: true } })
+    expect(result.meta.cleanup).not.toBe('failed')
+  })
+
+  it('answers a pending permission request when the host cancels', async () => {
+    const { root, config } = await setup('permission')
+    const controller = new AbortController()
+    setTimeout(() => controller.abort(), 100)
+    const result = await runBridge('pi', request(root), config, controller.signal, async () => await new Promise(() => {}))
+    expect(result).toMatchObject({ status: 'canceled', error: { code: 'BRIDGE_CANCELED' } })
+    expect(result.meta.cleanup).not.toBe('failed')
   })
 
   it('forces a non-cooperative process tree after the grace period', async () => {
@@ -106,11 +134,11 @@ describe('ACP bridge core', () => {
     const root = await realpath(await mkdtemp(join(tmpdir(), 'dsh-host-bridge-')))
     await mkdir(join(root, 'exists'))
     const missingWorkspace = await runBridge('pi', { ...request(root), hostCwd: join(root, 'missing') }, {
-      command: process.execPath, args: [], workspaceRoot: root, envAllowlist: [], permission: 'reject', cancelGraceMs: 100,
+      command: process.execPath, args: [], workspaceRoot: root, envAllowlist: [], permission: 'reject', cancelGraceMs: 100, requestTimeoutMs: 500,
     }, undefined, async () => false)
     expect(missingWorkspace.error?.code).toBe('BRIDGE_WORKSPACE_UNAVAILABLE')
     const missingChild = await runBridge('pi', request(root), {
-      command: join(root, 'does-not-exist'), args: [], workspaceRoot: root, envAllowlist: [], permission: 'reject', cancelGraceMs: 100,
+      command: join(root, 'does-not-exist'), args: [], workspaceRoot: root, envAllowlist: [], permission: 'reject', cancelGraceMs: 100, requestTimeoutMs: 500,
     }, undefined, async () => false)
     expect(missingChild.error?.code).toBe('BRIDGE_CHILD_NOT_FOUND')
   })
