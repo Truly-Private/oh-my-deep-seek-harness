@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/process/2026-08-16-hosted-release-gates-and-alert-floors.md
-2026-08-16-hosted-release-gates-and-alert-floors.md: 23172cc5374bc5c2b96e5ad484c082927d560a89
-2026-08-16-hosted-release-gates-and-alert-floors.zh.md: 04aef34607c4df83ff76d3208799eef76fef5041
+2026-08-16-hosted-release-gates-and-alert-floors.md: 19c76ee17855789809c2900baabdaef57854e435
+2026-08-16-hosted-release-gates-and-alert-floors.zh.md: e062d144f240f1fd9cb04b29390521cf4e904940

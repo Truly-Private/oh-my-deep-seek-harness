@@ -74,6 +74,10 @@ describe('CI workflow', () => {
     expect(windowsNative['runs-on']).toContain('windows-latest')
     expect(windowsNative.name).toBe('windows node 24 / native complete')
     expect(windowsNative.if).toBe("github.event_name == 'pull_request'")
+    expect(windowsNative.env).toMatchObject({
+      DSH_COVERAGE_MAX_WORKERS: '1',
+      DSH_GATE_CONCURRENCY: '1',
+    })
     const nativeCommandSteps = (windowsNative.steps as unknown[]).filter((step): step is Record<string, unknown> & { run: string } => (
       isRecord(step) && typeof step.run === 'string'
     ))

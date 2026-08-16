@@ -451,8 +451,11 @@ jobs:
     name: windows node 24 / native complete
     timeout-minutes: 60
     env:
-      DSH_COVERAGE_MAX_WORKERS: '2'
-      DSH_GATE_CONCURRENCY: '2'
+      # Windows coverage must not overlap another gate: a hosted two-gate run
+      # completed every assertion but lost one Vitest fork, while this exact
+      # inventory passed under the serialized Windows reference posture.
+      DSH_COVERAGE_MAX_WORKERS: '1'
+      DSH_GATE_CONCURRENCY: '1'
       DSH_PUBLINT_CONCURRENCY: '8'
     steps:
       - uses: actions/checkout@v6
