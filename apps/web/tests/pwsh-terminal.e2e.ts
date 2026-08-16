@@ -42,13 +42,15 @@ const HAS_PWSH = MODE === 'record' ? false : spawnSync(
   resolvePwshPath(), ['-NoLogo', '-NoProfile', '-NonInteractive', '-Command', '$true'],
   { encoding: 'utf8' },
 ).status === 0
+const SKIP_PWSH = MODE === 'record' || !HAS_PWSH
 
-describe.skipIf(MODE === 'record' || !HAS_PWSH)('web e2e: pwsh calls use the bash terminal-card layout', () => {
+describe.skipIf(SKIP_PWSH)('web e2e: pwsh calls use the bash terminal-card layout', () => {
   let scaffold: WebScaffold
   let browser: Browser
   let page: Page
 
   beforeAll(async () => {
+    if (SKIP_PWSH) return
     const fixture = await readFile(SEED, 'utf8')
     expect(fixtureUserPrompts(fixture), 'seed fixture must carry the single drive prompt').toEqual([PROMPT])
     scaffold = await launchWebScaffold({ extraOverlayPath: OVERLAY })

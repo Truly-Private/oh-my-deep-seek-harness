@@ -107,7 +107,9 @@ describe('web e2e: workspace management (create / rename / flat view / hover aff
     const button = row.getByRole('button', { name })
     await expect.poll(async () => {
       await row.hover()
-      return await button.isVisible()
+      if (!await button.isVisible()) return false
+      await button.hover()
+      return true
     }, { timeout: 10_000 }).toBe(true)
     await button.click()
   }
