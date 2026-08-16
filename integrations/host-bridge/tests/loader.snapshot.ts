@@ -36,7 +36,13 @@ it('loads the candidate extension through the real Pi SDK and executes its activ
         encoding: 'utf8',
       },
     )
-    expect(execution.status, execution.stderr).toBe(0)
+    if (execution.status !== 0) {
+      throw new Error([
+        `Pi host tool smoke exited with status ${String(execution.status)}`,
+        `stdout:\n${execution.stdout}`,
+        `stderr:\n${execution.stderr}`,
+      ].join('\n'))
+    }
     const executionLine = execution.stdout.split('\n').find(line => line.startsWith('{'))
     if (executionLine === undefined) throw new Error(`Pi host tool result missing from stdout:\n${execution.stdout}`)
     expect(JSON.parse(executionLine)).toMatchInlineSnapshot(`
