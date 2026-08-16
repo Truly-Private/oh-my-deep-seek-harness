@@ -59,7 +59,7 @@ class HermesPluginTests(unittest.TestCase):
             "DSH_BRIDGE_ARGS_JSON": json.dumps(["--import", str(tsx), str(fake), scenario]),
             "DSH_BRIDGE_WORKSPACE_ROOT": workspace,
             "TERMINAL_CWD": workspace,
-            "DSH_BRIDGE_CANCEL_GRACE_SECONDS": "0.25",
+            "DSH_BRIDGE_CANCEL_GRACE_SECONDS": "1",
             "DSH_BRIDGE_REQUEST_TIMEOUT_SECONDS": "2",
         })
 

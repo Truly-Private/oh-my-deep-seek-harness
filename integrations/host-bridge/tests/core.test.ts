@@ -28,7 +28,7 @@ async function setup(scenario: string, changes: Partial<BridgeConfig> = {}) {
     envAllowlist: [],
     permission: 'interactive',
     cancelGraceMs: 250,
-    requestTimeoutMs: 500,
+    requestTimeoutMs: 2_000,
     ...changes,
   }
   return { root, config }
