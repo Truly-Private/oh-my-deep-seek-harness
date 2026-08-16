@@ -1,0 +1,1 @@
+{"name":"child-exit","scenario":"child-stop","expectedStatus":"failed","expectedError":"BRIDGE_CHILD_EXITED"}

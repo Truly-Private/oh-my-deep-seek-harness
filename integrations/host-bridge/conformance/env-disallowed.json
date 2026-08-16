@@ -1,0 +1,1 @@
+{"name":"env-disallowed","scenario":"environment","expectedStatus":"denied","expectedError":"BRIDGE_ENV_NOT_ALLOWED"}

@@ -1,0 +1,67 @@
+name: Host bridge candidates
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/host-bridge.yml'
+      - '.prototools'
+      - 'integrations/host-bridge/**'
+      - 'integrations/hermes-dsh/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/host-bridge.yml'
+      - '.prototools'
+      - 'integrations/host-bridge/**'
+      - 'integrations/hermes-dsh/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  keyless-conformance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      - uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0
+        with:
+          auto-install: true
+
+      - name: Install without dependency lifecycle scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Typecheck TypeScript adapters
+        run: pnpm --filter @truly-private/dsh-host-bridge typecheck
+
+      - name: Run TypeScript conformance tests
+        run: pnpm --filter @truly-private/dsh-host-bridge test
+
+      - name: Run Hermes Python plugin tests
+        run: python -W error::ResourceWarning -m unittest discover -s integrations/hermes-dsh/tests -v
+
+      - name: Run the real Pi SDK tool-execution snapshot
+        run: pnpm exec vitest run --config vitest.snapshot.config.ts integrations/host-bridge/tests/loader.snapshot.ts
+
+      - name: Load the OMP extension through the real RPC host
+        env:
+          DSH_BRIDGE_COMMAND: node
+          DSH_BRIDGE_ARGS_JSON: '[]'
+          PI_CODING_AGENT_DIR: ${{ runner.temp }}/omp-host-loader
+        run: |
+          printf '%s\n' '{"type":"get_commands","id":"loader-omp"}' |
+            bun "$GITHUB_WORKSPACE/integrations/host-bridge/node_modules/@oh-my-pi/pi-coding-agent/dist/cli.js" \
+              --mode rpc \
+              --api-key no-network-loader-placeholder \
+              --model openai/gpt-4o \
+              --no-session \
+              --no-extensions \
+              --extension "$GITHUB_WORKSPACE/integrations/host-bridge/src/omp/index.ts" |
+            grep 'dsh-bridge-status'

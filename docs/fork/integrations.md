@@ -7,9 +7,9 @@ This reference separates model-provider interoperability from host-agent interop
 | Target | Current level | Supported path | Next compatibility milestone |
 | --- | --- | --- | --- |
 | Pi provider library | Available upstream | `dsh-llm-pi-ai` supplies multi-provider model routing inside DeepSeek Harness. | Continue testing DeepSeek models and gateway-specific behavior. |
-| Pi coding agent | Compatibility target | Run Pi and `dsh` as separate agents against the same provider or gateway. | Add an executable agent bridge with cancellation, permissions, and transcript tests. |
-| Oh My Pi (OMP) | Compatibility target | OMP and `dsh` can use the same DeepSeek or 9Router endpoint independently. | Test a delegated `dsh` tool or ACP bridge in an OMP session. |
-| Hermes Agent | Compatibility target | Hermes can use DeepSeek independently; no Hermes plugin ships in this repository yet. | Build a Hermes plugin over a stable `dsh` automation interface without changing Hermes core. |
+| Pi coding agent | Candidate extension | The [Pi ACP extension](../../integrations/host-bridge/README.md) registers `dsh_delegate`; its real loader and keyless ACP contract pass locally. | Prove a model-driven tool call, host cancellation, and approval transcript against the exact published commit. |
+| Oh My Pi (OMP) | Candidate extension | The [OMP ACP extension](../../integrations/host-bridge/README.md) registers the same tool through an independent OMP entrypoint; its real loader and keyless ACP contract pass locally. | Prove the complete OMP host matrix on Bun and record commit-matched transcripts. |
+| Hermes Agent | Candidate plugin; full bridge target | The [Hermes ACP plugin](../../integrations/hermes-dsh/README.md) executes approval-free ACP tasks and rejects permission requests when no safe callback exists. | Add and prove real Hermes approval and cancellation callbacks before calling the host bridge complete. |
 | OpenClaw | Compatibility target | OpenClaw and `dsh` can use the same local 9Router endpoint independently. | Add an OpenClaw adapter with explicit workspace and approval boundaries. |
 | 9Router | Configurable now | Add 9Router as an OpenAI-compatible custom provider through `llm-pi-ai`. | Add keyless local-gateway discovery and request-path integration tests. |
 
@@ -39,4 +39,4 @@ A host-agent integration is not complete until an automated test proves all of t
 - approval requests remain visible to the person operating the host;
 - an upstream compatibility break fails clearly instead of falling back to broader access.
 
-These requirements intentionally keep Hermes, OpenClaw, Pi, and OMP marked as compatibility targets until their adapters carry executable evidence.
+The candidate Pi and OMP extensions have keyless contract and loader evidence, but they do not satisfy the complete host matrix yet. Hermes remains a full-bridge compatibility target because Hermes 0.16.0 plugin handlers expose neither an interactive approval callback nor host cancellation. OpenClaw remains a compatibility target with no adapter in this repository.

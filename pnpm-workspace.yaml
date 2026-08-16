@@ -7,6 +7,8 @@ packages:
   - native/landlock-run/packages/*
   # Product assemblies over the package tier; apps/cli owns the `dsh` bin.
   - apps/*
+  # Downstream host-agent extensions and their shared ACP client.
+  - integrations/host-bridge
   - website
   # The runnable demo leaves join as ONE workspace member: examples/package.json
   # declares the union of every leaf's cordis.yml plugins as workspace:*, so a
@@ -30,6 +32,7 @@ overrides:
   '@hono/node-server': 1.19.15
   # Downstream security floor: keep transitive consumers on advisory-fixed
   # releases while their direct parents catch up.
+  adm-zip: 0.6.0
   brace-expansion: 5.0.9
   fast-uri: 3.1.5
   hono: 4.12.34
@@ -38,6 +41,7 @@ overrides:
   nanoid: 3.3.18
   postcss: 8.5.23
   protobufjs: 7.6.5
+  sharp: 0.35.3
   undici: 7.29.0
 
 peerDependencyRules:
@@ -58,6 +62,10 @@ allowBuilds:
   # them only because they ship lifecycle scripts, but those are no-ops we don't
   # need, so we deny them — install still succeeds.
   '@google/genai': false
+  # OMP's optional local-model and image stack is present only for host
+  # compatibility testing. The bridge does not need its download/install hooks.
+  onnxruntime-node: false
+  sharp: false
   protobufjs: false
   node-addon-require-builtin: false
   # JSONL durability calls MoveFileExW with write-through publication on Windows.

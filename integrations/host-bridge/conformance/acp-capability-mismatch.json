@@ -1,0 +1,1 @@
+{"name":"acp-capability-mismatch","scenario":"bad-version","expectedStatus":"incompatible","expectedError":"BRIDGE_ACP_CAPABILITY"}

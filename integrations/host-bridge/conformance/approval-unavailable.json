@@ -1,0 +1,1 @@
+{"name":"approval-unavailable","scenario":"permission","expectedStatus":"incompatible","expectedError":"BRIDGE_APPROVAL_UNAVAILABLE"}

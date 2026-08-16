@@ -7,9 +7,9 @@
 | 目标 | 当前级别 | 支持路径 | 下一兼容性里程碑 |
 | --- | --- | --- | --- |
 | Pi 提供方库 | 上游可用 | `dsh-llm-pi-ai` 在 DeepSeek Harness 内提供多模型提供方路由。 | 持续测试 DeepSeek 模型与网关特定行为。 |
-| Pi 编程智能体 | 兼容性目标 | Pi 与 `dsh` 可以作为独立智能体连接同一个模型提供方或网关。 | 增加包含取消、权限与会话记录测试的可执行智能体桥接。 |
-| Oh My Pi（OMP） | 兼容性目标 | OMP 与 `dsh` 可以各自使用同一个 DeepSeek 或 9Router 端点。 | 在 OMP 会话中测试委派的 `dsh` 工具或 ACP 桥接。 |
-| Hermes Agent | 兼容性目标 | Hermes 可以独立使用 DeepSeek；本仓库尚未提供 Hermes 插件。 | 基于稳定的 `dsh` 自动化接口构建 Hermes 插件，并且不修改 Hermes 核心。 |
+| Pi 编程智能体 | 候选扩展 | [Pi ACP 扩展](../../integrations/host-bridge/README.md)注册 `dsh_delegate`；真实加载器与无密钥 ACP 约定已在本地通过。 | 针对精确发布提交证明模型驱动工具调用、主机取消与审批会话记录。 |
+| Oh My Pi（OMP） | 候选扩展 | [OMP ACP 扩展](../../integrations/host-bridge/README.md)通过独立 OMP 入口注册同一工具；真实加载器与无密钥 ACP 约定已在本地通过。 | 在 Bun 上证明完整 OMP 主机矩阵，并记录与提交匹配的会话记录。 |
+| Hermes Agent | 候选插件；完整桥接目标 | [Hermes ACP 插件](../../integrations/hermes-dsh/README.md)执行无需审批的 ACP 任务，并在没有安全回调时拒绝权限请求。 | 在宣称主机桥接完整之前，增加并证明真实 Hermes 审批与取消回调。 |
 | OpenClaw | 兼容性目标 | OpenClaw 与 `dsh` 可以各自使用同一个本地 9Router 端点。 | 增加具备明确工作区与审批边界的 OpenClaw 适配器。 |
 | 9Router | 目前可配置 | 通过 `llm-pi-ai` 把 9Router 添加为 OpenAI 兼容自定义提供方。 | 增加无密钥本地网关发现与请求路径集成测试。 |
 
@@ -39,4 +39,4 @@
 - 操作主机的人始终可以看到审批请求；
 - 上游兼容性破坏会明确失败，而不会回退到更宽的访问权限。
 
-这些要求有意让 Hermes、OpenClaw、Pi 与 OMP 保持“兼容性目标”状态，直到其适配器具有可执行证据。
+候选 Pi 与 OMP 扩展已有无密钥约定与加载器证据，但尚未满足完整主机矩阵。Hermes 仍是完整桥接兼容性目标，因为 Hermes 0.16.0 插件处理函数既不公开交互式审批回调，也不公开主机取消。OpenClaw 仍是兼容性目标，本仓库没有提供其适配器。

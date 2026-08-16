@@ -1,0 +1,1 @@
+{"name":"cancel-ack","scenario":"hang","expectedStatus":"canceled","expectedError":"BRIDGE_CANCELED"}

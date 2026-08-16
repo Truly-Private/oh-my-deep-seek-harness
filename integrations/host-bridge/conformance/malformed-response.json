@@ -1,0 +1,1 @@
+{"name":"malformed-response","scenario":"malformed","expectedStatus":"failed","expectedError":"BRIDGE_PROTOCOL"}
