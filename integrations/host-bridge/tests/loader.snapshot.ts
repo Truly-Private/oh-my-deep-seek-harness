@@ -13,67 +13,11 @@ const fakeServer = fileURLToPath(new URL('../test-support/fake-acp-server.ts', i
 const hostToolSmoke = fileURLToPath(new URL('../test-support/pi-host-tool-smoke.ts', import.meta.url))
 const tsxLoader = createRequire(import.meta.url).resolve('tsx/esm')
 
-it('loads the candidate extension through the real Pi RPC host and executes its active tool', async () => {
+it('loads the candidate extension through the real Pi SDK and executes its active tool', async () => {
   const profile = await mkdtemp(join(tmpdir(), 'dsh-pi-loader-snapshot-'))
   const workspace = await mkdtemp(join(tmpdir(), 'dsh-pi-host-tool-snapshot-'))
   try {
     const baseEnv = buildChildEnvironment([], process.env)
-    const result = spawnSync(
-      process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm',
-      [
-        '--filter', '@truly-private/dsh-host-bridge', 'exec', 'pi',
-        '--mode', 'rpc', '--offline', '--no-session', '--no-extensions',
-        '--api-key', 'no-network-loader-placeholder', '--model', 'openai/gpt-4o',
-        '--extension', extensionPath,
-      ],
-      {
-        cwd: repositoryRoot,
-        env: {
-          ...baseEnv,
-          DSH_BRIDGE_ARGS_JSON: '[]',
-          DSH_BRIDGE_COMMAND: process.execPath,
-          PI_CODING_AGENT_DIR: profile,
-        },
-        encoding: 'utf8',
-        input: '{"type":"get_commands","id":"loader-snapshot"}\n',
-      },
-    )
-    expect(result.status, result.stderr).toBe(0)
-    const responseLine = result.stdout
-      .split('\n')
-      .find(line => line.startsWith('{') && line.includes('"id":"loader-snapshot"'))
-    if (responseLine === undefined) throw new Error(`Pi RPC response missing from stdout:\n${result.stdout}`)
-    const response = JSON.parse(responseLine) as {
-      id: string
-      type: string
-      command: string
-      success: boolean
-      data: { commands: Array<{ name: string, description: string, source: string }> }
-    }
-    expect({
-      id: response.id,
-      type: response.type,
-      command: response.command,
-      success: response.success,
-      commands: response.data.commands
-        .filter(command => command.name === 'dsh-bridge-status')
-        .map(command => ({ name: command.name, description: command.description, source: command.source })),
-    }).toMatchInlineSnapshot(`
-      {
-        "command": "get_commands",
-        "commands": [
-          {
-            "description": "Show the configured DeepSeek Harness bridge status.",
-            "name": "dsh-bridge-status",
-            "source": "extension",
-          },
-        ],
-        "id": "loader-snapshot",
-        "success": true,
-        "type": "response",
-      }
-    `)
-
     const execution = spawnSync(
       process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm',
       [

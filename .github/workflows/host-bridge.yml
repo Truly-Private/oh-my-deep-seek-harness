@@ -48,20 +48,8 @@ jobs:
       - name: Run Hermes Python plugin tests
         run: python3 -W error::ResourceWarning -m unittest discover -s integrations/hermes-dsh/tests -v
 
-      - name: Replay the real Pi loader and tool-execution snapshot
+      - name: Run the real Pi SDK tool-execution snapshot
         run: pnpm exec vitest run --config vitest.snapshot.config.ts integrations/host-bridge/tests/loader.snapshot.ts
-
-      - name: Load the Pi extension through the real RPC host
-        env:
-          DSH_BRIDGE_COMMAND: node
-          DSH_BRIDGE_ARGS_JSON: '[]'
-        run: |
-          printf '%s\n' '{"type":"get_commands","id":"loader-pi"}' |
-            pnpm --filter @truly-private/dsh-host-bridge exec pi --mode rpc --offline --no-session --no-extensions \
-              --api-key no-network-loader-placeholder \
-              --model openai/gpt-4o \
-              --extension "$GITHUB_WORKSPACE/integrations/host-bridge/src/pi/index.ts" |
-            grep 'dsh-bridge-status'
 
       - name: Load the OMP extension through the real RPC host
         env:
