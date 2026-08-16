@@ -61,7 +61,14 @@ jobs:
         env:
           DSH_BRIDGE_COMMAND: node
           DSH_BRIDGE_ARGS_JSON: '[]'
+          PI_CODING_AGENT_DIR: ${{ runner.temp }}/omp-host-loader
         run: |
           printf '%s\n' '{"type":"get_commands","id":"loader-omp"}' |
-            npm exec --yes --package=bun@1.3.14 -- sh -c 'pnpm --filter @truly-private/dsh-host-bridge exec omp --mode rpc --no-session --no-extensions --extension "$GITHUB_WORKSPACE/integrations/host-bridge/src/omp/index.ts"' |
+            npm exec --yes --package=bun@1.3.14 -- bun "$GITHUB_WORKSPACE/integrations/host-bridge/node_modules/@oh-my-pi/pi-coding-agent/dist/cli.js" \
+              --mode rpc \
+              --api-key no-network-loader-placeholder \
+              --model openai/gpt-4o \
+              --no-session \
+              --no-extensions \
+              --extension "$GITHUB_WORKSPACE/integrations/host-bridge/src/omp/index.ts" |
             grep 'dsh-bridge-status'
