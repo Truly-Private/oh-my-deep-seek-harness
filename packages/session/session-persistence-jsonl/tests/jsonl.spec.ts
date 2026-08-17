@@ -22,13 +22,19 @@ vi.mock('node:fs/promises', async (importOriginal) => {
   const actual = await importOriginal<typeof import('node:fs/promises')>()
   return {
     ...actual,
-    stat: (async (...args: Parameters<typeof actual.stat>) => {
-      const identity = await actual.stat(...args)
-      if (String(args[0]) !== statRace.path || !('mtimeNs' in identity)) return identity
-      statRace.reads += 1
-      if (statRace.reads !== 2) return identity
-      return { ...identity, mtimeNs: identity.mtimeNs + 1n }
-    }) as typeof actual.stat,
+    open: (async (...args: Parameters<typeof actual.open>) => {
+      const handle = await actual.open(...args)
+      if (String(args[0]) !== statRace.path) return handle
+      const readStat = handle.stat.bind(handle)
+      handle.stat = (async (...statArgs: Parameters<typeof handle.stat>) => {
+        const identity = await readStat(...statArgs)
+        if (!('mtimeNs' in identity)) return identity
+        statRace.reads += 1
+        if (statRace.reads !== 2) return identity
+        return { ...identity, mtimeNs: identity.mtimeNs + 1n }
+      }) as typeof handle.stat
+      return handle
+    }),
   }
 })
 

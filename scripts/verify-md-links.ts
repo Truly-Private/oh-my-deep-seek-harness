@@ -29,6 +29,20 @@ const PATTERNS = [
   '.agents/skills/**/*.md',
 ]
 
+/** Remove each closed HTML comment while retaining an unclosed tail verbatim. */
+function stripClosedHtmlComments(source: string): string {
+  let rendered = ''
+  let cursor = 0
+  for (;;) {
+    const start = source.indexOf('<!--', cursor)
+    if (start === -1) return rendered + source.slice(cursor)
+    const end = source.indexOf('-->', start + 4)
+    if (end === -1) return rendered + source.slice(cursor)
+    rendered += source.slice(cursor, start)
+    cursor = end + 3
+  }
+}
+
 /** A broken relative link: a missing target path or a missing anchor on it. */
 interface Violation {
   file: string
@@ -128,7 +142,7 @@ export function documentAnchors(source: string): Set<string> {
   }
   visitMarkdown(parseMarkdown(source), (node: Nodes): void => {
     if (node.type !== 'html') return
-    const html = node.value.replace(/<!--[\s\S]*?-->/g, '')
+    const html = stripClosedHtmlComments(node.value)
     for (const match of html.matchAll(/<a id="([^"]+)"/g)) anchors.add(match[1] ?? '')
   })
   return anchors

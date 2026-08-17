@@ -57,6 +57,26 @@ export interface ParsedSessionReferenceText {
   references: SessionReferenceInput[]
 }
 
+function isBase64UrlCharacter(char: string | undefined): boolean {
+  if (char === '_' || char === '-') return true
+  if (char === undefined) return false
+  const code = char.charCodeAt(0)
+  return (code >= 0x30 && code <= 0x39)
+    || (code >= 0x41 && code <= 0x5A)
+    || (code >= 0x61 && code <= 0x7A)
+}
+
+function explicitLabelEnd(text: string, start: number): number | undefined {
+  for (let cursor = start; cursor < text.length; cursor += 1) {
+    if (text[cursor] === '\\') {
+      cursor += 1
+      continue
+    }
+    if (text[cursor] === ']') return cursor
+  }
+  return undefined
+}
+
 /**
  * Extract Markdown mentions and bare canonical URIs from one text value.
  * Explicit Markdown mentions fail on any malformed URI. Bare text is treated
@@ -67,22 +87,49 @@ export interface ParsedSessionReferenceText {
  */
 export function parseSessionReferenceText(text: string): ParsedSessionReferenceText {
   const references: SessionReferenceInput[] = []
-  const pattern = /@\[((?:\\.|[^\\\]])*)\]\((dsh-session:[^\s)]*)\)|(dsh-session:[A-Za-z0-9_-]+)/gu
-  const rendered = text.replace(pattern, (
-    _match,
-    rawLabel: string | undefined,
-    markdownUri: string | undefined,
-    bareUri: string | undefined,
-  ) => {
-    const uri = markdownUri ?? bareUri
-    /* v8 ignore next -- the two-alternative regex always captures exactly one URI group. */
-    if (uri === undefined) throw new SessionReferenceError('session reference URI is missing', 'SESSION_REFERENCE_INVALID_REFERENCE')
-    const sessionId = decodeSessionReferenceUri(uri)
-    const label = rawLabel === undefined ? sessionId : unescapeLabel(rawLabel)
-    references.push({ sessionId, label })
-    return `@${label}`
-  })
-  return { text: rendered, references }
+  const rendered: string[] = []
+  let cursor = 0
+  let explicitMentionsRemainPossible = true
+  while (cursor < text.length) {
+    if (explicitMentionsRemainPossible && text.startsWith('@[', cursor)) {
+      const labelEnd = explicitLabelEnd(text, cursor + 2)
+      if (labelEnd === undefined) {
+        // No later nested `@[` can close before this opener, so continuing to
+        // probe each one would make malformed text quadratic. Bare URIs still scan.
+        explicitMentionsRemainPossible = false
+      } else if (text[labelEnd + 1] === '(' && text.startsWith(SESSION_REFERENCE_SCHEME, labelEnd + 2)) {
+        const uriStart = labelEnd + 2
+        let uriEnd = uriStart + SESSION_REFERENCE_SCHEME.length
+        while (text[uriEnd] !== undefined && text[uriEnd] !== ')' && !/\s/u.test(text[uriEnd] as string)) uriEnd += 1
+        if (text[uriEnd] === ')') {
+          const uri = text.slice(uriStart, uriEnd)
+          const sessionId = decodeSessionReferenceUri(uri)
+          const label = unescapeLabel(text.slice(cursor + 2, labelEnd))
+          references.push({ sessionId, label })
+          rendered.push(`@${label}`)
+          cursor = uriEnd + 1
+          continue
+        }
+      }
+    }
+
+    if (text.startsWith(SESSION_REFERENCE_SCHEME, cursor)) {
+      let end = cursor + SESSION_REFERENCE_SCHEME.length
+      while (isBase64UrlCharacter(text[end])) end += 1
+      if (end > cursor + SESSION_REFERENCE_SCHEME.length) {
+        const uri = text.slice(cursor, end)
+        const sessionId = decodeSessionReferenceUri(uri)
+        references.push({ sessionId, label: sessionId })
+        rendered.push(`@${sessionId}`)
+        cursor = end
+        continue
+      }
+    }
+
+    rendered.push(text[cursor] as string)
+    cursor += 1
+  }
+  return { text: rendered.join(''), references }
 }
 
 function escapeLabel(label: string): string {
@@ -90,7 +137,12 @@ function escapeLabel(label: string): string {
 }
 
 function unescapeLabel(label: string): string {
-  return label.replace(/\\(.)/gu, '$1')
+  let rendered = ''
+  for (let cursor = 0; cursor < label.length; cursor += 1) {
+    if (label[cursor] === '\\' && label[cursor + 1] !== undefined) cursor += 1
+    rendered += label.charAt(cursor)
+  }
+  return rendered
 }
 
 function invalidUri(uri: string, cause?: unknown): SessionReferenceError {

@@ -46,6 +46,20 @@ const IMPLEMENTATION_PULL_REQUEST_ACTIONS = new Set([
   'unlabeled',
 ])
 
+/** Remove each closed HTML comment while retaining an unclosed tail verbatim. */
+function stripClosedHtmlComments(source) {
+  let rendered = ''
+  let cursor = 0
+  for (;;) {
+    const start = source.indexOf('<!--', cursor)
+    if (start === -1) return rendered + source.slice(cursor)
+    const end = source.indexOf('-->', start + 4)
+    if (end === -1) return rendered + source.slice(cursor)
+    rendered += source.slice(cursor, start)
+    cursor = end + 3
+  }
+}
+
 for (const status of ['In progress', 'In review']) {
   if (!ACTIVE_STATUS_ORDER.includes(status)) throw new Error(`config.statuses 缺少 ${status}`)
 }
@@ -59,7 +73,7 @@ if (typeof config.lifecycleActor !== 'string' || !config.lifecycleActor) {
  * @returns {{text: string, balanced: boolean, detailsCount: number, allCollapsed: boolean}} Visible source and details shape.
  */
 export function extractOutsideDetails(body) {
-  const source = body.replace(/<!--[\s\S]*?-->/g, '')
+  const source = stripClosedHtmlComments(body)
   const tag = /<\/?details\b[^>]*>/gi
   let depth = 0
   let cursor = 0
@@ -216,7 +230,7 @@ export function nextResolvingIssueStatus(currentStatus, command, currentStatusAc
 }
 
 function stripIgnoredMarkdown(body) {
-  const lines = body.replace(/<!--[\s\S]*?-->/g, '').split(/\r?\n/)
+  const lines = stripClosedHtmlComments(body).split(/\r?\n/)
   const kept = []
   let fence = null
   for (const line of lines) {

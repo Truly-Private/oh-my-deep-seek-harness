@@ -9,7 +9,7 @@
 import { Context } from '@deepseek-ai/cordis'
 import z from '@deepseek-ai/schemastery'
 import { readdirSync } from 'node:fs'
-import { open, mkdir, readFile, readdir, realpath, link, rm, stat, truncate } from 'node:fs/promises'
+import { open, mkdir, readdir, realpath, link, rm, stat, truncate } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { performance } from 'node:perf_hooks'
 import { scheduler } from 'node:timers/promises'
@@ -295,11 +295,16 @@ export class JsonlSessionPersistence extends SessionPersistence implements Persi
   ): Promise<{ buffer: Buffer; revision: PersistenceRevision }> {
     for (;;) {
       signal?.throwIfAborted()
-      const before = fileRevision(await stat(path, { bigint: true }))
-      const buffer = await readFile(path, { signal })
-      signal?.throwIfAborted()
-      const after = fileRevision(await stat(path, { bigint: true }))
-      if (before === after) return { buffer, revision: after }
+      const file = await open(path, 'r')
+      try {
+        const before = fileRevision(await file.stat({ bigint: true }))
+        const buffer = await file.readFile({ signal })
+        signal?.throwIfAborted()
+        const after = fileRevision(await file.stat({ bigint: true }))
+        if (before === after) return { buffer, revision: after }
+      } finally {
+        await file.close()
+      }
     }
   }
 
