@@ -7,6 +7,10 @@ on:
       - '.prototools'
       - 'integrations/host-bridge/**'
       - 'integrations/hermes-dsh/**'
+      - 'integrations/clean-room/**'
+      - 'scripts/integration/clean-room-hosts.*'
+      - '.dockerignore'
+      - 'justfile'
       - 'pnpm-lock.yaml'
       - 'pnpm-workspace.yaml'
   push:
@@ -16,6 +20,10 @@ on:
       - '.prototools'
       - 'integrations/host-bridge/**'
       - 'integrations/hermes-dsh/**'
+      - 'integrations/clean-room/**'
+      - 'scripts/integration/clean-room-hosts.*'
+      - '.dockerignore'
+      - 'justfile'
       - 'pnpm-lock.yaml'
       - 'pnpm-workspace.yaml'
   workflow_dispatch:
@@ -65,3 +73,30 @@ jobs:
               --no-extensions \
               --extension "$GITHUB_WORKSPACE/integrations/host-bridge/src/omp/index.ts" |
             grep 'dsh-bridge-status'
+
+  clean-room-host-installs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+
+      - uses: moonrepo/setup-toolchain@261c62cb5b0f580c7be7c8cd0f023a2e96756095 # v0
+        with:
+          auto-install: true
+
+      - name: Verify clean-room orchestration invariants
+        run: proto run node -- --test scripts/integration/clean-room-hosts.test.mjs
+
+      - name: Fresh-install and test all candidate hosts
+        run: proto run node -- scripts/integration/clean-room-hosts.mjs test all
+
+      - name: Retain clean-room evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: clean-room-host-evidence
+          path: .artifacts/clean-room/**
+          if-no-files-found: error
+          retention-days: 14

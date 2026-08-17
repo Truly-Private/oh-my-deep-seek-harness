@@ -53,3 +53,5 @@ pnpm --filter @truly-private/dsh-host-bridge test
 ```
 
 无密钥测试套件使用脚本化 ACP 进程，覆盖 UTF-8 结果、权限结果、取消、强制进程树清理、规范工作区检查、环境变量允许清单、协议失败与并发会话。一项聚焦快照还会通过真实 Pi SDK 加载扩展，获取活动的 `dsh_delegate` 工具，并针对该 ACP fixture 执行它。真实提供方执行仍需要配置好的 DSH 凭据，下游仍处于候选状态。
+
+如需发布形式的安装证据，请运行[主机洁净环境检查](../clean-room/README.md)。它们会在一次性容器中全新安装 Pi 与 OMP，安装本包的 `npm pack` tarball，并在不挂载主机凭据的情况下保留与提交匹配的日志。

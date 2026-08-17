@@ -1,0 +1,11 @@
+.git
+.omx
+.artifacts
+**/.DS_Store
+**/__pycache__
+**/node_modules
+**/*.pyc
+**/*.tsbuildinfo
+coverage
+lib
+dist

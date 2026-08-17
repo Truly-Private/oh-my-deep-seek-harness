@@ -53,3 +53,5 @@ pnpm --filter @truly-private/dsh-host-bridge test
 ```
 
 The keyless suite uses a scripted ACP process and covers UTF-8 results, permission outcomes, cancellation, forced process-tree cleanup, canonical workspace checks, environment allowlisting, protocol failures, and concurrent sessions. A focused snapshot also loads the extension through the real Pi SDK, retrieves the active `dsh_delegate` tool, and executes it against that ACP fixture. Real provider execution still needs the configured DSH credential, and the downstream remains a candidate.
+
+For release-shaped installation evidence, run the [clean-room host checks](../clean-room/README.md). They fresh-install Pi and OMP inside disposable containers, install an `npm pack` tarball of this package, and retain commit-matched logs without mounting host credentials.
