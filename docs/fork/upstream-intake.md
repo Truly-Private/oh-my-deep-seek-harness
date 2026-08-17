@@ -2,7 +2,7 @@
 
 English | [中文](upstream-intake.zh.md)
 
-This reference defines how `oh-my-deep-seek-harness` accepts DeepSeek Harness updates. The distribution prefers a known reviewed commit over automatic synchronization with upstream `master`.
+This reference defines how `oh-my-deepseek-harness` accepts DeepSeek Harness updates. The distribution prefers a known reviewed commit over automatic synchronization with upstream `master`.
 
 ## Trust anchors
 

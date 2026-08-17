@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write docs/fork/upstream-intake.md
-upstream-intake.md: 7e45ff8d41bc0ac9c605f33bafe423bda1eee31c
-upstream-intake.zh.md: e94ea4b156fb3e03cb2f7e394b2bad8679c3d073
+upstream-intake.md: ff8edbb5f0b7366749805cbb4cbba17b4816649b
+upstream-intake.zh.md: e1ae892fd0e15e7e84e6b3511cf4b2c0ae6824ff

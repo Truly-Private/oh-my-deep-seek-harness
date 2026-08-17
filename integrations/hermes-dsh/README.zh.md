@@ -9,7 +9,7 @@
 Hermes 支持安装 Git 仓库中的插件子目录：
 
 ```bash
-hermes plugins install Truly-Private/oh-my-deep-seek-harness/integrations/hermes-dsh --no-enable
+hermes plugins install Truly-Private/oh-my-deepseek-harness/integrations/hermes-dsh --no-enable
 hermes plugins enable dsh-bridge
 ```
 

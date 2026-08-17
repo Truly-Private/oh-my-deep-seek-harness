@@ -10,7 +10,7 @@
 
 ```bash
 export DSH_BRIDGE_COMMAND=pnpm
-export DSH_BRIDGE_ARGS_JSON='["--dir","/absolute/path/to/oh-my-deep-seek-harness","run","demo:acp"]'
+export DSH_BRIDGE_ARGS_JSON='["--dir","/absolute/path/to/oh-my-deepseek-harness","run","demo:acp"]'
 export DSH_BRIDGE_WORKSPACE_ROOT=/absolute/path/to/allowed/workspace
 export DSH_BRIDGE_ENV_ALLOWLIST=DEEPSEEK_API_KEY
 export DSH_BRIDGE_REQUEST_TIMEOUT_MS=30000
@@ -27,7 +27,7 @@ export DSH_BRIDGE_REQUEST_TIMEOUT_MS=30000
 从固定到已检查候选证据提交的检出中直接加载 Pi 入口：
 
 ```bash
-pi --extension /absolute/path/to/oh-my-deep-seek-harness/integrations/host-bridge/src/pi/index.ts
+pi --extension /absolute/path/to/oh-my-deepseek-harness/integrations/host-bridge/src/pi/index.ts
 ```
 
 该包还在 `pi.extensions` 下声明了 Pi 入口，因此 Pi 包安装可以从仓库中发现它。运行 `/dsh-bridge-status` 确认发现结果。
@@ -37,7 +37,7 @@ pi --extension /absolute/path/to/oh-my-deep-seek-harness/integrations/host-bridg
 OMP 使用独立入口及自身的 schema 与审批元数据：
 
 ```bash
-omp --extension /absolute/path/to/oh-my-deep-seek-harness/integrations/host-bridge/src/omp/index.ts
+omp --extension /absolute/path/to/oh-my-deepseek-harness/integrations/host-bridge/src/omp/index.ts
 ```
 
 运行 `/dsh-bridge-status` 确认发现结果。OMP 17.3.4 需要 Bun 1.3.14 或更高版本。

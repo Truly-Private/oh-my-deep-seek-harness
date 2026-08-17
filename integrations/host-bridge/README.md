@@ -10,7 +10,7 @@ Set the launcher explicitly before loading either extension. A source checkout c
 
 ```bash
 export DSH_BRIDGE_COMMAND=pnpm
-export DSH_BRIDGE_ARGS_JSON='["--dir","/absolute/path/to/oh-my-deep-seek-harness","run","demo:acp"]'
+export DSH_BRIDGE_ARGS_JSON='["--dir","/absolute/path/to/oh-my-deepseek-harness","run","demo:acp"]'
 export DSH_BRIDGE_WORKSPACE_ROOT=/absolute/path/to/allowed/workspace
 export DSH_BRIDGE_ENV_ALLOWLIST=DEEPSEEK_API_KEY
 export DSH_BRIDGE_REQUEST_TIMEOUT_MS=30000
@@ -27,7 +27,7 @@ The child receives only locale, executable-search, temporary-directory, and requ
 From a clone pinned to a commit whose candidate evidence you have inspected, load the Pi entrypoint directly:
 
 ```bash
-pi --extension /absolute/path/to/oh-my-deep-seek-harness/integrations/host-bridge/src/pi/index.ts
+pi --extension /absolute/path/to/oh-my-deepseek-harness/integrations/host-bridge/src/pi/index.ts
 ```
 
 The package also declares its Pi entrypoint under `pi.extensions`, so Pi package installation can discover it from the repository. Run `/dsh-bridge-status` to confirm discovery.
@@ -37,7 +37,7 @@ The package also declares its Pi entrypoint under `pi.extensions`, so Pi package
 OMP uses a separate entrypoint and its own schema and approval metadata:
 
 ```bash
-omp --extension /absolute/path/to/oh-my-deep-seek-harness/integrations/host-bridge/src/omp/index.ts
+omp --extension /absolute/path/to/oh-my-deepseek-harness/integrations/host-bridge/src/omp/index.ts
 ```
 
 Run `/dsh-bridge-status` to confirm discovery. OMP 17.3.4 requires Bun 1.3.14 or newer.
