@@ -2,7 +2,9 @@
 
 Review state: `candidate`
 
-Analyzed downstream commit: `6ee3e55a5d2941d34cf09992d73ca4e185057ead`
+Baseline downstream commit: `6ee3e55a5d2941d34cf09992d73ca4e185057ead`
+
+Verified remediation commit: `0945ec137e5e7758fa5990568d6b8130da74babc`
 
 Remediation branch: `codex/codeql-alert-dispositions`
 
@@ -33,7 +35,7 @@ Alerts 22 and 35–39 are dismissed as `won't fix`. These checks and generators 
 
 Alerts 41–43 are dismissed as `won't fix` because code construction is the named feature. The Cordis dynamic-package and workflow-worker documentation states that `node:vm` is an API-shaping or lifecycle mechanism rather than a security boundary and requires bash-level trust. The client schema-form documentation states that Schemastery rehydration executes plugin-defined callbacks, accepts only the trusted same-host envelope, and is not an inert cross-trust format.
 
-## Source corrections awaiting default-branch analysis
+## Source corrections
 
 The remediation branch replaces the mechanisms reported by alerts 4–9, 12–18, 23–25, and 31:
 
@@ -44,8 +46,10 @@ The remediation branch replaces the mechanisms reported by alerts 4–9, 12–18
 
 Local evidence includes the focused parser, profile, persistence, Markdown, and catalog tests; the issue-policy Node tests; changed-file lint; repository-wide typecheck; generated catalog checks; and `git diff --check`.
 
-Pull request 8 analyzed source-change commit `21fe10c5b6ce56fbfefd742bba8040efbcaf74df` through merge ref commit `40eeed6bfb6df21a363810e0f9105b74afc64ce3`. JavaScript/TypeScript CodeQL 2.26.3 ran 103 rules and uploaded zero pull-request results; Python CodeQL, dependency review, dependency audit, full-history Gitleaks, and provenance also passed. Pull-request analysis filters findings already present on the base branch, so the zero-result upload proves that the branch introduces no new alerts but does not by itself prove that the 16 corrected base alerts close.
+Pull request 8 analyzed exact head `753373008d126261189dabce82fcec51c322bd81`. JavaScript/TypeScript CodeQL 2.26.3 ran 103 rules and uploaded zero pull-request results; Python CodeQL, dependency review, dependency audit, full-history Gitleaks, and provenance also passed in [security run 31994301908](https://github.com/Truly-Private/oh-my-deepseek-harness/actions/runs/31994301908). The exact-head cross-platform CI and both release package dry runs also passed.
 
-## Pending default-branch evidence
+## Default-branch verification
 
-Alerts 4–9, 12–14, 16–18, 23–25, and 31 remain open on the default branch until pull request 8 merges and the default-branch JavaScript/TypeScript analysis scans the merged source. That scan must close all 16 alerts before this remediation is complete. The project remains `candidate` regardless; alert closure does not supply maintainer approval or the other evidence required for a reviewed release.
+Pull request 8 merged as `0945ec137e5e7758fa5990568d6b8130da74babc`. The default-branch JavaScript/TypeScript analysis passed in [security run 31996300885](https://github.com/Truly-Private/oh-my-deepseek-harness/actions/runs/31996300885). GitHub marked alerts 4–9, 12–14, 16–18, 23–25, and 31 fixed at `2026-08-17T05:04:15Z`; the code-scanning API then reported zero open alerts.
+
+The project remains `candidate`; alert closure does not supply maintainer approval or the other evidence required for a reviewed release.
