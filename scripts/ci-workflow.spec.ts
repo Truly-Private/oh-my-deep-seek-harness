@@ -27,7 +27,7 @@ describe('CI workflow', () => {
     }
   })
 
-  it('keeps required hosted Windows jobs, a non-blocking native job with failover, and a master-only standby', () => {
+  it('keeps required hosted Windows jobs, a non-blocking native job with failover, and an opt-in master standby', () => {
     const workflow = loadWorkflow('.github/workflows/ci.yml')
     if (!isRecord(workflow.jobs)
       || !isRecord(workflow.jobs.windows)
@@ -92,8 +92,8 @@ describe('CI workflow', () => {
     expect(serialWindows['runs-on']).toBe('windows-latest')
     expect(serialWindows.name).toBe('serial / windows')
 
-    // serial-windows-selfhosted: master-only standby, self-hosted, non-blocking.
-    expect(serialWindowsSelfhosted.if).toBe("github.event_name == 'push' && github.ref == 'refs/heads/master'")
+    // serial-windows-selfhosted: opt-in master-only standby, self-hosted, non-blocking.
+    expect(serialWindowsSelfhosted.if).toBe("github.event_name == 'push' && github.ref == 'refs/heads/master' && vars.DSH_CI_STANDBY_DRILLS == 'enabled'")
     expect(serialWindowsSelfhosted['runs-on']).toEqual(['self-hosted', 'dsh-win-ci', 'windows'])
     expect(serialWindowsSelfhosted.name).toBe('serial / windows (self-hosted standby)')
 
@@ -140,8 +140,8 @@ describe('CI workflow', () => {
       const job = workflow.jobs[name]
       if (!isRecord(job)) throw new TypeError(`${name} must be defined`)
       expect(job.concurrency).toBeUndefined()
-      // Both stay master-push-only; that is what makes the push carve-out safe.
-      expect(job.if).toBe("github.event_name == 'push' && github.ref == 'refs/heads/master'")
+      // Both stay opt-in and master-push-only; that is what makes the push carve-out safe.
+      expect(job.if).toBe("github.event_name == 'push' && github.ref == 'refs/heads/master' && vars.DSH_CI_STANDBY_DRILLS == 'enabled'")
     }
 
     // What bounds the cost of exempting push: a master push may only carry the

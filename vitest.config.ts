@@ -111,7 +111,9 @@ const processBoundTests = [
   'packages/context/time-context/tests/time-context.spec.ts',
   'packages/llm/llm-pi-ai/tests/adapter.spec.ts',
   'packages/boot/app-boot/tests/app-boot.spec.ts',
+  'packages/boot/app-boot/tests/hmr-config.spec.ts',
   'packages/workflow/workflow-worker-thread/tests/session.spec.ts',
+  'packages/workflow/workflow-worker-thread/tests/workflow-worker-thread.spec.ts',
 ]
 
 export default defineConfig({
