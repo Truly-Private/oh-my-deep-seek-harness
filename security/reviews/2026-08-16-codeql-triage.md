@@ -27,7 +27,13 @@ The successful default-branch security workflow uploaded JavaScript/TypeScript a
 
 Alerts 1, 2, 3, 10, 11, 15, 19, 21, 26, 27, 28, 29, 30, 32, 33, and 34 are dismissed as `used in tests`. Each alert points only to a test or fixture path, and each GitHub dismissal records the exact path and why the code has no production reachability. No test directory or rule is excluded from later analysis.
 
-## Source corrections awaiting remote analysis
+Alerts 20 and 40 are dismissed as `false positive`. Alert 20 reports the deterministic monotonic Cordis fiber counter as insecure randomness even though it is not random, secret, or authorization data. Alert 40 follows repository owner and name routing fields into a GitHub API request; those fields are not file contents or secrets, the request origin remains the GitHub Actions API, and the downstream workflow is disabled by its repository-identity condition.
+
+Alerts 22 and 35–39 are dismissed as `won't fix`. These checks and generators operate on same-identity local or CI build trees and grant no additional authority from the reported metadata check. A process that can race those paths already controls the checkout, hook, manifest, or artifact after the operation completes. Each GitHub comment records the exact operation and trust assumption; the disposition does not generalize to product runtime file access.
+
+Alerts 41–43 are dismissed as `won't fix` because code construction is the named feature. The Cordis dynamic-package and workflow-worker documentation states that `node:vm` is an API-shaping or lifecycle mechanism rather than a security boundary and requires bash-level trust. The client schema-form documentation states that Schemastery rehydration executes plugin-defined callbacks, accepts only the trusted same-host envelope, and is not an inert cross-trust format.
+
+## Source corrections awaiting default-branch analysis
 
 The remediation branch replaces the mechanisms reported by alerts 4–9, 12–18, 23–25, and 31:
 
@@ -36,8 +42,10 @@ The remediation branch replaces the mechanisms reported by alerts 4–9, 12–18
 - profile files use exclusive creation rather than an existence check followed by a write;
 - JSONL stable reads obtain both revisions and bytes through one open file handle.
 
-Local evidence includes the focused parser, profile, persistence, Markdown, and catalog tests; the issue-policy Node tests; changed-file lint; repository-wide typecheck; generated catalog checks; and `git diff --check`. The exact branch commit and remote CodeQL result remain pending until the pull request is pushed and analyzed.
+Local evidence includes the focused parser, profile, persistence, Markdown, and catalog tests; the issue-policy Node tests; changed-file lint; repository-wide typecheck; generated catalog checks; and `git diff --check`.
 
-## Pending dispositions
+Pull request 8 analyzed source-change commit `21fe10c5b6ce56fbfefd742bba8040efbcaf74df` through merge ref commit `40eeed6bfb6df21a363810e0f9105b74afc64ce3`. JavaScript/TypeScript CodeQL 2.26.3 ran 103 rules and uploaded zero pull-request results; Python CodeQL, dependency review, dependency audit, full-history Gitleaks, and provenance also passed. Pull-request analysis filters findings already present on the base branch, so the zero-result upload proves that the branch introduces no new alerts but does not by itself prove that the 16 corrected base alerts close.
 
-Alerts 20, 22, and 35–43 remain open until the remediation pull request's exact-head analysis completes. They cover a monotonic runtime identifier, same-identity repository or build tooling, GitHub issue-policy requests, and three intentional code-construction paths. Each requires an exact finding-specific threat analysis before dismissal or another source correction. No pending alert is evidence that the candidate is reviewed or ready for release.
+## Pending default-branch evidence
+
+Alerts 4–9, 12–14, 16–18, 23–25, and 31 remain open on the default branch until pull request 8 merges and the default-branch JavaScript/TypeScript analysis scans the merged source. That scan must close all 16 alerts before this remediation is complete. The project remains `candidate` regardless; alert closure does not supply maintainer approval or the other evidence required for a reviewed release.
