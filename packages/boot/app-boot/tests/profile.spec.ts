@@ -4,7 +4,7 @@
  * empty-root composition, and the installation module-fallback healing.
  */
 
-import { lstatSync, mkdirSync, mkdtempSync, readFileSync, readlinkSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
+import { chmodSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readlinkSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
@@ -69,6 +69,18 @@ describe('initProfile', () => {
     initProfile(dir, ['other'])
     expect(readProfileManifest('t', dir).dsh?.profile?.bundles).toEqual(['@deepseek-ai/dsh-base'])
     expect(readFileSync(join(dir, PROFILE_PATCH_FILENAME), 'utf8')).toContain('- id: x')
+  })
+
+  it.skipIf(process.platform === 'win32')('propagates profile-file creation errors other than an existing file', () => {
+    const dir = tmp()
+    chmodSync(dir, 0o555)
+    try {
+      expect(() => {
+        initProfile(dir, ['@deepseek-ai/dsh-base'])
+      }).toThrow()
+    } finally {
+      chmodSync(dir, 0o755)
+    }
   })
 })
 
