@@ -134,6 +134,9 @@ describe('HMR exact config paths', () => {
     const ctx = await bootHmr(dir)
     const started = Promise.withResolvers<undefined>()
     const release = Promise.withResolvers<undefined>()
+    const queueRefresh = vi.spyOn(ctx.hmr as unknown as {
+      refreshConfig(key: object, filename: string, refresh: () => Promise<void> | void): void
+    }, 'refreshConfig')
     const observed: string[] = []
     let active = 0
     let maxActive = 0
@@ -149,10 +152,11 @@ describe('HMR exact config paths', () => {
         active -= 1
       })
       await started.promise
+      queueRefresh.mockClear()
       writeFileSync(filename, 'two')
-      // Chokidar coalesces atomic writes for 100 ms by default. Wait beyond
-      // that window so this edit is queued before registration disposal.
-      await new Promise(resolve => setTimeout(resolve, 250))
+      await vi.waitFor(() => {
+        expect(queueRefresh).toHaveBeenCalled()
+      }, { timeout: 10_000, interval: 50 })
 
       let disposed = false
       const disposal = dispose().then(() => { disposed = true })
@@ -163,6 +167,7 @@ describe('HMR exact config paths', () => {
       expect(maxActive).toBe(1)
       expect(observed).toEqual(['one', 'two'])
     } finally {
+      queueRefresh.mockRestore()
       release.resolve(undefined)
       await ctx.fiber.dispose()
     }
