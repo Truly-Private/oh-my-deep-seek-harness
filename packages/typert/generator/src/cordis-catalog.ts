@@ -422,12 +422,78 @@ interface ParsedJsDoc {
   readonly deprecated: boolean
 }
 
+function isWhitespace(char: string | undefined): boolean {
+  return char !== undefined && char.trim() === ''
+}
+
+function stripJsDocMargin(line: string): string {
+  let start = 0
+  while (isWhitespace(line[start])) start += 1
+  if (line[start] === '*') {
+    start += 1
+    if (isWhitespace(line[start])) start += 1
+  }
+  let end = line.length
+  while (end > start && isWhitespace(line[end - 1])) end -= 1
+  return line.slice(start, end)
+}
+
+function stripDescriptionPrefix(line: string, start: number): string {
+  while (isWhitespace(line[start])) start += 1
+  if (line[start] === '-' || line[start] === '—' || line[start] === '–') {
+    start += 1
+    while (isWhitespace(line[start])) start += 1
+  }
+  return line.slice(start)
+}
+
+function parseParamTag(line: string): { name: string; description: string } | undefined {
+  const tag = '@param'
+  if (!line.startsWith(tag) || !isWhitespace(line[tag.length])) return undefined
+  let cursor = tag.length
+  while (isWhitespace(line[cursor])) cursor += 1
+  const bracketed = line[cursor] === '['
+  if (bracketed) cursor += 1
+  const nameStart = cursor
+  while (line[cursor] !== undefined && /[\w$]/u.test(line[cursor] as string)) cursor += 1
+  if (cursor === nameStart) return undefined
+  const name = line.slice(nameStart, cursor)
+  if (bracketed && line[cursor] === ']') cursor += 1
+  return { name, description: stripDescriptionPrefix(line, cursor) }
+}
+
+function parseDescriptionTag(line: string, tags: readonly string[]): string | undefined {
+  const tag = tags.find(candidate => line === candidate || (line.startsWith(candidate) && isWhitespace(line[candidate.length])))
+  return tag === undefined ? undefined : stripDescriptionPrefix(line, tag.length)
+}
+
+function stripInlineLinks(source: string): string {
+  let rendered = ''
+  let cursor = 0
+  for (;;) {
+    const start = source.indexOf('{@link', cursor)
+    if (start === -1) return rendered + source.slice(cursor)
+    const contentStart = start + '{@link'.length
+    if (!isWhitespace(source[contentStart])) {
+      rendered += source.slice(cursor, contentStart)
+      cursor = contentStart
+      continue
+    }
+    let valueStart = contentStart
+    while (isWhitespace(source[valueStart])) valueStart += 1
+    const end = source.indexOf('}', valueStart)
+    if (end === -1 || end === valueStart) return rendered + source.slice(cursor)
+    rendered += source.slice(cursor, start) + source.slice(valueStart, end)
+    cursor = end + 1
+  }
+}
+
 function parseJsDoc(raw: string): ParsedJsDoc {
   const lines = raw
     .replace(/^\/\*\*/, '')
     .replace(/\*\/$/, '')
     .split('\n')
-    .map(line => line.replace(/^\s*\*?\s?/, '').replace(/\s+$/, ''))
+    .map(stripJsDocMargin)
   const blocks: string[] = []
   let paragraph: string[] = []
   let list: string[] = []
@@ -480,15 +546,15 @@ function parseJsDoc(raw: string): ParsedJsDoc {
   let deprecated = false
   let sink: ((text: string) => void) | undefined
   for (const line of lines) {
-    if (/^@deprecated(?:\s|$)/.test(line)) {
+    if (line === '@deprecated' || (line.startsWith('@deprecated') && isWhitespace(line['@deprecated'.length]))) {
       deprecated = true
       sink = undefined
       continue
     }
-    const param = /^@param\s+(\[?[\w$]+\]?)\s*(?:[-—–]\s*)?(.*)$/.exec(line)
-    if (param !== null) {
-      const name = (param[1] ?? '').replace(/^\[|\]$/g, '')
-      let value = param[2] ?? ''
+    const param = parseParamTag(line)
+    if (param !== undefined) {
+      const name = param.name
+      let value = param.description
       params.set(name, value)
       sink = (text) => {
         value = value === '' ? text : `${value} ${text}`
@@ -496,9 +562,9 @@ function parseJsDoc(raw: string): ParsedJsDoc {
       }
       continue
     }
-    const returnsTag = /^@returns?(?:\s+[-—–]?\s*(.*))?$/.exec(line)
-    if (returnsTag !== null) {
-      let value = returnsTag[1] ?? ''
+    const returnsTag = parseDescriptionTag(line, ['@returns', '@return'])
+    if (returnsTag !== undefined) {
+      let value = returnsTag
       returns = value
       sink = (text) => {
         value = value === '' ? text : `${value} ${text}`
@@ -506,9 +572,9 @@ function parseJsDoc(raw: string): ParsedJsDoc {
       }
       continue
     }
-    const throwsTag = /^@throws?(?:\s+[-—–]?\s*(.*))?$/.exec(line)
-    if (throwsTag !== null) {
-      let value = throwsTag[1] ?? ''
+    const throwsTag = parseDescriptionTag(line, ['@throws', '@throw'])
+    if (throwsTag !== undefined) {
+      let value = throwsTag
       throws.push(value)
       const index = throws.length - 1
       sink = (text) => {
@@ -521,7 +587,7 @@ function parseJsDoc(raw: string): ParsedJsDoc {
     else sink?.(line.trim())
   }
   return {
-    doc: blocks.join('\n\n').replace(/\{@link\s+([^}]+)\}/g, '$1').trim(),
+    doc: stripInlineLinks(blocks.join('\n\n')).trim(),
     params,
     returns,
     throws,

@@ -609,7 +609,7 @@ function pkgList(names: string[] | undefined, pkgsByShort: Map<string, Pkg>): st
 }
 
 function tableCell(value: string): string {
-  return value.replace(/\|/g, '\\|').replace(/\n/g, '<br>')
+  return value.replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/\n/g, '<br>')
 }
 
 function assertServiceRolesComplete(services: readonly ServiceEntry[]): void {

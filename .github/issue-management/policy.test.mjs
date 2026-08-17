@@ -3,6 +3,7 @@ import test from 'node:test'
 
 import {
   countVisibleUnits,
+  extractOutsideDetails,
   nextResolvingIssueStatus,
   parseReferences,
   retainIssueReferences,
@@ -68,6 +69,15 @@ test('counts only text outside details', () => {
     units: 4,
     balanced: true,
     detailsCount: 1,
+    allCollapsed: true,
+  })
+})
+
+test('removes adjacent closed comments without consuming an unclosed tail', () => {
+  assert.deepEqual(extractOutsideDetails('visible<!-- one --><!-- two --> text<!-- open'), {
+    text: 'visible text<!-- open',
+    balanced: true,
+    detailsCount: 0,
     allCollapsed: true,
   })
 })

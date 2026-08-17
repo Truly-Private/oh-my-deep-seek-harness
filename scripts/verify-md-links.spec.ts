@@ -71,6 +71,15 @@ describe('documentAnchors', () => {
     ].join('\n'))
     expect(anchors).toEqual(new Set(['doc', 'real']))
   })
+
+  it('removes adjacent closed comments while retaining an unclosed comment tail', () => {
+    expect(documentAnchors([
+      '<!-- <a id="first"></a> --><!-- <a id="second"></a> -->',
+      '<a id="real"></a>',
+      '<!-- <a id="unclosed"></a>',
+      '',
+    ].join('\n'))).toEqual(new Set(['real', 'unclosed']))
+  })
 })
 
 describe('findViolations fragments', () => {

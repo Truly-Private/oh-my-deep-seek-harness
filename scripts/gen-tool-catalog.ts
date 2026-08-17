@@ -678,7 +678,7 @@ function codeList(values: string[] | undefined): string {
 }
 
 function tableCell(value: string | undefined): string {
-  return value ? value.replace(/\|/g, '\\|').replace(/\n/g, '<br>') : '-'
+  return value ? value.replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/\n/g, '<br>') : '-'
 }
 
 /** Render the full catalog (pure, deterministic given the manifest-ordered input). */

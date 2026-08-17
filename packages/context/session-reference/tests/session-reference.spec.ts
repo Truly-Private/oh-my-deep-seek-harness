@@ -236,6 +236,24 @@ describe('session reference URI and inline mentions', () => {
     expect(() => decodeSessionReferenceUri(nonString)).toThrow(expectCode('SESSION_REFERENCE_INVALID_REFERENCE'))
     expect(() => decodeSessionReferenceUri('dsh-session:IiJ')).toThrow(expectCode('SESSION_REFERENCE_INVALID_REFERENCE'))
   })
+
+  it('leaves non-reference mentions intact and still scans an unclosed mention URI as bare text', () => {
+    const sessionId = SessionId('unclosed-mention')
+    const uri = encodeSessionReferenceUri(sessionId)
+    expect(parseSessionReferenceText(`@[plain] and @[label](${uri}`)).toEqual({
+      text: `@[plain] and @[label](@${sessionId}`,
+      references: [{ sessionId, label: sessionId }],
+    })
+  })
+
+  it('scans malformed mention prefixes without backtracking over the remaining text', () => {
+    const sessionId = SessionId('after-malformed-prefixes')
+    const uri = encodeSessionReferenceUri(sessionId)
+    const prefixes = '@['.repeat(50_000)
+    const parsed = parseSessionReferenceText(`${prefixes}${uri}`)
+    expect(parsed.text).toBe(`${prefixes}@${sessionId}`)
+    expect(parsed.references).toEqual([{ sessionId, label: sessionId }])
+  })
 })
 
 describe('session reference discovery and preparation', () => {

@@ -142,6 +142,15 @@ nodeLinker: hoisted
 autoInstallPeers: false
 `
 
+/** Create one profile file without following or overwriting a concurrent winner. */
+function writeProfileFileIfAbsent(path: string, content: string): void {
+  try {
+    writeFileSync(path, content, { flag: 'wx' })
+  } catch (error: unknown) {
+    if ((error as NodeJS.ErrnoException | null)?.code !== 'EEXIST') throw error
+  }
+}
+
 /**
  * Initialize a profile directory: manifest, empty user patch layer, and the
  * pnpm settings out-of-tree plugins need. Existing files are never touched,
@@ -152,19 +161,17 @@ autoInstallPeers: false
 export function initProfile(dir: string, bundles: readonly string[]): void {
   mkdirSync(dir, { recursive: true })
   const manifestPath = join(dir, 'package.json')
-  if (!existsSync(manifestPath)) {
-    const manifest: ProfileManifest & { private: boolean } = {
-      name: `dsh-profile-${basename(dir)}`,
-      private: true,
-      dependencies: {},
-      dsh: { profile: { bundles: [...bundles] } },
-    }
-    writeFileSync(manifestPath, JSON.stringify(manifest, undefined, 2) + '\n')
+  const manifest: ProfileManifest & { private: boolean } = {
+    name: `dsh-profile-${basename(dir)}`,
+    private: true,
+    dependencies: {},
+    dsh: { profile: { bundles: [...bundles] } },
   }
+  writeProfileFileIfAbsent(manifestPath, JSON.stringify(manifest, undefined, 2) + '\n')
   const patchPath = join(dir, PROFILE_PATCH_FILENAME)
-  if (!existsSync(patchPath)) writeFileSync(patchPath, PROFILE_PATCH_TEMPLATE)
+  writeProfileFileIfAbsent(patchPath, PROFILE_PATCH_TEMPLATE)
   const workspacePath = join(dir, 'pnpm-workspace.yaml')
-  if (!existsSync(workspacePath)) writeFileSync(workspacePath, PROFILE_PNPM_WORKSPACE)
+  writeProfileFileIfAbsent(workspacePath, PROFILE_PNPM_WORKSPACE)
 }
 
 /** Ensure `link` is a symlink to `target`, replacing a wrong or dangling link; a real directory throws. */
