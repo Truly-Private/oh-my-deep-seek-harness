@@ -10,7 +10,7 @@ Status: implemented
 
 ## 决策
 
-必需的 Linux 作业和真实 Windows 作业默认使用 GitHub 托管 runner，同时保留现有仓库变量开关，以便切换到私有故障转移池。托管作业的并发度降低，以适配标准 runner。完整的原生 Windows 清单一次只运行一个门禁和一个覆盖率 worker：并发运行两个门禁时，所有测试断言均已完成，但插桩覆盖率期间丢失了一个 Vitest fork；同一份完整清单采用 Windows 串行参考作业的执行方式后通过。Linux、macOS 和 Windows 串行参考作业在拉取请求中运行，并加入 `all checks passed` 汇总。自托管 Linux 和 Windows lane 保留各自的 `master` 推送备用作业标识，但只在仓库变量 `DSH_CI_STANDBY_DRILLS` 为 `enabled` 时运行；没有这些 runner 的公共下游仓库因此会跳过作业，而不会让默认分支运行无限期排队。
+必需的 Linux 作业和真实 Windows 作业默认使用 GitHub 托管 runner，同时保留现有仓库变量开关，以便切换到私有故障转移池。托管作业的并发度降低，以适配标准 runner。完整的原生 Windows 清单一次只运行一个门禁和一个覆盖率 worker。串行运行顶层门禁消除了它们之间的重叠，但仍会重复出现 Vitest fork 在大型 workflow worker-thread suite 完成前退出的问题。该 suite 会创建并终止真实的嵌套 worker，因此改由现有的 process-bound 项目运行；单次覆盖率调用仍会汇总其测量结果，同时使用新的项目 fork 将其与大范围清单累积的进程状态隔离。Linux、macOS 和 Windows 串行参考作业在拉取请求中运行，并加入 `all checks passed` 汇总。自托管 Linux 和 Windows lane 保留各自的 `master` 推送备用作业标识，但只在仓库变量 `DSH_CI_STANDBY_DRILLS` 为 `enabled` 时运行；没有这些 runner 的公共下游仓库因此会跳过作业，而不会让默认分支运行无限期排队。
 
 文档工具链为 Mermaid、Vite、DOMPurify 和 esbuild 设置已修复安全公告的版本下限。网站使用 Vite 6.4.3，而仓库测试运行器显式保留 Vite 8.0.16，使 Vitest 在 Node 24 和 Node 26 上保持其源模块运行器行为。pnpm 将 VitePress 保留的 Vite 5 范围覆盖为 Vite 6.4.3，并将传递依赖 DOMPurify 保持在 3.4.13。由于 Vite 5 依赖已移除，生成的锁文件不再包含 esbuild 0.21.5。[`2026-08-16-release-blockers.md`](../../../../security/reviews/2026-08-16-release-blockers.md)记录告警与版本处置的对应关系，并在 GitHub 针对此确切提交完成评估前保留远程验证待办状态。
 
@@ -26,4 +26,4 @@ Status: implemented
 
 ## 后果
 
-拉取请求会使用更多 GitHub 托管计算资源，串行 lane 也需要更长时间，但这个公共 fork 可以获得其结论。原生 Windows 同样优先提供可重复的完整结论，而不是让多个门禁进程重叠运行。私有 runner 仍是可选的故障转移基础设施，而不是前置条件。在 VitePress 采用既修复安全公告又保持源模块运行器的兼容版本线之前，仓库会有意为测试运行器和 VitePress 网站保留不同的 Vite 主版本。直接父依赖采用已修复版本后，依赖版本下限可能需要移除；在此之前，锁文件、源 worker 兼容性测试和网站构建提供兼容性证据。候选状态保持不变：这些门禁通过并不表示提交已评审，也不授权稳定版发布。
+拉取请求会使用更多 GitHub 托管计算资源，串行 lane 也需要更长时间，但这个公共 fork 可以获得其结论。原生 Windows 同样优先提供可重复的完整结论，而不是让多个门禁进程重叠运行；process-bound 项目还会承载额外的 workflow worker-thread suite。私有 runner 仍是可选的故障转移基础设施，而不是前置条件。在 VitePress 采用既修复安全公告又保持源模块运行器的兼容版本线之前，仓库会有意为测试运行器和 VitePress 网站保留不同的 Vite 主版本。直接父依赖采用已修复版本后，依赖版本下限可能需要移除；在此之前，锁文件、源 worker 兼容性测试和网站构建提供兼容性证据。候选状态保持不变：这些门禁通过并不表示提交已评审，也不授权稳定版发布。
