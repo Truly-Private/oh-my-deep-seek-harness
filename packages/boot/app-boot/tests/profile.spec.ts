@@ -4,10 +4,10 @@
  * empty-root composition, and the installation module-fallback healing.
  */
 
-import { chmodSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readlinkSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
+import { lstatSync, mkdirSync, mkdtempSync, readFileSync, readlinkSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import {
   composeEntries,
   healProfilesModuleFallback,
@@ -20,6 +20,11 @@ import {
   resolveProfileDir,
   writeProfileManifest,
 } from '../src/index.ts'
+
+vi.mock('node:fs', async (importOriginal) => {
+  const original = await importOriginal<typeof import('node:fs')>()
+  return { ...original, writeFileSync: vi.fn(original.writeFileSync) }
+})
 
 const tmp = (): string => mkdtempSync(join(tmpdir(), 'dsh-profile-'))
 
@@ -71,16 +76,15 @@ describe('initProfile', () => {
     expect(readFileSync(join(dir, PROFILE_PATCH_FILENAME), 'utf8')).toContain('- id: x')
   })
 
-  it.skipIf(process.platform === 'win32')('propagates profile-file creation errors other than an existing file', () => {
+  it('propagates profile-file creation errors other than an existing file', () => {
     const dir = tmp()
-    chmodSync(dir, 0o555)
-    try {
-      expect(() => {
-        initProfile(dir, ['@deepseek-ai/dsh-base'])
-      }).toThrow()
-    } finally {
-      chmodSync(dir, 0o755)
-    }
+    const denied = Object.assign(new Error('profile write denied'), { code: 'EACCES' })
+    vi.mocked(writeFileSync).mockImplementationOnce(() => {
+      throw denied
+    })
+    expect(() => {
+      initProfile(dir, ['@deepseek-ai/dsh-base'])
+    }).toThrow(denied)
   })
 })
 
