@@ -64,10 +64,16 @@ describe('web e2e: workspace management (create / rename / flat view / hover aff
   async function addNewFolderWorkspace(parent: string, name: string): Promise<void> {
     const dialog = await browseTo(parent)
     await dialog.getByRole('button', { name: 'New folder' }).click()
-    await page.getByLabel('Folder name').fill(name)
-    await page.getByRole('button', { name: 'Create', exact: true }).click()
-    // Creating selects the new folder in the listing; Open adopts it.
-    await dialog.getByRole('button', { name: 'Open', exact: true }).click()
+    const createDialog = page.getByRole('dialog', { name: 'New folder' })
+    await createDialog.getByLabel('Folder name').fill(name)
+    await createDialog.getByRole('button', { name: 'Create', exact: true }).click()
+    // The create dialog closes after mkdir; Open enables only after the
+    // parent relist selects the child.
+    await createDialog.waitFor({ state: 'hidden', timeout: 10_000 })
+    await stat(join(parent, name))
+    const open = dialog.getByRole('button', { name: 'Open', exact: true })
+    await expect.poll(() => open.isEnabled(), { timeout: 10_000 }).toBe(true)
+    await open.click()
     await dialog.waitFor({ state: 'hidden', timeout: 10_000 })
     await expect.poll(
       () => scaffold.ctx.workspaceRegistry.resolveByPath(join(parent, name)),
@@ -112,6 +118,19 @@ describe('web e2e: workspace management (create / rename / flat view / hover aff
       return true
     }, { timeout: 10_000 }).toBe(true)
     await button.click()
+  }
+
+  /**
+   * Return the fixture's only non-blank Session row in one tree section.
+   * Blank New Session placeholders carry no row menu, while the persisted
+   * seed does; requiring exactly one actionable row keeps the identity check
+   * independent of a cold Session's fallback display title.
+   */
+  async function onlyActionableSessionRow(section: Locator): Promise<Locator> {
+    const rows = section.locator('[role="treeitem"]')
+      .filter({ has: page.locator('button[aria-label^="Session actions for "]') })
+    await expect.poll(() => rows.count(), { timeout: 10_000 }).toBe(1)
+    return rows.first()
   }
 
   beforeAll(async () => {
@@ -235,7 +254,7 @@ describe('web e2e: workspace management (create / rename / flat view / hover aff
       }
       return await groupSection.locator('[role="treeitem"]').count()
     }, { timeout: 10_000 }).toBeGreaterThanOrEqual(2)
-    const seededRow = groupSection.locator('[role="treeitem"]').nth(1)
+    const seededRow = await onlyActionableSessionRow(groupSection)
     await seededRow.click()
     await expect.poll(() => seededRow.getAttribute('aria-selected'), { timeout: 10_000 }).toBe('true')
 
@@ -480,9 +499,7 @@ describe('web e2e: workspace management (create / rename / flat view / hover aff
       }
       return await ungroupedRow.getAttribute('aria-expanded')
     }, { timeout: 5_000 }).toBe('true')
-    const row = ungroupedSection.locator('[role="treeitem"]').nth(1)
-    await row.waitFor({ timeout: 10_000 })
-    return row
+    return await onlyActionableSessionRow(ungroupedSection)
   }
 
   it('shows the session hover card after a dwell on the row', async () => {
@@ -568,19 +585,16 @@ describe('web e2e: workspace management (create / rename / flat view / hover aff
     // so a fixture gaining a second stray fails here instead of archiving
     // the wrong row. CSS attribute match, not getByRole: the button is
     // display:none until its row hovers, and role queries skip hidden nodes.
-    const sessionRows = ungroupedSection.locator('[role="treeitem"]')
-      .filter({ has: page.locator('button[aria-label^="Session actions for "]') })
-    await expect.poll(() => sessionRows.count(), { timeout: 10_000 }).toBe(1)
-    const sessionRow = sessionRows.first()
+    const sessionRow = await onlyActionableSessionRow(ungroupedSection)
     const rowTitle = await sessionRow.locator('[class*="title"]').innerText()
     // Row menu: hover reveals the actions button; Archive session commits
     // without a confirmation dialog (non-destructive: log + accounting stay).
     await clickHoverAction(sessionRow, `Session actions for ${rowTitle}`)
     await page.getByRole('menuitem', { name: 'Archive session' }).click()
-    // The row disappears on the archive-set echo; with no other visible
-    // stray, the whole Ungrouped bucket withdraws.
+    // The seeded row disappears on the archive-set echo. Other blank
+    // Sessions created by earlier workspace flows may still keep Ungrouped
+    // visible, so the bucket itself is not evidence for this Session id.
     await expect.poll(() => page.getByText(rowTitle, { exact: true }).count(), { timeout: 10_000 }).toBe(0)
-    await expect.poll(() => page.getByText('Ungrouped', { exact: true }).count(), { timeout: 10_000 }).toBe(0)
     // Durable on the host: the registry-global set carries the id while the
     // session log itself stays in persistence untouched.
     expect([...scaffold.ctx.workspaceRegistry.archivedSessionIds]).toEqual([SessionId(SEED_ID)])
