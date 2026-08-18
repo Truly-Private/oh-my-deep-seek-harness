@@ -97,8 +97,28 @@ describe('gate graph validation', () => {
     const byId = new Map(gates.map(subject => [subject.id, subject]))
 
     expect(byId.get('coverage')?.allowFailure).not.toBe(true)
+    expect(byId.get('coverage')?.maxAttempts).toBe(2)
     expect(byId.get('coverage-exempt-heavy')?.allowFailure).not.toBe(true)
+    expect(byId.get('coverage-exempt-heavy')?.maxAttempts).toBeUndefined()
     expect(byId.get('duplication')?.allowFailure).toBe(true)
+  })
+
+  it('retries a bounded gate and requires one complete passing attempt', async () => {
+    const subject = gate('subject', { maxAttempts: 2 })
+    const execute = vi.fn()
+      .mockResolvedValueOnce(resultFor(subject, 'failed'))
+      .mockResolvedValueOnce(resultFor(subject, 'passed'))
+
+    await expect(runGates([subject], 1, execute)).resolves.toMatchObject([{ status: 'passed' }])
+    expect(execute).toHaveBeenCalledTimes(2)
+  })
+
+  it('retains failure after every bounded attempt fails', async () => {
+    const subject = gate('subject', { maxAttempts: 2 })
+    const execute = vi.fn(async () => resultFor(subject, 'failed'))
+
+    await expect(runGates([subject], 1, execute)).resolves.toMatchObject([{ status: 'failed' }])
+    expect(execute).toHaveBeenCalledTimes(2)
   })
 
   it.each([
@@ -117,6 +137,14 @@ describe('gate graph validation', () => {
     const execute = vi.fn(async (subject: Gate) => resultFor(subject))
 
     await expect(runGates([gate('subject')], 0, execute)).rejects.toThrow('max concurrency must be a positive integer')
+    expect(execute).not.toHaveBeenCalled()
+  })
+
+  it('rejects an invalid attempt count before starting a child', async () => {
+    const execute = vi.fn(async (subject: Gate) => resultFor(subject))
+
+    await expect(runGates([gate('subject', { maxAttempts: 0 })], 1, execute))
+      .rejects.toThrow('maxAttempts must be a positive integer')
     expect(execute).not.toHaveBeenCalled()
   })
 
