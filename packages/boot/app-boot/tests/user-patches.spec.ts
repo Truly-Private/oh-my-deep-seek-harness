@@ -312,15 +312,16 @@ describe('boot with user patches', () => {
     }
   })
 
-  it('watches add, failure, recovery, and removal through transactional HMR', { timeout: 20_000 }, async () => {
+  it('applies the initial layer, then watches failure, recovery, and removal through transactional HMR', { timeout: 20_000 }, async () => {
     const dir = tmp()
     const userDir = tmp()
     const filename = join(userDir, PROFILE_PATCH_FILENAME)
+    writeFileSync(filename, '- id: noop\n  config:\n    value: live\n')
     const basePatches = [{ id: 'noop', config: { value: 'generated' } }]
     const ctx = await boot(NAME, writeTree(dir), basePatches)
     await ctx.plugin(Timer)
-    // Exact-path native events are covered by hmr-config.spec.ts. Poll here so
-    // this acceptance owns transactional patch behavior under suite-wide load.
+    // hmr-config.spec.ts owns creation after registration. Start from an
+    // existing layer so this acceptance owns transactional patch behavior.
     await ctx.plugin(Hmr, { root: [], ignored: [], debounce: 0, usePolling: true })
     const failures: Array<{ filename: string; error: Error }> = []
     ctx.on('hmr/config-update-failed', (failedFilename, error) => {
@@ -332,8 +333,7 @@ describe('boot with user patches', () => {
       compose: userPatches => [...basePatches, ...userPatches],
     })
     try {
-      writeFileSync(filename, '- id: noop\n  config:\n    value: live\n')
-      await eventually(() => (entryConfig(ctx, 'noop') as { value?: string }).value === 'live', 'user patch addition was not applied')
+      await eventually(() => (entryConfig(ctx, 'noop') as { value?: string }).value === 'live', 'initial user patch was not applied')
 
       writeFileSync(filename, '- id: noop\n  config:\n    fail: true\n')
       await eventually(() => failures.length === 1, 'failed candidate was not broadcast')
