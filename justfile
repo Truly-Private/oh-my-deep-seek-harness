@@ -35,3 +35,33 @@ cleanroom-hermes:
 [doc('Show the newest clean-room evidence manifest and log directory')]
 cleanroom-report:
     proto run node -- scripts/integration/clean-room-hosts.mjs report
+
+[group('agent comparison bench')]
+[doc('Verify OrbStack/Docker, proto, versions, and the optional model credential')]
+comparison-doctor:
+    proto run node -- scripts/integration/comparison-bench.mjs doctor
+
+[group('agent comparison bench')]
+[doc('Fresh-build the two Pi comparison images and screenshot evaluator')]
+comparison-build:
+    proto run node -- scripts/integration/comparison-bench.mjs build all
+
+[group('agent comparison bench')]
+[doc('Run both fresh Pi lanes and capture build, DOM, and screenshot evidence')]
+comparison-all:
+    proto run node -- scripts/integration/comparison-bench.mjs run all
+
+[group('agent comparison bench')]
+[doc('Run only the fresh Pi baseline lane and capture its evidence')]
+comparison-baseline:
+    proto run node -- scripts/integration/comparison-bench.mjs run pi-baseline
+
+[group('agent comparison bench')]
+[doc('Run only the fresh Pi plus DSH lane and capture its evidence')]
+comparison-harness:
+    proto run node -- scripts/integration/comparison-bench.mjs run pi-harness
+
+[group('agent comparison bench')]
+[doc('Show the newest comparison manifest and evidence directory')]
+comparison-report:
+    proto run node -- scripts/integration/comparison-bench.mjs report

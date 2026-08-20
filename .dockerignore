@@ -1,7 +1,13 @@
 .git
 .omx
 .artifacts
+**/.credentials.yaml
 **/.DS_Store
+**/.env
+**/.env.*
+**/.npmrc
+**/.yarnrc.yml
+**/auth.json
 **/__pycache__
 **/node_modules
 **/*.pyc

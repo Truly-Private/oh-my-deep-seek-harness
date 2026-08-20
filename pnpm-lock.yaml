@@ -764,6 +764,22 @@ importers:
         specifier: workspace:*
         version: link:../packages/workflow/workflow-worker-thread
 
+  integrations/comparison-bench:
+    dependencies:
+      '@earendil-works/pi-coding-agent':
+        specifier: 0.84.2
+        version: 0.84.2(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3)
+    devDependencies:
+      '@types/node':
+        specifier: ^24.0.0
+        version: 24.13.3
+      playwright:
+        specifier: 1.61.1
+        version: 1.61.1
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
   integrations/host-bridge:
     dependencies:
       '@agentclientprotocol/sdk':
