@@ -1,12 +1,12 @@
 /**
  * Shared path resolution and regular-file validation for model-facing read tools.
- * @module @deepseek-ai/dsh-tool-fs/src/read-target
+ * @module @truly-private/omdsh-tool-fs/src/read-target
  */
 
 import type { Context } from '@deepseek-ai/cordis'
-import { FsError } from '@deepseek-ai/dsh-fs'
-import type { FsInfo, FsTarget } from '@deepseek-ai/dsh-fs'
-import type { ToolExecution } from '@deepseek-ai/dsh-tools'
+import { FsError } from '@truly-private/omdsh-fs'
+import type { FsInfo, FsTarget } from '@truly-private/omdsh-fs'
+import type { ToolExecution } from '@truly-private/omdsh-tools'
 import { sessionResolveOptions } from './session-cwd.ts'
 
 /**

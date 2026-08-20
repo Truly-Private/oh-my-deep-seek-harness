@@ -6,11 +6,11 @@
     path: ./cordis.yml
     patches:
       - id: llm-deepseek
-        name: '@deepseek-ai/dsh-llm-deepseek'
+        name: '@truly-private/omdsh-llm-deepseek'
         disabled: true
       - insert:
           - id: llm-replay
-            name: '@deepseek-ai/dsh-llm-replay'
+            name: '@truly-private/omdsh-llm-replay'
             config:
               providers:
                 - id: deepseek-official
@@ -19,9 +19,9 @@
                     - id: deepseek-v4-flash
                     - id: deepseek-v4-pro
           - id: subagent-codex
-            name: '@deepseek-ai/dsh-subagent-codex'
+            name: '@truly-private/omdsh-subagent-codex'
           - id: tool-subagent-codex
-            name: '@deepseek-ai/dsh-tool-subagent'
+            name: '@truly-private/omdsh-tool-subagent'
             config:
               provider: codex
               toolName: subagent_codex

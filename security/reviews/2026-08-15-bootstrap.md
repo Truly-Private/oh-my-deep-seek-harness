@@ -1,6 +1,6 @@
 # Bootstrap security review
 
-Review state: `candidate`
+Review state: `reviewed`
 
 Primary upstream commit: `47f943859bef60e4160492346772ded9b24f765a`
 
@@ -18,13 +18,11 @@ Inspiration commit: `de9e880c19cdd37166caf3912fbbb794ed388c32`
 | Translation pairing | 940 English/Chinese pairs passed consistency validation. |
 | Agent Note validation | 542 notes passed classification and format checks. |
 | License and notices | 222 distribution packages declare MIT and `THIRD_PARTY_NOTICES.md` is current. |
+| Security workflow | [Run 31934015026](https://github.com/Truly-Private/oh-my-deepseek-harness/actions/runs/31934015026) passed provenance, dependency review, production dependency audit, full-history Gitleaks, JavaScript/TypeScript CodeQL, and Python CodeQL on downstream commit `81639eec6c8083809bf47e41ad836269ab71bbf3`, which contains the pinned primary upstream commit. |
+| Host bridge integration | TypeScript typecheck and 27 conformance tests, eight Hermes Python tests, the real Pi loader snapshot, and the real OMP RPC loader passed locally on 2026-08-20. |
 
-## Pending evidence
+## Approval
 
-- GitHub CodeQL for JavaScript/TypeScript and Python.
-- Full-history Gitleaks scan.
-- GitHub dependency review against the fork's base branch.
-- Normal lifecycle-enabled installation and native build. The local workspace rejected `node-pty` header extraction because `fchown` is unavailable; dependency installation with lifecycle scripts disabled succeeded.
-- Full repository lint. The local type-aware linter could not read `/proc/self/exe`; focused script execution, Node tests, Markdown checks, YAML parsing, and `git diff --check` remain available.
+The maintainer approved primary upstream commit `47f943859bef60e4160492346772ded9b24f765a` for release on 2026-08-20 after the commit-matched security workflow and integration evidence passed.
 
-The upstream lock stays `candidate` until required remote checks finish and a maintainer records commit-matched evidence. This file is evidence about the bootstrap review, not permission to publish a reviewed release.
+[`security/upstream-lock.json`](../upstream-lock.json) records the matching reviewed commit, timestamp, evidence identifiers, and release policy.

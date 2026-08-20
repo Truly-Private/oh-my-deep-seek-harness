@@ -2,9 +2,9 @@
 /** Snapshot-only Loader driver: stream one fixture turn as canonical JSONL. */
 
 import type { Context } from '@deepseek-ai/cordis'
-import { boot, installFailLoud, loadEnv, resolveConfigPath } from '@deepseek-ai/dsh-app-boot'
-import { runFixtureTurn } from '@deepseek-ai/dsh-loader-smoke'
-import type { SessionEvent } from '@deepseek-ai/dsh-session'
+import { boot, installFailLoud, loadEnv, resolveConfigPath } from '@truly-private/omdsh-app-boot'
+import { runFixtureTurn } from '@truly-private/omdsh-loader-smoke'
+import type { SessionEvent } from '@truly-private/omdsh-session'
 
 const NAME = 'headless-test-driver'
 const [configPath, ...taskParts] = process.argv.slice(2)

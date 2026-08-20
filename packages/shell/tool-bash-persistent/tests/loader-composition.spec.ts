@@ -6,19 +6,19 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
 import Loader from '@deepseek-ai/cordis-plugin-loader'
 import Include from '@deepseek-ai/cordis-plugin-include'
-import { CallId } from '@deepseek-ai/dsh-llm'
-import { Session, SessionId } from '@deepseek-ai/dsh-session'
-import AgentRegistry, { Inbox } from '@deepseek-ai/dsh-agent'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import TerminalSessionService from '@deepseek-ai/dsh-terminal'
-import * as TerminalLocal from '@deepseek-ai/dsh-terminal-bash'
-import SandboxProvider from '@deepseek-ai/dsh-sandbox'
-import type { ConfinedArgv, SandboxPolicy } from '@deepseek-ai/dsh-sandbox'
-import SandboxPolicyService from '@deepseek-ai/dsh-sandbox-policy'
-import LocalSubprocessRuntime from '@deepseek-ai/dsh-subprocess-local'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
-import * as ToolBashPersistent from '@deepseek-ai/dsh-tool-bash-persistent'
+import { CallId } from '@truly-private/omdsh-llm'
+import { Session, SessionId } from '@truly-private/omdsh-session'
+import AgentRegistry, { Inbox } from '@truly-private/omdsh-agent'
+import type { Agent } from '@truly-private/omdsh-agent'
+import TerminalSessionService from '@truly-private/omdsh-terminal'
+import * as TerminalLocal from '@truly-private/omdsh-terminal-bash'
+import SandboxProvider from '@truly-private/omdsh-sandbox'
+import type { ConfinedArgv, SandboxPolicy } from '@truly-private/omdsh-sandbox'
+import SandboxPolicyService from '@truly-private/omdsh-sandbox-policy'
+import LocalSubprocessRuntime from '@truly-private/omdsh-subprocess-local'
+import SystemPrompt from '@truly-private/omdsh-system-prompt'
+import ToolRuntime from '@truly-private/omdsh-tools'
+import * as ToolBashPersistent from '@truly-private/omdsh-tool-bash-persistent'
 
 let root: string | undefined
 let context: Context | undefined
@@ -70,17 +70,17 @@ suite('persistent Bash through a real cordis.yml Loader composition', () => {
     root = await mkdtemp(join(tmpdir(), 'dsh-persistent-bash-loader-'))
     const configPath = join(root, 'cordis.yml')
     await writeFile(configPath, [
-      "- name: '@deepseek-ai/dsh-agent'",
-      "- name: '@deepseek-ai/dsh-system-prompt'",
-      "- name: '@deepseek-ai/dsh-tools'",
-      "- name: '@deepseek-ai/dsh-terminal'",
-      "- name: '@deepseek-ai/dsh-test-sandbox'",
-      "- name: '@deepseek-ai/dsh-sandbox-policy'",
+      "- name: '@truly-private/omdsh-agent'",
+      "- name: '@truly-private/omdsh-system-prompt'",
+      "- name: '@truly-private/omdsh-tools'",
+      "- name: '@truly-private/omdsh-terminal'",
+      "- name: '@truly-private/omdsh-test-sandbox'",
+      "- name: '@truly-private/omdsh-sandbox-policy'",
       '  config:',
       '    mode: danger-full-access',
       `    workspaceRoot: ${JSON.stringify(root)}`,
-      "- name: '@deepseek-ai/dsh-subprocess-local'",
-      "- name: '@deepseek-ai/dsh-terminal-bash'",
+      "- name: '@truly-private/omdsh-subprocess-local'",
+      "- name: '@truly-private/omdsh-terminal-bash'",
       '  config:',
       '    pollIntervalMs: 10',
       '    exactProbeAfterMs: 20',
@@ -89,7 +89,7 @@ suite('persistent Bash through a real cordis.yml Loader composition', () => {
       '    scrollbackLines: 20000',
       '    timeoutMs: 2000',
       '    disposeGraceMs: 500',
-      "- name: '@deepseek-ai/dsh-tool-bash-persistent'",
+      "- name: '@truly-private/omdsh-tool-bash-persistent'",
       '  config:',
       '    timeoutMs: 5000',
       '',
@@ -100,15 +100,15 @@ suite('persistent Bash through a real cordis.yml Loader composition', () => {
     await context.plugin(Loader)
     context.loader.builtins.include = Include
     const modules = new Map<string, unknown>([
-      ['@deepseek-ai/dsh-agent', AgentRegistry],
-      ['@deepseek-ai/dsh-system-prompt', SystemPrompt],
-      ['@deepseek-ai/dsh-tools', ToolRuntime],
-      ['@deepseek-ai/dsh-terminal', TerminalSessionService],
-      ['@deepseek-ai/dsh-test-sandbox', PassthroughSandbox],
-      ['@deepseek-ai/dsh-sandbox-policy', SandboxPolicyService],
-      ['@deepseek-ai/dsh-subprocess-local', LocalSubprocessRuntime],
-      ['@deepseek-ai/dsh-terminal-bash', TerminalLocal],
-      ['@deepseek-ai/dsh-tool-bash-persistent', ToolBashPersistent],
+      ['@truly-private/omdsh-agent', AgentRegistry],
+      ['@truly-private/omdsh-system-prompt', SystemPrompt],
+      ['@truly-private/omdsh-tools', ToolRuntime],
+      ['@truly-private/omdsh-terminal', TerminalSessionService],
+      ['@truly-private/omdsh-test-sandbox', PassthroughSandbox],
+      ['@truly-private/omdsh-sandbox-policy', SandboxPolicyService],
+      ['@truly-private/omdsh-subprocess-local', LocalSubprocessRuntime],
+      ['@truly-private/omdsh-terminal-bash', TerminalLocal],
+      ['@truly-private/omdsh-tool-bash-persistent', ToolBashPersistent],
     ])
     context.loader.internal = {
       version: 'v2',

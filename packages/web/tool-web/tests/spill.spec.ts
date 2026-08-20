@@ -14,18 +14,18 @@ import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { Context } from '@deepseek-ai/cordis'
-import { CallId } from '@deepseek-ai/dsh-llm'
-import { SessionId } from '@deepseek-ai/dsh-session'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
-import type { ToolExecution } from '@deepseek-ai/dsh-tools'
+import { CallId } from '@truly-private/omdsh-llm'
+import { SessionId } from '@truly-private/omdsh-session'
+import SystemPrompt from '@truly-private/omdsh-system-prompt'
+import ToolRuntime from '@truly-private/omdsh-tools'
+import type { ToolExecution } from '@truly-private/omdsh-tools'
 
 const testToolSignal = new AbortController().signal
-import WebRuntime from '@deepseek-ai/dsh-web'
-import * as WebFetchLocal from '@deepseek-ai/dsh-web-fetch-http'
-import LocalSpillStore from '@deepseek-ai/dsh-spill-local'
-import * as SpillPolicy from '@deepseek-ai/dsh-spill-policy'
-import * as ToolWeb from '@deepseek-ai/dsh-tool-web'
+import WebRuntime from '@truly-private/omdsh-web'
+import * as WebFetchLocal from '@truly-private/omdsh-web-fetch-http'
+import LocalSpillStore from '@truly-private/omdsh-spill-local'
+import * as SpillPolicy from '@truly-private/omdsh-spill-policy'
+import * as ToolWeb from '@truly-private/omdsh-tool-web'
 
 type Handler = (req: IncomingMessage, res: ServerResponse) => void
 

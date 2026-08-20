@@ -1,13 +1,13 @@
 {
-  "name": "@deepseek-ai/dsh-client-web",
+  "name": "@truly-private/omdsh-client-web",
   "description": "Web shell kernel: bootWebShell (module system holding + seed table + two-stage boot + AppRoot gate + app-shell assembly entry), consumed by the apps/web vite entry",
-  "version": "0.1.0-rc.5",
+  "version": "0.0.1",
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
+    "url": "git+https://github.com/Truly-Private/oh-my-deepseek-harness.git",
     "directory": "packages/client/web"
   },
   "type": "module",
@@ -27,21 +27,21 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/dsh-client-modules": "workspace:^",
-    "@deepseek-ai/dsh-client-schema-form": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-attachment": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-primitives": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-slots": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-theme": "workspace:^",
-    "@deepseek-ai/dsh-client-web-react": "workspace:^",
+    "@truly-private/omdsh-client-modules": "workspace:^",
+    "@truly-private/omdsh-client-schema-form": "workspace:^",
+    "@truly-private/omdsh-client-ui-attachment": "workspace:^",
+    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
+    "@truly-private/omdsh-client-ui-slots": "workspace:^",
+    "@truly-private/omdsh-client-ui-theme": "workspace:^",
+    "@truly-private/omdsh-client-web-react": "workspace:^",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@deepseek-ai/cordis-plugin-loader": "workspace:^",
-    "@deepseek-ai/dsh-client-runtime": "workspace:^",
-    "@deepseek-ai/dsh-client-test-runtime": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
+    "@truly-private/omdsh-client-runtime": "workspace:^",
+    "@truly-private/omdsh-client-test-runtime": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
     "@types/react": "~18.3.1",
     "@types/react-dom": "~18.3.0",
     "@deepseek-ai/cordis": "workspace:^",
@@ -49,7 +49,7 @@
   },
   "peerDependencies": {
     "@deepseek-ai/cordis-plugin-loader": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^"
   },
   "files": [

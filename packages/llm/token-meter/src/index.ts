@@ -1,17 +1,17 @@
 /**
  * Single replay-aware token-meter service for request and surface pressure.
  *
- * @module @deepseek-ai/dsh-token-meter
+ * @module @truly-private/omdsh-token-meter
  */
 
 import { Context, Service } from '@deepseek-ai/cordis'
 import z from '@deepseek-ai/schemastery'
-import { BlockAssembler, deepFreeze } from '@deepseek-ai/dsh-llm'
-import type { Message, TokenUsage } from '@deepseek-ai/dsh-llm'
-import type { EpochHeader, Session, SessionEvent } from '@deepseek-ai/dsh-session'
-import { canonicalHeader, headerEquals, isSurfaceEvent } from '@deepseek-ai/dsh-session'
+import { BlockAssembler, deepFreeze } from '@truly-private/omdsh-llm'
+import type { Message, TokenUsage } from '@truly-private/omdsh-llm'
+import type { EpochHeader, Session, SessionEvent } from '@truly-private/omdsh-session'
+import { canonicalHeader, headerEquals, isSurfaceEvent } from '@truly-private/omdsh-session'
 // Type-only: resolves the optional projection registry Context declaration.
-import type {} from '@deepseek-ai/dsh-session-projection'
+import type {} from '@truly-private/omdsh-session-projection'
 import type {
   TokenMeasurement,
   TokenMeasurementBaseline,

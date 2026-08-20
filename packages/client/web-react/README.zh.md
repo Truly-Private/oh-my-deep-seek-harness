@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-client-web-react
+# @truly-private/omdsh-client-web-react
 
 [English](README.md) | 中文
 

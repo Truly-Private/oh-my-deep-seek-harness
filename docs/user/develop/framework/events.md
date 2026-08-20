@@ -122,7 +122,7 @@ This plugin logs tool calls and results:
 
 ```ts
 import type { Context } from '@deepseek-ai/cordis'
-import '@deepseek-ai/dsh-tools'
+import '@truly-private/omdsh-tools'
 
 export const name = 'tool-logger'
 

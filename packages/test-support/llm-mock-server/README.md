@@ -1,4 +1,4 @@
-# `@deepseek-ai/dsh-llm-mock-server`
+# `@truly-private/omdsh-llm-mock-server`
 
 English | [中文](README.zh.md)
 

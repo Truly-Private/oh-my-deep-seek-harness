@@ -2,14 +2,14 @@
 
 import { describe, expect, expectTypeOf, it } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
-import { CallId } from '@deepseek-ai/dsh-llm'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
+import { CallId } from '@truly-private/omdsh-llm'
+import SystemPrompt from '@truly-private/omdsh-system-prompt'
 import ToolRuntime, {
   defineContentToolFixture,
   type ToolDefinition,
   type ToolExecutionInput,
   type ToolExecutionMode,
-} from '@deepseek-ai/dsh-tools'
+} from '@truly-private/omdsh-tools'
 
 const testToolSignal = new AbortController().signal
 

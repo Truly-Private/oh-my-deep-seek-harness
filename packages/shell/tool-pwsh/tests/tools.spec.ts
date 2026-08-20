@@ -15,22 +15,22 @@ import { Context } from '@deepseek-ai/cordis'
 import { mkdtempSync, realpathSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve as resolvePath } from 'node:path'
-import { CallId } from '@deepseek-ai/dsh-llm'
-import SystemPrompt, { renderPrompt } from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime, { TOOL_ABORTED, TOOL_ABORTED_BEFORE_DISPATCH } from '@deepseek-ai/dsh-tools'
-import LocalJobRegistry from '@deepseek-ai/dsh-jobs-local'
-import * as ToolTasks from '@deepseek-ai/dsh-tool-jobs'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import { SessionId } from '@deepseek-ai/dsh-session'
-import ApprovalService from '@deepseek-ai/dsh-user-approval'
-import type { ApprovalOutcome } from '@deepseek-ai/dsh-user-approval'
-import { ShellExecutor } from '@deepseek-ai/dsh-shell'
-import type { ShellExecRequest, ShellExecSpec, ShellProcess, ShellRunResult } from '@deepseek-ai/dsh-shell'
-import SandboxPolicyService from '@deepseek-ai/dsh-sandbox-policy'
-import * as ToolPwsh from '@deepseek-ai/dsh-tool-pwsh'
-import * as BashEnvPlugin from '@deepseek-ai/dsh-shell-env'
-import type { ShellProcessRead } from '@deepseek-ai/dsh-shell'
+import { CallId } from '@truly-private/omdsh-llm'
+import SystemPrompt, { renderPrompt } from '@truly-private/omdsh-system-prompt'
+import ToolRuntime, { TOOL_ABORTED, TOOL_ABORTED_BEFORE_DISPATCH } from '@truly-private/omdsh-tools'
+import LocalJobRegistry from '@truly-private/omdsh-jobs-local'
+import * as ToolTasks from '@truly-private/omdsh-tool-jobs'
+import AgentRegistry from '@truly-private/omdsh-agent'
+import type { Agent } from '@truly-private/omdsh-agent'
+import { SessionId } from '@truly-private/omdsh-session'
+import ApprovalService from '@truly-private/omdsh-user-approval'
+import type { ApprovalOutcome } from '@truly-private/omdsh-user-approval'
+import { ShellExecutor } from '@truly-private/omdsh-shell'
+import type { ShellExecRequest, ShellExecSpec, ShellProcess, ShellRunResult } from '@truly-private/omdsh-shell'
+import SandboxPolicyService from '@truly-private/omdsh-sandbox-policy'
+import * as ToolPwsh from '@truly-private/omdsh-tool-pwsh'
+import * as BashEnvPlugin from '@truly-private/omdsh-shell-env'
+import type { ShellProcessRead } from '@truly-private/omdsh-shell'
 import { processOutcome } from '../src/background.ts'
 import { renderPwshProcessRead, renderPwshResult } from '../src/render.ts'
 
@@ -744,7 +744,7 @@ describe('background execution through the job runtime', () => {
     const { ctx } = await setup() // no LocalJobRegistry / ToolTasks
     const result = await call(ctx, 'pwsh', { command: 'Start-Sleep -Seconds 60', description: 'test command', run_in_background: true })
     expect(result.isError).toBe(true)
-    expect(text(result)).toContain('background jobs unavailable: load @deepseek-ai/dsh-jobs and @deepseek-ai/dsh-tool-jobs')
+    expect(text(result)).toContain('background jobs unavailable: load @truly-private/omdsh-jobs and @truly-private/omdsh-tool-jobs')
   })
 
   it('a pre-aborted call is skipped before the process starts', async () => {

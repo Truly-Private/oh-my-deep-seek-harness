@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-client-ui-primitives
+# @truly-private/omdsh-client-ui-primitives
 
 [English](README.md) | 中文
 

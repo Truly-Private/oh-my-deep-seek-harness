@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-llm-pi-ai
+# @truly-private/omdsh-llm-pi-ai
 
 [English](README.md) | 中文
 
@@ -12,7 +12,7 @@
 
 ```yaml
 - id: llm
-  name: '@deepseek-ai/dsh-llm-pi-ai'
+  name: '@truly-private/omdsh-llm-pi-ai'
   config:
     providers:
       # Catalog route: endpoint, protocol, and models all come from pi-ai.

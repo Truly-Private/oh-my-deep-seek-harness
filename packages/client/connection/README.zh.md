@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-client-connection
+# @truly-private/omdsh-client-connection
 
 [English](README.md) | 中文
 

@@ -1,4 +1,4 @@
-# `@deepseek-ai/dsh-agent-loop-testkit`
+# `@truly-private/omdsh-agent-loop-testkit`
 
 [English](README.md) | 中文
 
@@ -8,8 +8,8 @@
 
 ```ts
 import { Context } from '@deepseek-ai/cordis'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import { mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
+import AgentLoop from '@truly-private/omdsh-agent-loop'
+import { mountAgentLoopTestDependencies } from '@truly-private/omdsh-agent-loop-testkit'
 
 const ctx = new Context()
 

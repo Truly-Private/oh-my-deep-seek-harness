@@ -11,7 +11,7 @@
  * scalar. A match needs a quote (or `name: `) immediately left and the matching
  * quote — optionally after a `/subpath` — immediately right, which excludes
  * `cordis.yml`, the Loader's `cordis:` builtin prefix, `cordis-config-entry`,
- * `@deepseek-ai/dsh-tool-cordis`, and `cordiverse/cordis`, and makes the
+ * `@truly-private/omdsh-tool-cordis`, and `cordiverse/cordis`, and makes the
  * rewrite idempotent because the scoped name's `cordis` is preceded by `/`.
  * Markdown follows the rename inside every fence, and in `docs/` prose too:
  * a tutorial that teaches an unresolvable name is wrong, while prose elsewhere
@@ -104,6 +104,36 @@ const GENERIC_SKIPS: readonly GenericSkip[] = [
   // GROUP_ORDER holds `packages/<group>/` directory names, not package names.
   { file: 'scripts/gen-module-graph.ts', upstream: ['cordis'] },
   { file: 'scripts/gen-doc-graphs.ts', upstream: ['cordis'] },
+  // `cordis/*` strings in the extension seam are event names, plugin ids, and
+  // generated documentation for those runtime identifiers, not package imports.
+  ...[
+    'docs/event-producer-consumer.md',
+    'docs/event-producer-consumer.zh.md',
+    'docs/subsystems/extensions.md',
+    'docs/subsystems/extensions.zh.md',
+    'packages/api/remotes/src/remote-events.ts',
+    'packages/client/ui-settings-plugin-inventory/src/client/PluginInventorySettingsTab.tsx',
+    'packages/extensions/cordis-client-runner/src/client/index.ts',
+    'packages/extensions/cordis-client-runner/src/client/runtime.ts',
+    'packages/extensions/cordis-client-runner/tests/orchestrator.client.spec.ts',
+    'packages/extensions/cordis-client-runner/tests/plugin.client.spec.ts',
+    'packages/extensions/cordis-host-runner/src/index.ts',
+    'packages/extensions/cordis-host-runner/src/inspect-registry.ts',
+    'packages/extensions/cordis-host-runner/src/types.ts',
+    'packages/extensions/cordis-host-runner/tests/helpers.ts',
+    'packages/extensions/cordis-host-runner/tests/runner.spec.ts',
+    'packages/extensions/cordis-host-runner/tests/versioning.spec.ts',
+    'packages/extensions/tool-cordis/src/api-catalog.ts',
+    'packages/extensions/tool-cordis/src/providers.ts',
+    'packages/extensions/ui-cordis/src/client/CordisActionRow.tsx',
+    'packages/extensions/ui-cordis/src/client/CordisDefineRow.tsx',
+    'packages/extensions/ui-cordis/src/client/CordisPanel.tsx',
+    'packages/extensions/ui-cordis/src/client/CordisRunRow.tsx',
+    'packages/extensions/ui-cordis/src/client/index.ts',
+    'packages/extensions/ui-cordis/src/client/inventory.ts',
+    'packages/extensions/ui-cordis/src/client/locales.ts',
+    'scripts/gen-cordis-catalog.ts',
+  ].map(file => ({ file, upstream: ['cordis'] })),
 ]
 
 /** A string that must appear exactly `count` times once the rescope has run. */
@@ -178,7 +208,8 @@ const EXACT_EDITS: readonly ExactEdit[] = [
     },
     "packages/util/home": {`,
     replace: `      "ignoreDependencies": [
-        "@deepseek-ai/.+"
+        "@deepseek-ai/.+",
+        "@truly-private/.+"
       ]
     },
     "packages/util/home": {`,
@@ -194,7 +225,8 @@ const EXACT_EDITS: readonly ExactEdit[] = [
       ]`,
     replace: `    "packages/bundle/base": {
       "ignoreDependencies": [
-        "@deepseek-ai/.+"
+        "@deepseek-ai/.+",
+        "@truly-private/.+"
       ]`,
     expect: 1,
   },
@@ -215,9 +247,8 @@ const EXACT_EDITS: readonly ExactEdit[] = [
     id: 'publication-set-scope-assertion',
     file: 'scripts/publish-npm-baseline.ts',
     find: '      if (!isVendored && !name.startsWith(\'@deepseek-ai/\')) {',
-    replace: `      // Vendored packages are rescoped too (vendor/README.md), so publication
-      // never carries an upstream name that would squat it on the registry.
-      if (!name.startsWith('@deepseek-ai/')) {`,
+    replace: `      const expectedScope = isVendored ? '@deepseek-ai/' : '@truly-private/'
+      if (!name.startsWith(expectedScope)) {`,
     expect: 1,
   },
   {

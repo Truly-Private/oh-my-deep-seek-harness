@@ -4,7 +4,7 @@
  * per push.
  */
 
-import type { JobId } from '@deepseek-ai/dsh-jobs/brand'
+import type { JobId } from '@truly-private/omdsh-jobs/brand'
 
 /**
  * One background job as the client sees it.

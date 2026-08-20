@@ -11,30 +11,30 @@ import { Context } from '@deepseek-ai/cordis'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { createElement, type ComponentProps, type FC, type ReactNode } from 'react'
-import { bindSnapshotSelector } from '@deepseek-ai/dsh-client-web-react'
-import { resolveSlotLabel } from '@deepseek-ai/dsh-client-ui-slots'
+import { bindSnapshotSelector } from '@truly-private/omdsh-client-web-react'
+import { resolveSlotLabel } from '@truly-private/omdsh-client-ui-slots'
 import {
   ConversationEventRegistry, ConversationViewRegistry, createSnapshotStore,
   EMPTY_CHAT_SNAPSHOT,
-} from '@deepseek-ai/dsh-client-runtime/client'
-import { SlotRegistry } from '@deepseek-ai/dsh-client-runtime/client'
+} from '@truly-private/omdsh-client-runtime/client'
+import { SlotRegistry } from '@truly-private/omdsh-client-runtime/client'
 import type {
   ConversationSnapshot, RequestView,
   SessionId, SessionListState, SnapshotStore, WorkspaceListState,
-} from '@deepseek-ai/dsh-client-runtime/client'
-import type { ConvViewProps, ViewTab } from '@deepseek-ai/dsh-client-ui-conversation/client'
+} from '@truly-private/omdsh-client-runtime/client'
+import type { ConvViewProps, ViewTab } from '@truly-private/omdsh-client-ui-conversation/client'
 import {
   ConversationSession, ConversationSessionHeader,
   type ConversationSessionHeaderProps, type ConversationSessionProps,
-} from '@deepseek-ai/dsh-client-ui-conversation/src/client/skeleton/ConversationSession.tsx'
-import { createChatStore } from '@deepseek-ai/dsh-client-ui-conversation/src/client/stores.ts'
-import { zh as conversationZh } from '@deepseek-ai/dsh-client-ui-conversation/src/client/locales.ts'
-import { apply as localeApply, inject as localeInject } from '@deepseek-ai/dsh-client-locale/client'
-import { stubSettingsScope } from '@deepseek-ai/dsh-client-test-runtime'
-import type { LocaleKeysOf } from '@deepseek-ai/dsh-client-ui-slots'
+} from '@truly-private/omdsh-client-ui-conversation/src/client/skeleton/ConversationSession.tsx'
+import { createChatStore } from '@truly-private/omdsh-client-ui-conversation/src/client/stores.ts'
+import { zh as conversationZh } from '@truly-private/omdsh-client-ui-conversation/src/client/locales.ts'
+import { apply as localeApply, inject as localeInject } from '@truly-private/omdsh-client-locale/client'
+import { stubSettingsScope } from '@truly-private/omdsh-client-test-runtime'
+import type { LocaleKeysOf } from '@truly-private/omdsh-client-ui-slots'
 import { zh, type TrajectoryKey } from '../src/client/locales.ts'
-import { apply, inject } from '@deepseek-ai/dsh-client-ui-trajectory/client'
-import { apply as nodeApply } from '@deepseek-ai/dsh-client-ui-trajectory'
+import { apply, inject } from '@truly-private/omdsh-client-ui-trajectory/client'
+import { apply as nodeApply } from '@truly-private/omdsh-client-ui-trajectory'
 import type { TrajectoryTurnModel } from '../src/client/layout.ts'
 import { TrajectoryTimeline } from '../src/client/TrajectoryTimeline.tsx'
 import {

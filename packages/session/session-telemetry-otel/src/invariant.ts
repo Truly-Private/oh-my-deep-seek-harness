@@ -1,13 +1,13 @@
 /**
- * Package-owned invariant companion for `@deepseek-ai/dsh-session-telemetry-otel`.
- * @module @deepseek-ai/dsh-session-telemetry-otel/invariant
+ * Package-owned invariant companion for `@truly-private/omdsh-session-telemetry-otel`.
+ * @module @truly-private/omdsh-session-telemetry-otel/invariant
  */
 
 /* jscpd:ignore-start */
 import type { Context } from '@deepseek-ai/cordis'
-import type { InvariantInstaller } from '@deepseek-ai/dsh-invariants'
+import type { InvariantInstaller } from '@truly-private/omdsh-invariants'
 
-const PACKAGE_NAME = '@deepseek-ai/dsh-session-telemetry-otel'
+const PACKAGE_NAME = '@truly-private/omdsh-session-telemetry-otel'
 
 /** Cordis companion plugin name. */
 export const name = 'session-telemetry-otel-invariant'

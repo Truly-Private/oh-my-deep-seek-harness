@@ -6,7 +6,7 @@
 # persistent `bash` and `str_replace_editor`. Context compaction is absent.
 
 - id: persona
-  name: '@deepseek-ai/dsh-persona'
+  name: '@truly-private/omdsh-persona'
   config:
     text: You are a helpful software engineer assistant.
     complete: true
@@ -22,15 +22,15 @@
     terminals: true
   config:
     - id: pty
-      name: '@deepseek-ai/dsh-terminal'
+      name: '@truly-private/omdsh-terminal'
 
     - id: terminal-bash
-      name: '@deepseek-ai/dsh-terminal-bash'
+      name: '@truly-private/omdsh-terminal-bash'
       config:
         timeoutMs: 300000
 
     - id: persistent-bash
-      name: '@deepseek-ai/dsh-tool-bash-persistent'
+      name: '@truly-private/omdsh-tool-bash-persistent'
       config:
         timeoutMs: 300000
         description: |-
@@ -52,11 +52,11 @@
     fs: true
   config:
     - id: fs-local
-      name: '@deepseek-ai/dsh-fs-local'
+      name: '@truly-private/omdsh-fs-local'
       config:
         cwd: !!js process.env.DSH_CWD ?? process.cwd()
 
     - id: str-replace-editor
-      name: '@deepseek-ai/dsh-tool-str-replace-editor'
+      name: '@truly-private/omdsh-tool-str-replace-editor'
       config:
         maxOutputChars: 16000

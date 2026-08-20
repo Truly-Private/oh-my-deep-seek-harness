@@ -1,12 +1,12 @@
 /**
  * Durable storage-domain declaration for lifecycle-bound message feedback.
- * @module @deepseek-ai/dsh-message-feedback/src/spec
+ * @module @truly-private/omdsh-message-feedback/src/spec
  */
 
 import { z } from 'zod'
-import type { MessageId } from '@deepseek-ai/dsh-llm/brand'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import { defineDomain, domainTable } from '@deepseek-ai/dsh-storage-domain'
+import type { MessageId } from '@truly-private/omdsh-llm/brand'
+import type { SessionId } from '@truly-private/omdsh-session/types'
+import { defineDomain, domainTable } from '@truly-private/omdsh-storage-domain'
 import type { MessageFeedbackItem, MessageFeedbackRating, MessageFeedbackVersion } from './types.ts'
 
 const nonNegativeSafeInteger = z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER)

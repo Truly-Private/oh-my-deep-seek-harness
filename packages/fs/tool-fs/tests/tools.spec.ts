@@ -8,10 +8,10 @@ import { Context } from '@deepseek-ai/cordis'
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve, sep } from 'node:path'
-import { CallId } from '@deepseek-ai/dsh-llm'
-import SystemPrompt, { renderPrompt } from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime, { type ToolResult } from '@deepseek-ai/dsh-tools'
-import { FileSystem, FsError, FsTargetKey, FsVersion } from '@deepseek-ai/dsh-fs'
+import { CallId } from '@truly-private/omdsh-llm'
+import SystemPrompt, { renderPrompt } from '@truly-private/omdsh-system-prompt'
+import ToolRuntime, { type ToolResult } from '@truly-private/omdsh-tools'
+import { FileSystem, FsError, FsTargetKey, FsVersion } from '@truly-private/omdsh-fs'
 import type {
   FsDirEntry,
   FsEditOutcome,
@@ -21,16 +21,16 @@ import type {
   FsTarget,
   FsWriteIntent,
   FsWriteOutcome,
-} from '@deepseek-ai/dsh-fs'
-import * as FsPolicy from '@deepseek-ai/dsh-fs-observation-policy'
-import * as ToolFs from '@deepseek-ai/dsh-tool-fs'
+} from '@truly-private/omdsh-fs'
+import * as FsPolicy from '@truly-private/omdsh-fs-observation-policy'
+import * as ToolFs from '@truly-private/omdsh-tool-fs'
 import { STREAM_MIN_SIZE } from '../src/read.ts'
 import { formatReadOutput } from '../src/read-render.ts'
 import type { FileReadOutcome } from '../src/read-render.ts'
 import { sessionCwd } from '../src/session-cwd.ts'
-import ApprovalService from '@deepseek-ai/dsh-user-approval'
-import type { SandboxExecutionPolicy, SandboxMode } from '@deepseek-ai/dsh-sandbox'
-import SandboxPolicyService from '@deepseek-ai/dsh-sandbox-policy'
+import ApprovalService from '@truly-private/omdsh-user-approval'
+import type { SandboxExecutionPolicy, SandboxMode } from '@truly-private/omdsh-sandbox'
+import SandboxPolicyService from '@truly-private/omdsh-sandbox-policy'
 
 const testToolSignal = new AbortController().signal
 

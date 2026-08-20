@@ -18,20 +18,20 @@
 
 # Managed child-process groups required by the bash executor.
 - id: subprocess
-  name: '@deepseek-ai/dsh-subprocess-local'
+  name: '@truly-private/omdsh-subprocess-local'
 
 - id: bash
-  name: '@deepseek-ai/dsh-bash-local'
+  name: '@truly-private/omdsh-bash-local'
 
 - id: session-telemetry-otel
-  name: '@deepseek-ai/dsh-session-telemetry-otel'
+  name: '@truly-private/omdsh-session-telemetry-otel'
   config:
     mode: !!js process.env.DSH_TELEMETRY_E2E_MODE || 'FULL'
     exporter:
       url: !!js process.env.DSH_TELEMETRY_E2E_URL
 
 - id: agent-spine
-  name: '@deepseek-ai/dsh-agent-spine-demo'
+  name: '@truly-private/omdsh-agent-spine-demo'
   config:
     agents:
       - id: main
@@ -42,10 +42,10 @@
     workspaceContext: false
 
 - id: persistence
-  name: '@deepseek-ai/dsh-session-persistence-jsonl'
+  name: '@truly-private/omdsh-session-persistence-jsonl'
   config:
     root: './.sessions'
     compression: 'none'
 
 - id: checkpoint-policy
-  name: '@deepseek-ai/dsh-session-checkpoint-policy'
+  name: '@truly-private/omdsh-session-checkpoint-policy'

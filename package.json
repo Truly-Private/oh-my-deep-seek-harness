@@ -1,6 +1,6 @@
 {
-  "name": "@deepseek-ai/dsh-root",
-  "version": "0.1.0-rc.5",
+  "name": "@truly-private/omdsh-root",
+  "version": "0.0.1",
   "license": "MIT",
   "private": true,
   "type": "module",
@@ -21,7 +21,7 @@
     "build:lib": "npm run build:lib:host && npm run build:lib:client",
     "build:lib:host": "tsc -b tsconfig.host.json && tsdown --env.DSH_BUILD_FACE host",
     "build:lib:client": "tsc -b tsconfig.client.json && tsdown --env.DSH_BUILD_FACE client",
-    "build:web": "pnpm --filter @deepseek-ai/dsh-web-frontend run build",
+    "build:web": "pnpm --filter @truly-private/omdsh-web-frontend run build",
     "clean": "tsx scripts/clean.ts",
     "change-scope": "tsx scripts/change-scope.ts",
     "typecheck": "npm run build:lib:host && npm run typecheck:contracts-ready",
@@ -143,7 +143,7 @@
   },
   "devDependencies": {
     "@agentclientprotocol/sdk": "0.25.1",
-    "@deepseek-ai/dsh-tool-session-query": "workspace:^",
+    "@truly-private/omdsh-tool-session-query": "workspace:^",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.2",

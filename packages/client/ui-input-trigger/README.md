@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-client-ui-input-trigger
+# @truly-private/omdsh-client-ui-input-trigger
 
 English | [中文](README.zh.md)
 

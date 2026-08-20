@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/architecture/2026-07-28-identified-immutable-message-values.md
-2026-07-28-identified-immutable-message-values.md: f1e0e8c0b42bd2dc4b3c729dc15b5f2a36b98338
-2026-07-28-identified-immutable-message-values.zh.md: 5c6b392d7ebb55ddb6cdf3742facace1d2190eff
+2026-07-28-identified-immutable-message-values.md: a039e09c37b430deca674522f3fb5b97cc671a8e
+2026-07-28-identified-immutable-message-values.zh.md: 8200b91c0b681ca9ce95400f7a8b58094e89b24a

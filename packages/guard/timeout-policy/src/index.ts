@@ -3,12 +3,12 @@
  * promises to honor `exec.signal`; this wrapper arms that deadline and maps its
  * own expiry to `TOOL_TIMEOUT` without racing or abandoning the tool promise.
  *
- * @module @deepseek-ai/dsh-tool-call-timeout-policy
+ * @module @truly-private/omdsh-tool-call-timeout-policy
  */
 
 import type { Context } from '@deepseek-ai/cordis'
-import { deadline, timeoutOf } from '@deepseek-ai/dsh-timeout'
-import type { ToolExecutionResult } from '@deepseek-ai/dsh-tools'
+import { deadline, timeoutOf } from '@truly-private/omdsh-timeout'
+import type { ToolExecutionResult } from '@truly-private/omdsh-tools'
 
 /**
  * The code owned by this plugin, used BOTH as the internal {@link deadline}

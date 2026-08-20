@@ -1,5 +1,5 @@
 /**
- * @deepseek-ai/dsh-host-webserver — Web route-registration plugin: a node:http
+ * @truly-private/omdsh-host-webserver — Web route-registration plugin: a node:http
  * server plus the `webServer` service (HTTP and upgrade route registries,
  * index transform taps, and the single fallback seat for everything no route
  * claims). Knows no harness concepts and serves no files; the composing

@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-client-schema-form
+# @truly-private/omdsh-client-schema-form
 
 [English](README.md) | 中文
 

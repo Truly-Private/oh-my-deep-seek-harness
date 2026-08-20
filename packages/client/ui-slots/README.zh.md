@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-client-ui-slots
+# @truly-private/omdsh-client-ui-slots
 
 [English](README.md) | 中文
 
