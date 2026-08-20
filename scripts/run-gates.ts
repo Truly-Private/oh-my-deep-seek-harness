@@ -41,6 +41,8 @@ export interface Gate {
   needs?: string[]
   env?: Record<string, string | undefined>
   allowFailure?: boolean
+  /** Maximum complete command attempts; omitted means one attempt. */
+  maxAttempts?: number
 }
 
 /** The observed outcome of one gate process. */
@@ -435,7 +437,7 @@ function ciWindowsCompleteGates(): Gate[] {
   return [
     pnpmScript('build', 'build'),
     pnpmScript('windows-site', 'docs:build', { label: 'production site' }),
-    ...coverageGates(),
+    ...coverageGates({ instrumentedMaxAttempts: 2 }),
     ...observational,
   ]
 }
@@ -494,7 +496,7 @@ function coverageWorkerArgs(): { instrumented: string[]; exempt: string[] } {
   }
 }
 
-function coverageGates(): Gate[] {
+function coverageGates(options: { instrumentedMaxAttempts?: number } = {}): Gate[] {
   const workers = coverageWorkerArgs()
   return [
     pnpmExec('coverage', [
@@ -505,6 +507,9 @@ function coverageGates(): Gate[] {
     ], {
       label: 'test:coverage',
       env: { [COVERAGE_EXEMPT_ENV]: '1' },
+      ...(options.instrumentedMaxAttempts === undefined
+        ? {}
+        : { maxAttempts: options.instrumentedMaxAttempts }),
     }),
     pnpmExec('coverage-exempt-heavy', [
       'vitest',
@@ -655,6 +660,12 @@ function validateGateGraph(gates: readonly Gate[]): void {
     ids.add(gate.id)
   }
   for (const gate of gates) {
+    if (gate.maxAttempts !== undefined
+      && (!Number.isSafeInteger(gate.maxAttempts) || gate.maxAttempts < 1)) {
+      throw new Error(
+        `run-gates: gate ${JSON.stringify(gate.id)} maxAttempts must be a positive integer, got ${JSON.stringify(gate.maxAttempts)}.`,
+      )
+    }
     for (const dependency of gate.needs ?? []) {
       if (!ids.has(dependency)) {
         throw new Error(`run-gates: gate ${JSON.stringify(gate.id)} depends on unknown gate ${JSON.stringify(dependency)}.`)
@@ -726,7 +737,7 @@ export async function runGates(
       const ready = gates.find(gate => states.get(gate.id) === 'pending' && dependenciesPassed(gate, states))
       if (ready === undefined) break
       states.set(ready.id, 'running')
-      running.push({ gate: ready, promise: execute(ready) })
+      running.push({ gate: ready, promise: executeWithAttempts(ready, execute) })
       console.log(`run-gates: start ${ready.label}`)
       madeProgress = true
     }
@@ -774,6 +785,17 @@ export async function runGates(
     if (result === undefined) throw new Error(`run-gates: missing result for ${gate.id}.`)
     return result
   })
+}
+
+async function executeWithAttempts(gate: Gate, execute: GateExecutor): Promise<GateResult> {
+  const maxAttempts = gate.maxAttempts ?? 1
+  let result = await execute(gate)
+  for (let attempt = 2; result.status === 'failed' && attempt <= maxAttempts; attempt += 1) {
+    console.error(`run-gates: retry ${gate.label} after failed attempt ${attempt - 1}/${maxAttempts}`)
+    printResult(result)
+    result = await execute(gate)
+  }
+  return result
 }
 
 function dependenciesPassed(gate: Gate, states: Map<string, GateState>): boolean {

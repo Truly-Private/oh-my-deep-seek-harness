@@ -16,6 +16,8 @@ The language-neutral version 1 result distinguishes `completed`, `canceled`, `de
 
 The repository pins Node, Bun, Python, and pnpm in `.prototools`. Downstream-owned workflows install those runtimes through the commit-pinned Moonrepo setup-toolchain action; local verification uses `proto install` rather than independent runtime installers.
 
+A root `just` command runs release-shaped clean-room checks in disposable containers. Each no-cache build starts from a digest-pinned Ubuntu image, verifies the pinned proto archive, installs every language runtime through proto, and fresh-installs one documented host version. Pi and OMP install an `npm pack` tarball of the bridge; Hermes installs its public wheel and loads the candidate plugin through its real plugin manager. Runtime checks have no network, mounts, credentials, Linux capabilities, or writable root filesystem, and emit a commit and version manifest with per-host logs.
+
 Pi and OMP surface ACP permission requests through their host confirmation interfaces and fail closed without a UI. Hermes 0.16.0 plugin handlers expose neither an interactive approval callback nor an abort signal, so the Hermes plugin rejects permission requests by default and remains incomplete for full approval and host-cancellation semantics. The integration status reference labels these paths as candidates rather than complete bridges, consistent with the [reviewed downstream intake policy](../process/2026-08-15-reviewed-downstream-intake.md).
 
 ## Alternatives considered
@@ -27,4 +29,4 @@ Pi and OMP surface ACP permission requests through their host confirmation inter
 
 ## Consequences
 
-The adapters reuse DSH's existing session and approval authority and keep model-callable configuration narrow. Process-tree and environment code exists in both TypeScript and Python, so shared fixtures and host-specific tests must continue to detect semantic drift. Proto provides one auditable runtime-version source for local and downstream CI execution. Pi and OMP can load the candidate extensions, and Hermes can run approval-free ACP tasks, but no host receives a complete-integration label until commit-matched real-host evidence covers every required lifecycle path.
+The adapters reuse DSH's existing session and approval authority and keep model-callable configuration narrow. Process-tree and environment code exists in both TypeScript and Python, so shared fixtures and host-specific tests must continue to detect semantic drift. Proto provides one auditable runtime-version source for local and downstream CI execution. Clean-room installation evidence detects workspace-only dependency resolution and host packaging failures, but it does not replace real-model, approval, or cancellation evidence. Pi and OMP can load the candidate extensions, and Hermes can run approval-free ACP tasks, but no host receives a complete-integration label until commit-matched real-host evidence covers every required lifecycle path.

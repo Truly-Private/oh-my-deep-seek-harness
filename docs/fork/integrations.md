@@ -40,3 +40,7 @@ A host-agent integration is not complete until an automated test proves all of t
 - an upstream compatibility break fails clearly instead of falling back to broader access.
 
 The candidate Pi and OMP extensions have keyless contract and loader evidence, but they do not satisfy the complete host matrix yet. Hermes remains a full-bridge compatibility target because Hermes 0.16.0 plugin handlers expose neither an interactive approval callback nor host cancellation. OpenClaw remains a compatibility target with no adapter in this repository.
+
+## Clean-room installation evidence
+
+The [`just`-fronted clean-room harness](../../integrations/clean-room/README.md) fresh-installs the documented Pi, OMP, and Hermes versions in disposable containers. Pi and OMP load the packed bridge from a clean host project; Hermes loads the candidate plugin through its real plugin manager. Test execution is keyless, offline, non-root, read-only, and credential-free, and it retains a commit and version manifest plus per-host logs. This evidence strengthens the candidate paths but does not satisfy the missing approval, cancellation, and model-driven milestones above.
