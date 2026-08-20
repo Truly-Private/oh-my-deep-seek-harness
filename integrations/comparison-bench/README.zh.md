@@ -32,7 +32,7 @@ just comparison-report
 
 ## 方法参考
 
-两条路径使用锁定的 Pi 版本、`deepseek-v4-pro`、字节完全一致的提示词、空输出目录，以及相同的 CPU、内存、进程数和墙钟时间限制。基线路径向 Pi 提供 `read`、`bash`、`edit` 和 `write`。Harness 路径加载打包后的 Pi 扩展并直接调用 `dsh_delegate`，不会额外消耗一次 Pi 模型调用来决定是否委派。DeepSeek Harness ACP 服务使用 `workspace-write`，通过桥接允许列表接收同一个具名 API 密钥，并从当前仓库提交启动。
+两条路径使用锁定的 Pi 版本、`deepseek-v4-pro`、字节完全一致的提示词、空输出目录，以及相同的 CPU、内存、进程数和墙钟时间限制。基线路径向 Pi 提供 `read`、`bash`、`edit` 和 `write`。Harness 路径加载打包后的 Pi 扩展并直接调用 `dsh_delegate`，不会额外消耗一次 Pi 模型调用来决定是否委派。DeepSeek Harness ACP 服务使用 `workspace-write`，从上文所述的临时文件读取模型凭据，桥接环境允许列表只公开非敏感的 Harness 配置，并从当前仓库提交启动。
 
 智能体容器需要联网调用模型 API，并安装生成应用的依赖。容器以非 root 用户运行，移除 Linux capabilities，启用 `no-new-privileges`，限制资源，使用临时目录，且只有一个用于输出的可写绑定挂载。生成代码所执行的命令不会继承 API 密钥变量。容器不会接触 Docker socket 或宿主凭据路径。
 

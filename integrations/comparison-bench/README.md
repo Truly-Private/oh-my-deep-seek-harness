@@ -32,7 +32,7 @@ The exact shared task is [`game-prompt.txt`](game-prompt.txt). It asks both agen
 
 ## Method reference
 
-Both lanes use the pinned Pi version, `deepseek-v4-pro`, the same prompt bytes, an empty output directory, and the same CPU, memory, process, and wall-time limits. The baseline lane runs Pi with `read`, `bash`, `edit`, and `write`. The harness lane loads the packed Pi extension and calls `dsh_delegate` directly; it does not spend a separate Pi model turn deciding whether to delegate. The DeepSeek Harness ACP server uses `workspace-write`, receives the same named API key through the bridge allowlist, and is launched from the current repository commit.
+Both lanes use the pinned Pi version, `deepseek-v4-pro`, the same prompt bytes, an empty output directory, and the same CPU, memory, process, and wall-time limits. The baseline lane runs Pi with `read`, `bash`, `edit`, and `write`. The harness lane loads the packed Pi extension and calls `dsh_delegate` directly; it does not spend a separate Pi model turn deciding whether to delegate. The DeepSeek Harness ACP server uses `workspace-write`, reads the model credential from the ephemeral file described above, exposes only non-secret harness configuration through the bridge environment allowlist, and is launched from the current repository commit.
 
 Agent containers require network access for the model API and generated-app package installation. They run as an unprivileged user with Linux capabilities dropped, `no-new-privileges`, bounded resources, an ephemeral temporary directory, and a single writable bind mount for their output. Generated commands do not inherit the API-key variable. The containers receive no Docker socket or host credential paths.
 
