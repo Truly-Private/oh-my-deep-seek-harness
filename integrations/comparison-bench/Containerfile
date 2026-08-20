@@ -55,7 +55,7 @@ RUN npm init --yes \
     "tsx@${TSX_VERSION}" \
     "typebox@${TYPEBOX_VERSION}" \
   && npm cache clean --force
-COPY integrations/comparison-bench/pi-runner.ts integrations/comparison-bench/game-prompt.txt /opt/bench/
+COPY integrations/comparison-bench/pi-runner.ts integrations/comparison-bench/game-prompt.txt integrations/comparison-bench/harness-9router.cordis.yml /opt/bench/
 WORKDIR /workspace
 
 FROM agent-common AS pi-baseline
@@ -68,7 +68,7 @@ ARG PNPM_VERSION
 COPY integrations/host-bridge /opt/bridge-source
 COPY . /opt/dsh
 RUN bridge_tarball="$(npm pack /opt/bridge-source --pack-destination /opt/bench --silent)" \
-  && npm install --ignore-scripts --save-exact "/opt/bench/${bridge_tarball}" \
+  && npm install --prefix /opt/bench --ignore-scripts --save-exact "/opt/bench/${bridge_tarball}" \
   && rm "/opt/bench/${bridge_tarball}" \
   && cd /opt/dsh \
   && CI=1 proto run pnpm -- install --frozen-lockfile \

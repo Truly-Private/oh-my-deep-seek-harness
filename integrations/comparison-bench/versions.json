@@ -13,7 +13,10 @@
   "tsxVersion": "4.22.4",
   "typeboxVersion": "1.3.7",
   "playwrightVersion": "1.61.1",
-  "model": "deepseek-v4-pro",
+  "provider": "9router",
+  "model": "trifecta",
+  "routerHostBaseURL": "http://127.0.0.1:20128/v1",
+  "routerContainerBaseURL": "http://host.docker.internal:20128/v1",
   "promptTimeoutMs": 3600000,
   "captureSeed": 314159
 }

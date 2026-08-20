@@ -24,6 +24,8 @@ export function readVersions(env = process.env) {
   return {
     ...versions,
     piVersion: env.COMPARISON_PI_VERSION ?? versions.piVersion,
+    routerHostBaseURL: env.COMPARISON_ROUTER_HOST_BASE_URL ?? versions.routerHostBaseURL,
+    routerContainerBaseURL: env.COMPARISON_ROUTER_CONTAINER_BASE_URL ?? versions.routerContainerBaseURL,
   }
 }
 
@@ -66,9 +68,12 @@ export function agentRunArgs(tag, lane, workspace, versions, containerName) {
     '--memory', '8g',
     '--cpus', '4',
     '--tmpfs', '/tmp:rw,nosuid,nodev,size=2g',
-    '--env', 'DEEPSEEK_API_KEY',
+    '--add-host', 'host.docker.internal:host-gateway',
+    '--env', 'NINE_ROUTER_API_KEY',
     '--env', `COMPARISON_LANE=${lane}`,
+    '--env', `COMPARISON_PROVIDER=${versions.provider}`,
     '--env', `COMPARISON_MODEL=${versions.model}`,
+    '--env', `COMPARISON_ROUTER_BASE_URL=${versions.routerContainerBaseURL}`,
     '--env', `COMPARISON_TIMEOUT_MS=${String(versions.promptTimeoutMs)}`,
     '--mount', `type=bind,src=${workspace},dst=/workspace`,
     tag,
@@ -146,11 +151,13 @@ function digestFile(path) {
   return createHash('sha256').update(readFileSync(path)).digest('hex')
 }
 
-function inventory(root) {
+const inventoryExcludedDirectories = new Set(['.git', '.pw-browsers', '.pw-libs', 'node_modules'])
+
+export function inventory(root) {
   const output = []
   const visit = directory => {
     for (const entry of readdirSync(directory, { withFileTypes: true })) {
-      if (entry.name === 'node_modules' || entry.name === '.git') continue
+      if (entry.isDirectory() && inventoryExcludedDirectories.has(entry.name)) continue
       const path = join(directory, entry.name)
       if (entry.isDirectory()) visit(path)
       else if (entry.isFile()) output.push({ path: relative(root, path), bytes: statSync(path).size, sha256: digestFile(path) })
@@ -171,11 +178,27 @@ async function doctor() {
       throw new Error(`Docker context is ${context}; select the orbstack context before running the comparison bench.`)
     }
   }
+  const versions = readVersions()
+  const response = await fetch(`${versions.routerHostBaseURL}/models`, { signal: AbortSignal.timeout(10_000) })
+  if (!response.ok) throw new Error(`9Router model discovery failed with HTTP ${response.status}`)
+  const body = await response.json()
+  const modelIds = Array.isArray(body?.data)
+    ? body.data.map(candidate => candidate?.id).filter(candidate => typeof candidate === 'string')
+    : []
+  if (!modelIds.includes(versions.model)) {
+    throw new Error(`9Router at ${versions.routerHostBaseURL} does not advertise the required ${versions.model} model`)
+  }
+  const credentialConfigured = Boolean(process.env.NINE_ROUTER_API_KEY)
   process.stdout.write(`${JSON.stringify({
-    status: 'ready',
+    status: credentialConfigured ? 'ready' : 'needs-credential',
     engine: context,
-    credentialConfigured: Boolean(process.env.DEEPSEEK_API_KEY),
-    versions: readVersions(),
+    router: {
+      reachable: true,
+      provider: versions.provider,
+      model: versions.model,
+      credentialConfigured,
+    },
+    versions,
   }, null, 2)}\n`)
 }
 
@@ -191,8 +214,8 @@ async function build(targetValue, evidenceRoot) {
 
 async function execute(targetValue) {
   await doctor()
-  if (!process.env.DEEPSEEK_API_KEY) {
-    throw new Error('DEEPSEEK_API_KEY is not configured. The bench can build keylessly, but real comparison runs require the named environment variable.')
+  if (!process.env.NINE_ROUTER_API_KEY) {
+    throw new Error('NINE_ROUTER_API_KEY is not configured. Copy the gateway key from the local 9Router dashboard before a real comparison run.')
   }
   const versions = readVersions()
   const selected = requestedLanes(targetValue)
@@ -211,11 +234,12 @@ async function execute(targetValue) {
     promptBytes: statSync(promptPath).size,
     fairness: {
       identicalPrompt: true,
+      identicalProvider: versions.provider,
       identicalModel: versions.model,
       freshContainers: process.env.COMPARISON_REUSE_BUILD_CACHE !== '1',
       laneOrder: selected,
       agentResources: { cpus: 4, memory: '8g', pids: 512 },
-      credentialTransport: 'entrypoint-only-then-scrubbed',
+      credentialTransport: '9router-entrypoint-only-then-scrubbed',
     },
     versions,
     lanes: [],
@@ -234,45 +258,55 @@ async function execute(targetValue) {
       save()
       const containerName = `omdsh-comparison-${safeTagPart(runId)}-${lane}`
       try {
-        const agentOutput = await run(
-          'docker',
-          agentRunArgs(imageTag(lane, versions), lane, workspace, versions, containerName),
-          join(laneRoot, 'agent.log'),
-          { timeoutMs: versions.promptTimeoutMs + 60_000 },
-        )
-        entry.agentResult = JSON.parse(agentOutput.split('\n').at(-1))
-        entry.status = 'capturing'
-        save()
-      } finally {
-        await removeContainerIfPresent(containerName)
-      }
+        try {
+          const agentOutput = await run(
+            'docker',
+            agentRunArgs(imageTag(lane, versions), lane, workspace, versions, containerName),
+            join(laneRoot, 'agent.log'),
+            { timeoutMs: versions.promptTimeoutMs + 60_000 },
+          )
+          entry.agentResult = JSON.parse(agentOutput.split('\n').at(-1))
+          entry.status = 'capturing'
+          save()
+        } finally {
+          await removeContainerIfPresent(containerName)
+        }
 
-      const evaluatorName = `omdsh-comparison-${safeTagPart(runId)}-${lane}-capture`
-      try {
-        await run(
-          'docker',
-          evaluatorRunArgs(imageTag('evaluator', versions), workspace, laneRoot, evaluatorName),
-          join(laneRoot, 'capture.log'),
-          { timeoutMs: 10 * 60_000 },
-        )
+        const evaluatorName = `omdsh-comparison-${safeTagPart(runId)}-${lane}-capture`
+        try {
+          await run(
+            'docker',
+            evaluatorRunArgs(imageTag('evaluator', versions), workspace, laneRoot, evaluatorName),
+            join(laneRoot, 'capture.log'),
+            { timeoutMs: 10 * 60_000 },
+          )
+        } finally {
+          await removeContainerIfPresent(evaluatorName)
+        }
+        entry.files = inventory(workspace)
+        entry.uiChecks = JSON.parse(readFileSync(join(laneRoot, 'ui-checks.json'), 'utf8'))
+        entry.screenshots = ['desktop-start.png', 'desktop-playing.png', 'mobile-start.png']
+        entry.status = entry.agentResult.status === 'completed' ? 'passed' : entry.agentResult.status
+      } catch (error) {
+        entry.status = 'failed'
+        entry.error = error instanceof Error ? error.message : String(error)
       } finally {
-        await removeContainerIfPresent(evaluatorName)
+        entry.completedAt = new Date().toISOString()
+        save()
       }
-      entry.completedAt = new Date().toISOString()
-      entry.files = inventory(workspace)
-      entry.uiChecks = JSON.parse(readFileSync(join(laneRoot, 'ui-checks.json'), 'utf8'))
-      entry.screenshots = ['desktop-start.png', 'desktop-playing.png', 'mobile-start.png']
-      entry.status = 'passed'
-      save()
     }
     manifest.completedAt = new Date().toISOString()
-    manifest.status = 'passed'
+    const failedLanes = manifest.lanes.filter(entry => entry.status !== 'passed')
+    manifest.status = failedLanes.length === 0 ? 'passed' : 'failed'
+    if (failedLanes.length > 0) {
+      throw new Error(`Comparison lanes did not pass: ${failedLanes.map(entry => `${entry.lane} (${entry.status})`).join(', ')}`)
+    }
   } catch (error) {
     manifest.completedAt = new Date().toISOString()
     manifest.status = 'failed'
     manifest.error = error instanceof Error ? error.message : String(error)
     const active = manifest.lanes.at(-1)
-    if (active !== undefined && active.status !== 'passed') active.status = 'failed'
+    if (active !== undefined && (active.status === 'running' || active.status === 'capturing')) active.status = 'failed'
     throw error
   } finally {
     save()

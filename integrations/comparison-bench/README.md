@@ -6,13 +6,14 @@ This bench gives the same substantial coding task to two fresh Pi installations 
 
 ## Prerequisites
 
-Install the repository runtime pins with Moonrepo proto, start OrbStack on macOS, select its Docker context, and export a DeepSeek API key in the launching shell. The repository Docker context excludes local environment files, package-manager credentials, Pi auth files, and managed harness credential files. The bench never copies a home directory, CLI login, or credential store; Docker forwards only the named `DEEPSEEK_API_KEY` variable to each agent entrypoint. The entrypoint removes it before generated commands run. The harness lane gives its ACP runtime an ephemeral mode-0600 credential file outside the writable workspace and shell sandbox instead of forwarding the key in the ACP environment.
+Install the repository runtime pins with Moonrepo proto, start 9Router and OrbStack on macOS, select the OrbStack Docker context, and export the gateway key copied from 9Router's dashboard as `NINE_ROUTER_API_KEY`. The 9Router instance must advertise the `trifecta` model at `http://127.0.0.1:20128/v1`; agent containers reach that same instance through `host.docker.internal`. The repository Docker context excludes local environment files, package-manager credentials, Pi auth files, and managed harness credential files. The bench never copies a home directory, CLI login, 9Router database, or credential store; Docker forwards only the named 9Router key to each agent entrypoint. The entrypoint removes it before generated commands run. The harness lane gives its ACP runtime an ephemeral mode-0600 credential file outside the writable workspace and shell sandbox instead of forwarding the key in the ACP environment.
 
 ```bash
 proto install
+9router --no-browser
 orb start
 docker context use orbstack
-export DEEPSEEK_API_KEY='your key'
+export NINE_ROUTER_API_KEY='copy the API key from the 9Router dashboard'
 just comparison-doctor
 ```
 
@@ -32,14 +33,14 @@ The exact shared task is [`game-prompt.txt`](game-prompt.txt). It asks both agen
 
 ## Method reference
 
-Both lanes use the pinned Pi version, `deepseek-v4-pro`, the same prompt bytes, an empty output directory, and the same CPU, memory, process, and wall-time limits. The baseline lane runs Pi with `read`, `bash`, `edit`, and `write`. The harness lane loads the packed Pi extension and calls `dsh_delegate` directly; it does not spend a separate Pi model turn deciding whether to delegate. The DeepSeek Harness ACP server uses `workspace-write`, reads the model credential from the ephemeral file described above, exposes only non-secret harness configuration through the bridge environment allowlist, and is launched from the current repository commit.
+Both lanes use the pinned Pi version, the `9router/trifecta` route, the same prompt bytes, an empty output directory, and the same CPU, memory, process, and wall-time limits. The bench does not read or forward a DeepSeek provider credential. The baseline lane runs Pi with `read`, `bash`, `edit`, and `write`. The harness lane loads the packed Pi extension and calls `dsh_delegate` directly; it does not spend a separate Pi model turn deciding whether to delegate. The DeepSeek Harness ACP server uses `workspace-write`, reads the 9Router credential from the ephemeral file described above, exposes only non-secret harness configuration through the bridge environment allowlist, and is launched from the current repository commit.
 
 Agent containers require network access for the model API and generated-app package installation. They run as an unprivileged user with Linux capabilities dropped, `no-new-privileges`, bounded resources, an ephemeral temporary directory, and a single writable bind mount for their output. Generated commands do not inherit the API-key variable. The containers receive no Docker socket or host credential paths.
 
-After generation, a separate evaluator container receives the completed workspace and its lane evidence directory. It has no network or credential, uses a read-only root filesystem, runs the project's tests when available, requires `npm run build`, starts the mandated local development server, checks the stable `data-testid` hooks, and captures `desktop-start.png`, `desktop-playing.png`, and `mobile-start.png` at seed `314159`. A missing test command is recorded as a comparison warning; a failed build, unavailable server, missing interface hook, or failed screenshot makes the lane fail.
+After generation, a separate evaluator container receives the workspace and its lane evidence directory. A lane that reaches its wall-time limit is recorded as `timed_out`, but its partial workspace is still evaluated and later lanes still run. The evaluator has no network or credential, uses a read-only root filesystem, runs the project's tests when available, requires `npm run build`, starts the mandated local development server, checks the stable `data-testid` hooks, and captures `desktop-start.png`, `desktop-playing.png`, and `mobile-start.png` at seed `314159`. A missing test command is recorded as a comparison warning; a failed build, unavailable server, missing interface hook, or failed screenshot makes the lane fail.
 
 ## Evidence and interpretation
 
-Each run writes `.artifacts/comparison/<UTC run id>/manifest.json`. The manifest records the repository commit and dirty state, Docker context, exact versions, prompt hash, lane order, resource limits, durations, Pi usage when available, bridge cleanup, generated-file hashes, interface checks, and screenshot names. The lane folders contain the retained workspaces and build, test, server, agent, capture, and image-build logs.
+Each run writes `.artifacts/comparison/<UTC run id>/manifest.json`. The manifest records the repository commit and dirty state, Docker context, exact versions, prompt hash, lane order, resource limits, durations, Pi usage when available, bridge cleanup, generated-file hashes, interface checks, and screenshot names. Generated-file inventory excludes dependency directories and Playwright browser caches because they are execution tooling, not application output. The lane folders contain the retained workspaces and build, test, server, agent, capture, and image-build logs.
 
 Review the generated games for functional completeness, visual quality, rules fidelity, maintainability, and recovery from invalid play. Provider load and nondeterministic model output can affect a single result, so repeat trials and alternate the recorded lane order before drawing broader conclusions. The bench does not promote an integration status, expose a friend-score service, or publish either generated game.

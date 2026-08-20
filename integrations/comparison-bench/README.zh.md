@@ -6,13 +6,14 @@
 
 ## 前置条件
 
-使用 Moonrepo proto 安装仓库锁定的运行时；在 macOS 上启动 OrbStack 并选择其 Docker 上下文；随后在启动命令的 shell 中导出 DeepSeek API 密钥。仓库 Docker 上下文会排除本地环境文件、包管理器凭据、Pi 认证文件和 Harness 托管凭据文件。测试台不会复制主目录、CLI 登录状态或凭据存储；Docker 只把名为 `DEEPSEEK_API_KEY` 的变量转发给每个智能体入口程序。入口程序会在生成代码所执行的命令启动前删除该变量。Harness 路径不在 ACP 环境中转发密钥，而是向 ACP 运行时提供位于可写工作区和 shell 沙箱之外、权限为 0600 的临时凭据文件。
+使用 Moonrepo proto 安装仓库锁定的运行时；在 macOS 上启动 9Router 和 OrbStack，选择 OrbStack Docker 上下文；随后把从 9Router 控制面板复制的网关密钥导出为 `NINE_ROUTER_API_KEY`。9Router 必须在 `http://127.0.0.1:20128/v1` 公布 `trifecta` 模型；智能体容器通过 `host.docker.internal` 访问同一实例。仓库 Docker 上下文会排除本地环境文件、包管理器凭据、Pi 认证文件和 Harness 托管凭据文件。测试台不会复制主目录、CLI 登录状态、9Router 数据库或凭据存储；Docker 只把具名的 9Router 密钥转发给每个智能体入口程序。入口程序会在生成代码所执行的命令启动前删除该变量。Harness 路径不在 ACP 环境中转发密钥，而是向 ACP 运行时提供位于可写工作区和 shell 沙箱之外、权限为 0600 的临时凭据文件。
 
 ```bash
 proto install
+9router --no-browser
 orb start
 docker context use orbstack
-export DEEPSEEK_API_KEY='your key'
+export NINE_ROUTER_API_KEY='copy the API key from the 9Router dashboard'
 just comparison-doctor
 ```
 
@@ -32,14 +33,14 @@ just comparison-report
 
 ## 方法参考
 
-两条路径使用锁定的 Pi 版本、`deepseek-v4-pro`、字节完全一致的提示词、空输出目录，以及相同的 CPU、内存、进程数和墙钟时间限制。基线路径向 Pi 提供 `read`、`bash`、`edit` 和 `write`。Harness 路径加载打包后的 Pi 扩展并直接调用 `dsh_delegate`，不会额外消耗一次 Pi 模型调用来决定是否委派。DeepSeek Harness ACP 服务使用 `workspace-write`，从上文所述的临时文件读取模型凭据，桥接环境允许列表只公开非敏感的 Harness 配置，并从当前仓库提交启动。
+两条路径使用锁定的 Pi 版本、`9router/trifecta` 路由、字节完全一致的提示词、空输出目录，以及相同的 CPU、内存、进程数和墙钟时间限制。测试台不会读取或转发 DeepSeek 服务商凭据。基线路径向 Pi 提供 `read`、`bash`、`edit` 和 `write`。Harness 路径加载打包后的 Pi 扩展并直接调用 `dsh_delegate`，不会额外消耗一次 Pi 模型调用来决定是否委派。DeepSeek Harness ACP 服务使用 `workspace-write`，从上文所述的临时文件读取 9Router 凭据，桥接环境允许列表只公开非敏感的 Harness 配置，并从当前仓库提交启动。
 
 智能体容器需要联网调用模型 API，并安装生成应用的依赖。容器以非 root 用户运行，移除 Linux capabilities，启用 `no-new-privileges`，限制资源，使用临时目录，且只有一个用于输出的可写绑定挂载。生成代码所执行的命令不会继承 API 密钥变量。容器不会接触 Docker socket 或宿主凭据路径。
 
-生成结束后，独立的评估器容器只接收完成的工作区和该路径的证据目录。它没有网络或凭据，根文件系统只读；它会在可用时运行项目测试，强制执行 `npm run build`，启动约定的本地开发服务器，检查稳定的 `data-testid` 标记，并使用种子 `314159` 生成 `desktop-start.png`、`desktop-playing.png` 和 `mobile-start.png`。缺少测试命令会记录为对比警告；构建失败、服务不可用、界面标记缺失或截图失败都会使该路径失败。
+生成结束后，独立的评估器容器只接收工作区和该路径的证据目录。达到墙钟时间限制的路径会记录为 `timed_out`，但评估器仍会检查其部分工作区，后续路径也会继续运行。评估器没有网络或凭据，根文件系统只读；它会在可用时运行项目测试，强制执行 `npm run build`，启动约定的本地开发服务器，检查稳定的 `data-testid` 标记，并使用种子 `314159` 生成 `desktop-start.png`、`desktop-playing.png` 和 `mobile-start.png`。缺少测试命令会记录为对比警告；构建失败、服务不可用、界面标记缺失或截图失败都会使该路径失败。
 
 ## 证据与解读
 
-每次运行都会写入 `.artifacts/comparison/<UTC run id>/manifest.json`。清单记录仓库提交和工作树状态、Docker 上下文、精确版本、提示词哈希、路径顺序、资源限制、耗时、可用的 Pi 用量、桥接清理状态、生成文件哈希、界面检查和截图名称。各路径目录保留工作区以及构建、测试、服务、智能体、截图和镜像构建日志。
+每次运行都会写入 `.artifacts/comparison/<UTC run id>/manifest.json`。清单记录仓库提交和工作树状态、Docker 上下文、精确版本、提示词哈希、路径顺序、资源限制、耗时、可用的 Pi 用量、桥接清理状态、生成文件哈希、界面检查和截图名称。生成文件清单会排除依赖目录和 Playwright 浏览器缓存，因为它们属于执行工具而不是应用输出。各路径目录保留工作区以及构建、测试、服务、智能体、截图和镜像构建日志。
 
 评审生成的游戏时，应检查功能完整性、视觉质量、规则符合度、可维护性以及无效操作后的恢复。服务商负载和模型输出的非确定性会影响单次结果，因此应重复试验并轮换清单中记录的路径顺序，再形成更广泛的结论。此测试台不会提升任何集成状态，不提供好友分数服务，也不会发布任何生成的游戏。

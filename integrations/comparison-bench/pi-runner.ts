@@ -12,12 +12,14 @@ const lane = process.env.COMPARISON_LANE
 const cwd = '/workspace'
 const profile = '/tmp/pi-profile'
 const promptPath = '/opt/bench/game-prompt.txt'
-const apiKey = process.env.DEEPSEEK_API_KEY ?? ''
-const modelId = process.env.COMPARISON_MODEL ?? 'deepseek-v4-pro'
+const apiKey = process.env.NINE_ROUTER_API_KEY ?? ''
+const providerId = process.env.COMPARISON_PROVIDER ?? '9router'
+const modelId = process.env.COMPARISON_MODEL ?? 'trifecta'
+const routerBaseURL = process.env.COMPARISON_ROUTER_BASE_URL ?? 'http://host.docker.internal:20128/v1'
 const timeoutMs = Number(process.env.COMPARISON_TIMEOUT_MS ?? '3600000')
 
 if (lane !== 'pi-baseline' && lane !== 'pi-harness') throw new Error('COMPARISON_LANE must be pi-baseline or pi-harness')
-if (apiKey.length === 0) throw new Error('DEEPSEEK_API_KEY is required for a comparison run')
+if (apiKey.length === 0) throw new Error('NINE_ROUTER_API_KEY is required for a comparison run')
 if (!Number.isSafeInteger(timeoutMs) || timeoutMs <= 0) throw new Error('COMPARISON_TIMEOUT_MS must be a positive integer')
 
 mkdirSync(cwd, { recursive: true })
@@ -51,10 +53,25 @@ async function baseline(): Promise<Record<string, unknown>> {
     modelsPath: null,
     refreshOnCreate: false,
   })
-  await modelRuntime.setRuntimeApiKey('deepseek', apiKey)
-  delete process.env.DEEPSEEK_API_KEY
-  const model = modelRuntime.getModel('deepseek', modelId)
-  if (model === undefined) throw new Error(`Pi does not provide deepseek/${modelId}`)
+  modelRuntime.registerProvider(providerId, {
+    name: '9Router',
+    api: 'openai-completions',
+    baseUrl: routerBaseURL,
+    authHeader: true,
+    models: [{
+      id: modelId,
+      name: '9Router Trifecta',
+      reasoning: false,
+      input: ['text'],
+      cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+      contextWindow: 262_144,
+      maxTokens: 32_768,
+    }],
+  })
+  await modelRuntime.setRuntimeApiKey(providerId, apiKey)
+  delete process.env.NINE_ROUTER_API_KEY
+  const model = modelRuntime.getModel(providerId, modelId)
+  if (model === undefined) throw new Error(`Pi does not provide ${providerId}/${modelId}`)
   const { session } = await createAgentSession({
     cwd,
     modelRuntime,
@@ -75,7 +92,7 @@ async function baseline(): Promise<Record<string, unknown>> {
     const stats = session.getSessionStats()
     return {
       lane,
-      model: `deepseek/${modelId}`,
+      model: `${providerId}/${modelId}`,
       activeTools: session.getActiveToolNames(),
       tokens: stats.tokens,
       cost: stats.cost,
@@ -91,18 +108,19 @@ async function baseline(): Promise<Record<string, unknown>> {
 async function harness(): Promise<Record<string, unknown>> {
   const extensionPath = '/opt/bench/node_modules/@truly-private/dsh-host-bridge/src/pi/index.ts'
   const credentialRoot = '/run/dsh-credentials'
-  writeFileSync(join(credentialRoot, '.credentials.yaml'), `DEEPSEEK_API_KEY: ${JSON.stringify(apiKey)}\n`, { mode: 0o600 })
-  delete process.env.DEEPSEEK_API_KEY
+  writeFileSync(join(credentialRoot, '.credentials.yaml'), `NINE_ROUTER_API_KEY: ${JSON.stringify(apiKey)}\n`, { mode: 0o600 })
+  delete process.env.NINE_ROUTER_API_KEY
   process.env.DSH_BRIDGE_COMMAND = 'node'
   process.env.DSH_BRIDGE_ARGS_JSON = JSON.stringify([
     '--import',
     '/opt/dsh/node_modules/tsx/dist/esm/index.mjs',
     '/opt/dsh/packages/examples/acp-demo/src/bin.ts',
     '--config',
-    '/opt/dsh/examples/acp-agent/cordis.yml',
+    '/opt/bench/harness-9router.cordis.yml',
   ])
   process.env.DSH_BRIDGE_WORKSPACE_ROOT = cwd
-  process.env.DSH_BRIDGE_ENV_ALLOWLIST = 'DSH_HOME,DSH_PERMISSION_MODE,DSH_SNAPSHOT_SESSIONS_ROOT,HOME'
+  process.env.TSX_TSCONFIG_PATH = '/opt/dsh/tsconfig.json'
+  process.env.DSH_BRIDGE_ENV_ALLOWLIST = 'COMPARISON_MODEL,COMPARISON_PROVIDER,COMPARISON_ROUTER_BASE_URL,DSH_HOME,DSH_PERMISSION_MODE,DSH_SNAPSHOT_SESSIONS_ROOT,HOME,TSX_TSCONFIG_PATH'
   process.env.DSH_BRIDGE_PERMISSION = 'allow'
   process.env.DSH_BRIDGE_REQUEST_TIMEOUT_MS = String(timeoutMs)
   process.env.DSH_PERMISSION_MODE = 'workspace-write'
@@ -133,7 +151,7 @@ async function harness(): Promise<Record<string, unknown>> {
     if (details.status !== 'completed') throw new Error(`Harness delegation failed: ${JSON.stringify(details)}`)
     return {
       lane,
-      model: `deepseek-official/${modelId}`,
+      model: `${providerId}/${modelId}`,
       activeTools: ['dsh_delegate'],
       bridgeStatus: details.status,
       cleanup: details.meta?.cleanup,
@@ -145,12 +163,23 @@ async function harness(): Promise<Record<string, unknown>> {
 }
 
 try {
-  const result = lane === 'pi-baseline' ? await baseline() : await harness()
-  process.stdout.write(`${JSON.stringify({
-    ...result,
-    durationMs: Date.now() - startedAt,
-    status: 'completed',
-  })}\n`)
+  try {
+    const result = lane === 'pi-baseline' ? await baseline() : await harness()
+    process.stdout.write(`${JSON.stringify({
+      ...result,
+      durationMs: Date.now() - startedAt,
+      status: 'completed',
+    })}\n`)
+  } catch (error) {
+    if (!controller.signal.aborted) throw error
+    process.stdout.write(`${JSON.stringify({
+      lane,
+      model: `${providerId}/${modelId}`,
+      durationMs: Date.now() - startedAt,
+      status: 'timed_out',
+      error: error instanceof Error ? error.message : String(error),
+    })}\n`)
+  }
 } finally {
   clearTimeout(timeout)
 }
