@@ -1,6 +1,6 @@
 - listitem:
-  - button "ui-settings, 已挂载, 已启用":
-    - strong: ui-settings
+  - button "omdsh-client-ui-settings, 已挂载, 已启用":
+    - strong: omdsh-client-ui-settings
     - img "已挂载"
     - text: 已启用
     - img

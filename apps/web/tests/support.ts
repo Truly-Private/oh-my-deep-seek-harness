@@ -10,19 +10,13 @@ export const DIST_INDEX = fileURLToPath(new URL('../dist/index.html', import.met
 
 export const REPO_ROOT = fileURLToPath(new URL('../../..', import.meta.url))
 
-/**
- * Browser language a page must advertise to boot into the product's Chinese
- * surface: with no stored preference the client derives its initial locale
- * from the browser, and Playwright's default browser asks for English.
- */
+/** Browser locale used to prove that the product default ignores navigator language. */
 export const ZH_BROWSER_LOCALE = 'zh-CN'
 
 /**
  * Open the standard browser-test page advertising English before client boot.
- * This keeps role locators and goldens deterministic while leaving the Host
- * settings document free to override the provisional browser-derived locale;
- * scenarios asserting the Chinese surface advertise
- * {@link ZH_BROWSER_LOCALE} instead.
+ * This keeps browser-provided formatting inputs deterministic; product copy
+ * starts in English unless the scaffold seeds an explicit Host preference.
  * @param browser - Playwright browser owning the page.
  * @param height - Viewport height; width is fixed to the lane baseline.
  * @returns the initialized page.
@@ -88,9 +82,9 @@ export async function connectFreshWorkspace(page: Page, root: string, name = 'wo
 }
 
 /**
- * {@link connectFreshWorkspace} over the product default Chinese locale: the
- * English helper's anchors assume the locale every other scenario boots, so a
- * scenario that deliberately keeps zh needs the localized picker copy.
+ * {@link connectFreshWorkspace} over an explicitly selected Chinese locale.
+ * The English helper's anchors assume the product default, so a scenario that
+ * deliberately persists zh needs the localized picker copy.
  * @param page - the browser page under test.
  * @param root - workspace parent directory.
  * @param name - directory created under `root` and connected.

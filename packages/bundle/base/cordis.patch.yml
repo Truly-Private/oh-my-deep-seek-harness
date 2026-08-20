@@ -63,8 +63,8 @@
     - id: agent-default-model
       name: '@truly-private/omdsh-agent-default-model'
       config:
-        provider: deepseek-official
-        model: deepseek-v4-flash
+        provider: 9router
+        model: kr/claude-sonnet-4.5
 
     - id: jobs
       name: '@truly-private/omdsh-jobs-local'
@@ -85,15 +85,23 @@
     - id: credentials
       name: '@truly-private/omdsh-credentials-local'
 
-    # The pi-ai multi-provider twin, mounted dormant: zero routes (and no extra
-    # models in the picker) until a `llm-pi-ai:` settings section supplies provider
-    # profiles — then those routes register live, keys resolving per request
-    # through their apiKeyEnv references, and drop again when the section empties.
-    # Supplying those profiles is exactly what the web Models page does. Which
-    # adapters exist is composition; which providers run is the user's settings
-    # document.
+    # The pi-ai multi-provider adapter ships 9Router as this distribution's
+    # first-party route. Its endpoint key stays in the credential seam, while
+    # settings may replace the starter model from 9Router's live `/v1/models`
+    # listing without a restart. Other routes remain dormant until the Models
+    # page or `settings.yaml` supplies their provider profiles.
     - id: llm-pi-ai
       name: '@truly-private/omdsh-llm-pi-ai'
+      config:
+        providers:
+          9router:
+            displayName: 9Router
+            apiKeyEnv: NINE_ROUTER_API_KEY
+            api: openai-completions
+            baseURL: http://127.0.0.1:20128/v1
+            models:
+              - id: kr/claude-sonnet-4.5
+                name: Claude Sonnet 4.5 (Kiro)
 
     - id: session-persistence-jsonl
       name: '@truly-private/omdsh-session-persistence-jsonl'

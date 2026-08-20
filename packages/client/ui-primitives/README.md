@@ -2,7 +2,11 @@
 
 English | [中文](README.zh.md)
 
-Pure React atoms (zero cordis): StateDot, DisclosureRow, ic_ds_* icons, Button/Pill/Menu/Modal/Input, the Toast transient banner, the OnboardingSurface first-run takeover (body-portaled mask + opaque stage that holds `#root` inert for exactly its own lifetime), the markdown family (MessageText/MarkdownText/JsonBlock), the read-only JsonTree inspector, the `useAnchoredMaxHeight` hook that clamps a bottom-anchored overlay to the viewport space above its anchor (re-measured on resize, scroll, and a caller-supplied dependency), TerminalBlock, DiffBlock, ReadBlock, SearchBlock, and WebBlock.
+Pure React atoms (zero cordis): BrandLogo, StateDot, DisclosureRow, ic_ds_* icons, Button/Pill/Menu/Modal/Input, the Toast transient banner, the OnboardingSurface first-run takeover (body-portaled mask + opaque stage that holds `#root` inert for exactly its own lifetime), the markdown family (MessageText/MarkdownText/JsonBlock), the read-only JsonTree inspector, the `useAnchoredMaxHeight` hook that clamps a bottom-anchored overlay to the viewport space above its anchor (re-measured on resize, scroll, and a caller-supplied dependency), TerminalBlock, DiffBlock, ReadBlock, SearchBlock, and WebBlock.
+
+## Product logo
+
+`BrandLogo` renders the supplied DeepSeek Harness artwork as a decorative image while preserving its native aspect ratio. The Web composition owns the public `/omdsh-logo.jpg` asset; any other composition that uses this primitive must serve the same asset path.
 
 ## Hover cards
 
@@ -47,7 +51,7 @@ None; this package neither assembles nor sends a provider request.
 ## Known Limitations and Deferred Work
 
 - **Streaming defers cross-boundary reference resolution** — a reference-style link or footnote whose definition sits on the other side of the incremental freeze boundary renders as literal text while the reply streams; the settled full parse at finalize resolves it. Inline links and references resolved within one parse are unaffected.
-- **Glyph-level icons are redrawn approximations** — the fish logo (and the sparkle held by ui-conversation) come from font glyphs whose vector geometry is not exportable from the local design data; hand-authored recreations stand in until an exact export path exists.
+- **The sparkle glyph is a redrawn approximation** — the sparkle held by ui-conversation comes from a font glyph whose vector geometry is not exportable from the local design data; a hand-authored recreation stands in until an exact export path exists. The product logo uses the supplied raster artwork rather than a recreated glyph.
 - **Pill and Input have no design source** — both atoms are self-defined; the sidebar search field and view-tab strip that resemble them are consumer-owned compositions, not these atoms.
 - **No `Active` StateDot variant** — the supported states are done, warning, ongoing, and error.
 - **User-facing copy localizes through label props, defaulting to the original Chinese literals** — the atoms are zero-cordis and cannot reach `ctx.locale`, so `HoverCard` (`copyLabel`/`copiedLabel`), `TerminalBlock` (`labels`), `JsonTree` (`labels`), `CodeBlock` (`copyLabel`/`copiedLabel`), `MarkdownText` (`codeLabels`), `JsonBlock` (`truncatedLabel`), `ConnectionBanner` (`label`), and `Modal` (`closeLabel`) take their copy as optional props. Localized plugins pass dictionary-driven labels from their own `t` seat; a consumer that passes nothing gets those defaults. `WebBlock` does not yet follow this pattern: its source-list and fetch truncation notes and its empty-search note stay inline Chinese, pending the same label-prop treatment.

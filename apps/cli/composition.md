@@ -42,6 +42,8 @@ flowchart LR
   cfg --> plugin_dsh_base_credentials
   plugin_dsh_base_llm_pi_ai["llm-pi-ai<br/>@truly-private/omdsh-llm-pi-ai"]
   cfg --> plugin_dsh_base_llm_pi_ai
+  plugin_dsh_base_kr_claude_sonnet_4_5["kr/claude-sonnet-4.5<br/>Claude Sonnet 4.5 (Kiro)"]
+  cfg --> plugin_dsh_base_kr_claude_sonnet_4_5
   plugin_dsh_base_session_persistence_jsonl["session-persistence-jsonl<br/>@truly-private/omdsh-session-persistence-jsonl"]
   cfg --> plugin_dsh_base_session_persistence_jsonl
   plugin_dsh_base_attachment_local["attachment-local<br/>@truly-private/omdsh-attachment-local"]
@@ -185,6 +187,7 @@ flowchart LR
 | `settings` | `@truly-private/omdsh-settings-file` |
 | `credentials` | `@truly-private/omdsh-credentials-local` |
 | `llm-pi-ai` | `@truly-private/omdsh-llm-pi-ai` |
+| `kr/claude-sonnet-4.5` | `Claude Sonnet 4.5 (Kiro)` |
 | `session-persistence-jsonl` | `@truly-private/omdsh-session-persistence-jsonl` |
 | `attachment-local` | `@truly-private/omdsh-attachment-local` |
 | `session-query-sqlite` | `@truly-private/omdsh-session-query-sqlite` |

@@ -2,11 +2,19 @@
 
 English | [中文](index.zh.md)
 
-Start the Web UI through the [root README](../../../README.md#run); the command prints its URL. This guide begins after that server is running. The `dsh` process uses its invoking directory as the default filesystem location, but a fresh Web UI has no selected workspace until you add one.
+## Start from npm
+
+From the directory the agent may edit, run the reviewed downstream package directly from npm:
+
+```sh
+npx --yes @truly-private/omdsh@0.0.1 web
+```
+
+The command prints the Web UI URL; the default is `http://127.0.0.1:3080`. The `dsh` process uses its invoking directory as the default filesystem location, but a fresh Web UI has no selected workspace until you add one. The [root quick start](../../../README.md#run) covers 9Router setup, headless tasks, and auditable multi-agent orchestration with the same npm package.
 
 ## Configure a model
 
-Open **Settings → Models**, enter a DeepSeek API key, and save it. The model route becomes usable immediately without restarting the server.
+On first launch, paste the endpoint key into **Connect 9Router to get started**. The shipped first-party route already uses `http://127.0.0.1:20128/v1`, `openai-completions`, `NINE_ROUTER_API_KEY`, and the starter model `kr/claude-sonnet-4.5`. To use another model or combo, open **Settings → Models → 9Router → Edit**, fetch the available models, and apply the exact ID. No server restart is required.
 
 The [model configuration guide](./providers.md) covers other providers and custom OpenAI-compatible endpoints.
 

@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write docs/fork/integrations.md
-integrations.md: a3ffcf61d6ad6f3d5e2bc694a14d8d49ed55f0b2
-integrations.zh.md: a5ae7bc5a2f904842d67f629d22bd8733b7cfd0f
+integrations.md: 876391b68f0802b0390488eeedf9f292f9df3de9
+integrations.zh.md: 35b08cafac1e56d658b4e4be067adadbb69c19c2

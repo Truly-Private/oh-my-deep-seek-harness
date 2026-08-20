@@ -1,3 +1,4 @@
+# Optional override of the first-party profile shipped by the base bundle.
 # Merge this section into $DSH_HOME/settings.yaml.
 llm-pi-ai:
   providers:

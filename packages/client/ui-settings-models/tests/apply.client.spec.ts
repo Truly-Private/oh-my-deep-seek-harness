@@ -4,20 +4,17 @@ import { describe, expect, it, vi } from 'vitest'
 import { resolveSlotLabel } from '@truly-private/omdsh-client-ui-slots'
 import { SlotRegistry } from '@truly-private/omdsh-client-runtime/client'
 import { LocaleRuntime } from '@truly-private/omdsh-client-locale/client'
-import { TestRemote, usePinnedBrowserLanguages } from '@truly-private/omdsh-client-test-runtime'
+import { TestRemote } from '@truly-private/omdsh-client-test-runtime'
 import { apply, inject, refreshIfLoaded } from '@truly-private/omdsh-client-ui-settings-models/client'
 import { ModelsSection } from '../src/client/ModelsSection.tsx'
-import { DeepSeekOnboardingDialog } from '../src/client/DeepSeekOnboardingDialog.tsx'
+import { ProviderOnboardingDialog } from '../src/client/DeepSeekOnboardingDialog.tsx'
 import { WelcomeNotice } from '../src/client/WelcomeNotice.tsx'
 
-// The service reads its initial locale from the browser; these specs assert
-// the shipped Chinese copy, so they state the browser they assume.
-usePinnedBrowserLanguages('zh-CN')
-
-async function bench(isLoopback = true) {
+async function bench(isLoopback = true, initialLocale?: 'zh' | 'en') {
   const ctx = new Context()
   await ctx.plugin(SlotRegistry).await()
   const locale = new LocaleRuntime(ctx)
+  if (initialLocale) locale.setLocale(initialLocale)
   ctx.provide('locale', locale)
   // The plugins inject `remote`; forwarded events reach them through the
   // same `$dispatch` handoff the connection sink makes.
@@ -47,7 +44,7 @@ describe('ui-settings-models apply', () => {
   })
 
   it('registers the models nav entry for declarations before or after apply', async () => {
-    const before = await bench()
+    const before = await bench(true, 'zh')
     declare(before.slots)
     await before.ctx.plugin({ inject: [...inject], apply }).await()
     const entry = before.slots.entries('settings.section')[0]!
@@ -67,11 +64,11 @@ describe('ui-settings-models apply', () => {
       component: WelcomeNotice,
       options: { id: 'welcome-notice', order: -100 },
     })
-    const deepSeek = onboarding.find(entry => entry.options.id === 'deepseek-official')!
-    expect(deepSeek.component).toBe(DeepSeekOnboardingDialog)
-    expect(deepSeek.options).toMatchObject({ id: 'deepseek-official', order: 0 })
+    const deepSeek = onboarding.find(entry => entry.options.id === '9router')!
+    expect(deepSeek.component).toBe(ProviderOnboardingDialog)
+    expect(deepSeek.options).toMatchObject({ id: '9router', order: 0 })
     const deepSeekInjected = (
-      deepSeek.inject as unknown as () => import('../src/client/DeepSeekOnboardingDialog.tsx').DeepSeekOnboardingInjected
+      deepSeek.inject as unknown as () => import('../src/client/DeepSeekOnboardingDialog.tsx').ProviderOnboardingInjected
     )()
     expect(deepSeekInjected.hooks.models).toBe(injected.controller.store)
     expect(deepSeekInjected.api).toBeDefined()
@@ -130,7 +127,7 @@ describe('ui-settings-models apply', () => {
   })
 
   it('registers the zh/en nav dictionaries and disposes everything with the fiber', async () => {
-    const b = await bench()
+    const b = await bench(true, 'zh')
     declare(b.slots)
     const fiber = b.ctx.plugin({ inject: [...inject], apply })
     await fiber.await()
@@ -193,14 +190,14 @@ describe('pushed invalidations', () => {
     declare(b.slots)
     await b.ctx.plugin({ inject: [...inject], apply }).await()
     const entry = b.slots.entries('settings.onboarding')
-      .find(candidate => candidate.options.id === 'deepseek-official')!
+      .find(candidate => candidate.options.id === '9router')!
     const injected = (
       entry.inject as unknown as
-      () => import('../src/client/DeepSeekOnboardingDialog.tsx').DeepSeekOnboardingInjected
+      () => import('../src/client/DeepSeekOnboardingDialog.tsx').ProviderOnboardingInjected
     )()
     injected.controller.store.update((state) => { state.status = 'ready' })
     const load = vi.spyOn(injected.controller, 'load').mockResolvedValue()
-    b.ctx.remote.$dispatch('credentials/updated', ['DEEPSEEK_API_KEY'])
+    b.ctx.remote.$dispatch('credentials/updated', ['NINE_ROUTER_API_KEY'])
     expect(load).toHaveBeenCalledTimes(1)
   })
 

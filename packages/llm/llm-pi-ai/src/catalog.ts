@@ -113,6 +113,9 @@ export const SUPPORTED_THINKING_FORMATS = Object.keys(THINKING_FORMAT_GATE) as r
 
 let providerIndex: Map<string, Provider> | undefined
 
+/** Distribution presets that this adapter presents as first-party when configured. */
+const FIRST_PARTY_PROVIDER_IDS = ['9router'] as const
+
 /**
  * Installed catalog providers by id, constructed once. Each entry owns the API
  * implementations for its own models, which is why a catalog route reuses this
@@ -139,6 +142,17 @@ export function catalogProvider(provider: string): Provider | undefined {
  */
 export function catalogProviderIds(): readonly string[] {
   return getBuiltinProviders()
+}
+
+/**
+ * Adapter-owned provider presets that become first-party directory entries
+ * when a composition configures them. They are not offered by a bare adapter:
+ * unlike pi-ai catalog providers, each preset still needs its distribution's
+ * endpoint, credential reference, protocol, and starter model.
+ * @returns the first-party preset route ids.
+ */
+export function firstPartyProviderIds(): readonly string[] {
+  return FIRST_PARTY_PROVIDER_IDS
 }
 
 /**

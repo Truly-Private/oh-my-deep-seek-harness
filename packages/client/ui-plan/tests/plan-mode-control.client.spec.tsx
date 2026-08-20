@@ -17,7 +17,7 @@ import { zh } from '../src/client/locales.ts'
 
 afterEach(cleanup)
 
-// The framework-injected t seat, stubbed over the zh dictionaries (the default locale).
+// The framework-injected t seat, stubbed over the Chinese dictionaries for these copy assertions.
 const t: PlanChipProps['t'] = makeTranslate(zh, commonZh)
 
 function setup(

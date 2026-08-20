@@ -32,6 +32,21 @@ describe('dsh-base bundle', () => {
     )
     expect(rows.length).toBeGreaterThan(50)
     expect(rows.some(row => row.id === 'agent-loop')).toBe(true)
+    expect(rows.find(row => row.id === 'agent-default-model')?.config).toEqual({
+      provider: '9router',
+      model: 'kr/claude-sonnet-4.5',
+    })
+    expect(rows.find(row => row.id === 'llm-pi-ai')?.config).toEqual({
+      providers: {
+        '9router': {
+          displayName: '9Router',
+          apiKeyEnv: 'NINE_ROUTER_API_KEY',
+          api: 'openai-completions',
+          baseURL: 'http://127.0.0.1:20128/v1',
+          models: [{ id: 'kr/claude-sonnet-4.5', name: 'Claude Sonnet 4.5 (Kiro)' }],
+        },
+      },
+    })
     expect(rows.find(row => row.id === 'session-telemetry-otel')?.config?.['mode']).toEqual({
       __jsExpr: "process.env.DSH_TELEMETRY_MODE || 'DISABLED'",
     })

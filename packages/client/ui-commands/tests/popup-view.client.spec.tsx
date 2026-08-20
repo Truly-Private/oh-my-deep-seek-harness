@@ -18,7 +18,7 @@ import { makeTranslate } from '@truly-private/omdsh-client-test-runtime'
 import { zh as commonZh } from '@truly-private/omdsh-client-locale/src/locales/zh.ts'
 import { zh } from '../src/client/locales.ts'
 
-// The framework-injected t seat, stubbed over the zh dictionaries (the default locale).
+// The framework-injected t seat, stubbed over the Chinese dictionaries for these copy assertions.
 const t: Parameters<typeof PopupSelectView>[0]['t'] = makeTranslate(zh, commonZh)
 
 // jsdom has no scrollIntoView; the view calls it on the highlighted row.

@@ -150,7 +150,31 @@ describe('hand-declared providers', () => {
     // provider carries a stored profile the moment anyone corrects it.
     expect(directory.filter(entry => entry.declared).map(entry => entry.provider))
       .toEqual(['acme-gateway'])
+    expect(directory.find(entry => entry.provider === '9router')).toBeUndefined()
     expect(directory.find(entry => entry.provider === 'deepseek')?.declared).toBe(false)
+  })
+
+  it('serves the first-party 9Router route from a profile without labeling it custom', async () => {
+    const ctx = await harness({
+      providers: {
+        '9router': {
+          displayName: '9Router',
+          apiKeyEnv: KEY_ENV,
+          api: 'openai-completions',
+          baseURL: 'http://127.0.0.1:20128/v1',
+          models: [{ id: 'kr/claude-sonnet-4.5', name: 'Claude Sonnet 4.5 (Kiro)' }],
+        },
+      },
+    })
+
+    expect(ctx.llm.listProviders()).toContainEqual({ id: '9router', name: '9Router' })
+    expect(await ctx.llm.listModels('9router')).toEqual([{
+      provider: '9router',
+      id: 'kr/claude-sonnet-4.5',
+      name: 'Claude Sonnet 4.5 (Kiro)',
+      inputModalities: ['text'],
+    }])
+    expect(ctx.llm.listConfigurableProviders().find(entry => entry.provider === '9router')?.declared).toBe(false)
   })
 
   it('sizes a model the catalog cannot describe from the route\u2019s own fallbacks', () => {

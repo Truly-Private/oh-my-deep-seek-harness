@@ -23,7 +23,7 @@
   overflow: visible;
 }
 
-/* figma 34:10411: fish + title, gap 10, centered; 26/32 wt500. The preview
+/* Product mark + title, gap 10, centered; 26/32 wt500. The preview
    badge is a product addition outside that source: a mono superscript pill
    riding the title's top-right. */
 .headline {
@@ -62,7 +62,7 @@
 }
 
 /* Keep hover detection on a stationary box while the mark moves within it. */
-.fishHitbox {
+.logoHitbox {
   grid-row: 1;
   grid-column: 1;
   display: inline-flex;
@@ -70,13 +70,12 @@
   justify-content: center;
 }
 
-/* Keep the hero mark in the same primary ink as its headline. */
-.fish {
-  color: var(--dsw-alias-label-primary);
+/* The supplied raster retains its paper texture in either theme. */
+.logo {
   transform-origin: 50% 60%;
 }
 
-@keyframes hero-fish-swim {
+@keyframes hero-logo-float {
   0%, 100% {
     transform: translate(0, 0) rotate(0deg);
   }
@@ -91,8 +90,8 @@
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .fishHitbox:hover .fish {
-    animation: hero-fish-swim var(--ds-transition-duration-slow) var(--ds-ease-in-out);
+  .logoHitbox:hover .logo {
+    animation: hero-logo-float var(--ds-transition-duration-slow) var(--ds-ease-in-out);
   }
 }
 

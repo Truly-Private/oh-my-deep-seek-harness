@@ -2,11 +2,19 @@
 
 [English](index.md) | 中文
 
-先按照[根 README](../../../README.md#run)启动 Web UI；命令会打印其访问地址。本指南从服务器已经运行的状态开始。`dsh` 进程会把调用目录作为默认文件系统位置，但新的 Web UI 在添加工作区前不会选中任何工作区。
+## 从 npm 启动
+
+在允许 agent 修改的目录中，直接从 npm 运行已评审的下游包：
+
+```sh
+npx --yes @truly-private/omdsh@0.0.1 web
+```
+
+命令会打印 Web UI 地址；默认地址为 `http://127.0.0.1:3080`。`dsh` 进程会把调用目录作为默认文件系统位置，但新的 Web UI 在添加工作区前不会选中任何工作区。[根目录快速上手](../../../README.md#run)介绍如何用同一 npm 包配置 9Router、运行 headless 任务和可审计的多 agent 编排。
 
 ## 配置模型
 
-打开**设置 → 模型**，输入 DeepSeek API 密钥并保存。模型路由会立即可用，不需要重启服务器。
+首次启动时，在**连接 9Router 开始使用**中粘贴端点密钥。随发行版提供的第一方路由已经使用 `http://127.0.0.1:20128/v1`、`openai-completions`、`NINE_ROUTER_API_KEY` 和入门模型 `kr/claude-sonnet-4.5`。如需使用其他模型或 combo，请打开**设置 → 模型 → 9Router → 编辑**，获取可用模型并应用准确的 ID。无需重启服务器。
 
 [模型配置指南](./providers.md)介绍其他提供方和自定义 OpenAI 兼容端点。
 

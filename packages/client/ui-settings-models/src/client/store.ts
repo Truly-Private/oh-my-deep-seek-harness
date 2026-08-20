@@ -205,7 +205,7 @@ export function providerUsable(row: ProviderRow): boolean {
   return row.credential?.configured === true
 }
 
-/** First-run onboarding readiness derived only from the shared Models join. */
+/** First-run 9Router onboarding readiness derived only from the shared Models join. */
 export type OnboardingReadiness =
   | { kind: 'loading' }
   | { kind: 'adapter-absent' }
@@ -224,9 +224,9 @@ export type OnboardingReadiness =
 /**
  * Project first-run readiness from the provider/settings/credential join used
  * by the Models page. The step exists to leave the user with a model to talk
- * to, so ANY usable provider ends it; only when none exists does the official
- * DeepSeek route — the one route the prompt can offer a key field for — decide
- * whether prompting can help. A missing official configurable-provider
+ * to, so ANY usable provider ends it; only when none exists does the shipped
+ * 9Router route — this distribution's default — decide whether prompting can
+ * help. A missing first-party configurable-provider
  * declaration means the adapter is not repairable by navigating to Models.
  * @param state - current shared Models join snapshot.
  * @returns the onboarding state without reading a parallel fact source.
@@ -243,9 +243,11 @@ export function onboardingReadiness(state: ModelsSettingsState): OnboardingReadi
   }
   if (state.rows.some(providerUsable)) return { kind: 'provider-ready' }
   const row = state.rows.find(candidate =>
-    candidate.entry.provider === 'deepseek-official'
-    && candidate.entry.settingsNs === 'llm-deepseek'
-    && candidate.entry.settingsPath.length === 0)
+    candidate.entry.provider === '9router'
+    && candidate.entry.settingsNs === 'llm-pi-ai'
+    && candidate.entry.settingsPath.length === 2
+    && candidate.entry.settingsPath[0] === 'providers'
+    && candidate.entry.settingsPath[1] === '9router')
   if (row === undefined) return { kind: 'adapter-absent' }
   if (!row.entry.active) {
     return {

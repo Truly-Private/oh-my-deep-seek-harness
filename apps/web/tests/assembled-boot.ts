@@ -68,20 +68,13 @@ let unmount: (() => void) | undefined
 
 /**
  * Register the per-test jsdom setup and teardown the assembled boot needs:
- * English pinned before boot so role/text locators stay deterministic across
- * localized component migrations (the newEnglishPage e2e convention), the
- * observers and frame callbacks jsdom lacks, and a full reset of the document,
- * the boot globals, and the injected plugin styles afterwards.
+ * The observers and frame callbacks jsdom lacks, plus a full reset of the
+ * document, boot globals, and injected plugin styles after each test. With no
+ * Host locale preference, the assembled client uses the English product default.
  */
 export function installAssembledBootEnv(): void {
   beforeEach(() => {
     localStorage.clear()
-    // The locale service derives its provisional locale from the browser and
-    // takes an explicit choice only from Host settings, which this lane's
-    // fixture transport does not serve; pinning the navigator is what selects
-    // English here.
-    Object.defineProperty(navigator, 'languages', { value: ['en-US'], configurable: true })
-    Object.defineProperty(navigator, 'language', { value: 'en-US', configurable: true })
     document.title = 'DeepSeek Harness'
     vi.stubGlobal('ResizeObserver', ResizeObserverStub)
     vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) =>

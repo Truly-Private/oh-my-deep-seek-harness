@@ -4,6 +4,12 @@
 
 本指南假定你已按照[根 README](../../../README.md#run)启动 Web UI。模型变更会在下一次请求时生效，不需要重启服务器。
 
+## 配置第一方 9Router 提供方
+
+基础 profile 已使用 `http://127.0.0.1:20128/v1`、`openai-completions` 协议、安全的 `NINE_ROUTER_API_KEY` 凭据引用和入门模型 `kr/claude-sonnet-4.5` 注册 **9Router**。请在首次运行弹窗中粘贴端点密钥。如需使用其他模型或 combo，请打开**设置 → 模型 → 9Router → 编辑 → 自定义设置**，获取可用模型，然后应用 9Router 返回的准确 ID。
+
+9Router 是第一方条目，不是自定义提供方。自定义提供方表单仍用于发行版未预配置的其他网关。
+
 ## 配置 DeepSeek
 
 打开**设置 → 模型**。DeepSeek 卡片提供一个 API 密钥字段；输入密钥并保存。

@@ -11,21 +11,20 @@ This reference separates model-provider interoperability from host-agent interop
 | Oh My Pi (OMP) | Candidate extension | The [OMP ACP extension](../../integrations/host-bridge/README.md) registers the same tool through an independent OMP entrypoint; its real loader and keyless ACP contract pass locally. | Prove the complete OMP host matrix on Bun and record commit-matched transcripts. |
 | Hermes Agent | Candidate plugin; full bridge target | The [Hermes ACP plugin](../../integrations/hermes-dsh/README.md) executes approval-free ACP tasks and rejects permission requests when no safe callback exists. | Add and prove real Hermes approval and cancellation callbacks before calling the host bridge complete. |
 | OpenClaw | Compatibility target | OpenClaw and `dsh` can use the same local 9Router endpoint independently. | Add an OpenClaw adapter with explicit workspace and approval boundaries. |
-| 9Router | Configurable now | Add 9Router as an OpenAI-compatible custom provider through `llm-pi-ai`. | Add keyless local-gateway discovery and request-path integration tests. |
+| 9Router | First-party provider | The base bundle ships a `9router` route through `llm-pi-ai`, including onboarding, local endpoint defaults, a safe credential reference, model discovery, and the downstream default model. | Add a live request-path integration test against a pinned 9Router release. |
 
 ## Configure 9Router
 
-Start 9Router locally and confirm its OpenAI-compatible endpoint and model identifiers. In the DeepSeek Harness Web UI, open **Settings -> Models -> Add a custom provider**, then use:
+Start 9Router locally, connect Kiro AI or another upstream provider, and copy the endpoint key. On first launch, paste that key into **Connect 9Router to get started**. The base bundle supplies:
 
 | Field | Value |
 | --- | --- |
-| Provider ID | `9router` |
 | Base URL | `http://127.0.0.1:20128/v1` |
 | API protocol | `openai-completions` |
-| API key | A 9Router key or a non-secret placeholder required by the local endpoint |
-| Model | An exact model ID returned by the 9Router installation |
+| Credential reference | `NINE_ROUTER_API_KEY` |
+| Starter model | `kr/claude-sonnet-4.5` |
 
-For file-based configuration, copy [`integrations/9router/settings.yaml.example`](../../integrations/9router/settings.yaml.example) into the `llm-pi-ai` section of `$DSH_HOME/settings.yaml`, replace the placeholder model ID, and export the referenced key. Keep the loopback address unless the gateway is intentionally secured for remote access.
+The route appears as **9Router** in the Models page without using the custom-provider form. Choose **Edit**, then **Fetch available models**, to replace the starter model with any exact model or combo ID returned by the installation. For file-based overrides, copy [`integrations/9router/settings.yaml.example`](../../integrations/9router/settings.yaml.example) into the `llm-pi-ai` section of `$DSH_HOME/settings.yaml`, replace the placeholder model ID, and export the referenced key. Keep the loopback address unless the gateway is intentionally secured for remote access.
 
 ## Bridge requirements
 

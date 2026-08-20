@@ -1,6 +1,6 @@
 {
   "name": "@truly-private/omdsh-llm-pi-ai",
-  "description": "pi-ai-backed DeepSeek adapter for the DeepSeek Harness LLM seam (design-verification twin of dsh-llm-deepseek)",
+  "description": "pi-ai-backed multi-provider adapter for the DeepSeek Harness LLM seam",
   "version": "0.0.1",
   "publishConfig": {
     "access": "public"

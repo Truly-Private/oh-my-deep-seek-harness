@@ -1,6 +1,7 @@
 # Agent Note: The Settings language a fresh browser opens in comes from the browser
 
 Status: implemented
+Archived: 2026-08-20
 
 English | [中文](2026-07-31-browser-derived-initial-locale.zh.md)
 

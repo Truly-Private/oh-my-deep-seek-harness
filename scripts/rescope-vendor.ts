@@ -206,13 +206,13 @@ const EXACT_EDITS: readonly ExactEdit[] = [
         "@deepseek-ai/.+"
       ]
     },
-    "packages/util/home": {`,
+    "integrations/host-bridge": {`,
     replace: `      "ignoreDependencies": [
         "@deepseek-ai/.+",
         "@truly-private/.+"
       ]
     },
-    "packages/util/home": {`,
+    "integrations/host-bridge": {`,
     expect: 1,
   },
   {

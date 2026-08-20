@@ -11,21 +11,20 @@
 | Oh My Pi（OMP） | 候选扩展 | [OMP ACP 扩展](../../integrations/host-bridge/README.md)通过独立 OMP 入口注册同一工具；真实加载器与无密钥 ACP 约定已在本地通过。 | 在 Bun 上证明完整 OMP 主机矩阵，并记录与提交匹配的会话记录。 |
 | Hermes Agent | 候选插件；完整桥接目标 | [Hermes ACP 插件](../../integrations/hermes-dsh/README.md)执行无需审批的 ACP 任务，并在没有安全回调时拒绝权限请求。 | 在宣称主机桥接完整之前，增加并证明真实 Hermes 审批与取消回调。 |
 | OpenClaw | 兼容性目标 | OpenClaw 与 `dsh` 可以各自使用同一个本地 9Router 端点。 | 增加具备明确工作区与审批边界的 OpenClaw 适配器。 |
-| 9Router | 目前可配置 | 通过 `llm-pi-ai` 把 9Router 添加为 OpenAI 兼容自定义提供方。 | 增加无密钥本地网关发现与请求路径集成测试。 |
+| 9Router | 第一方提供方 | base bundle 通过 `llm-pi-ai` 提供 `9router` 路由，包括首次引导、本地端点默认值、安全凭据引用、模型发现和下游默认模型。 | 针对固定 9Router 版本增加真实请求路径集成测试。 |
 
 ## 配置 9Router
 
-在本地启动 9Router，并确认其 OpenAI 兼容端点与模型标识符。在 DeepSeek Harness Web UI 中打开 **Settings -> Models -> Add a custom provider**，然后使用：
+在本地启动 9Router，连接 Kiro AI 或其他上游提供方，然后复制端点密钥。首次启动时，把该密钥粘贴到**连接 9Router 开始使用**中。base bundle 已提供：
 
 | 字段 | 值 |
 | --- | --- |
-| Provider ID | `9router` |
 | Base URL | `http://127.0.0.1:20128/v1` |
 | API protocol | `openai-completions` |
-| API key | 9Router 密钥，或本地端点要求的非秘密占位值 |
-| Model | 9Router 安装返回的精确模型 ID |
+| Credential reference | `NINE_ROUTER_API_KEY` |
+| Starter model | `kr/claude-sonnet-4.5` |
 
-对于文件配置，把 [`integrations/9router/settings.yaml.example`](../../integrations/9router/settings.yaml.example) 合并到 `$DSH_HOME/settings.yaml` 的 `llm-pi-ai` 部分，替换模型 ID 占位符，并导出所引用的密钥。除非网关已经为远程访问进行有意加固，否则请保留回环地址。
+该路由会直接以 **9Router** 显示在 Models 页面中，无需使用自定义提供方表单。选择 **Edit**，再选择 **Fetch available models**，即可把入门模型替换为安装返回的任意准确模型或 combo ID。对于文件覆盖，把 [`integrations/9router/settings.yaml.example`](../../integrations/9router/settings.yaml.example) 合并到 `$DSH_HOME/settings.yaml` 的 `llm-pi-ai` 部分，替换模型 ID 占位符，并导出所引用的密钥。除非网关已经为远程访问进行有意加固，否则请保留回环地址。
 
 ## 桥接要求
 

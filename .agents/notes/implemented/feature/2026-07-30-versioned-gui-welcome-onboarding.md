@@ -6,11 +6,11 @@ English | [中文](2026-07-30-versioned-gui-welcome-onboarding.zh.md)
 
 ## Problem
 
-The GUI's credential onboarding begins with a DeepSeek-specific readiness check, but the internal-test notice applies to every user and must precede provider setup even when a credential is already configured. Treating both as independent overlays permits simultaneous dialogs, while a process-local dismissal cannot distinguish a completed notice from a window closed before acknowledgement or intentionally present revised copy once.
+The GUI's credential onboarding begins with a first-party-provider readiness check, but the internal-test notice applies to every user and must precede provider setup even when a credential is already configured. Treating both as independent overlays permits simultaneous dialogs, while a process-local dismissal cannot distinguish a completed notice from a window closed before acknowledgement or intentionally present revised copy once.
 
 ## Decision
 
-**The Settings shell coordinates ordered steps.** `settings.onboarding` remains a root-scoped list, but `ui-settings` projects its entry ids and order into one coordinator and mounts only the first incomplete step. The active registrant receives `complete()` and `openSection(id)`; no later step mounts until ownership transfers. `ui-settings-models` now registers the restored welcome notice at order `-100` and the conditional DeepSeek credential step at order `0`; their current shared presentation is owned by the [shared-modal onboarding decision](2026-08-13-shared-modal-product-onboarding.md).
+**The Settings shell coordinates ordered steps.** `settings.onboarding` remains a root-scoped list, but `ui-settings` projects its entry ids and order into one coordinator and mounts only the first incomplete step. The active registrant receives `complete()` and `openSection(id)`; no later step mounts until ownership transfers. `ui-settings-models` registers the restored welcome notice at order `-100` and the conditional first-party provider credential step at order `0`; their current shared presentation is owned by the [shared-modal onboarding decision](2026-08-13-shared-modal-product-onboarding.md).
 
 **The product welcome step is versioned and feature-owned.** The notice was historically removed by the [first-run beta notice removal](../simplification/2026-08-13-remove-first-run-beta-notice.md) and is now restored in `ui-settings-models` with new testing-stage copy. `ui-settings-general` still seats no onboarding step; the plugin that owns both current steps also owns the copy, store, and shared modal.
 
@@ -30,4 +30,4 @@ The GUI's credential onboarding begins with a DeepSeek-specific readiness check,
 
 ## Consequences
 
-A fresh profile sees the current testing-stage notice, then the conditional DeepSeek key dialog when no provider is usable. Focused store and React tests pin exact-version acknowledgement, coordinator ordering, conditional transfer, shared modal behavior, and HMR cleanup. The real Chromium scenario boots the shipped Web composition with an isolated harness home, verifies both dialogs, writes the key through the existing credential boundary, and checks that no secret reaches the DOM, ARIA, or browser console.
+A fresh profile sees the current testing-stage notice, then the conditional first-party provider key dialog when no provider is usable. Focused store and React tests pin exact-version acknowledgement, coordinator ordering, conditional transfer, shared modal behavior, and HMR cleanup. The real Chromium scenario boots the shipped Web composition with an isolated harness home, verifies both dialogs, writes the key through the existing credential boundary, and checks that no secret reaches the DOM, ARIA, or browser console.

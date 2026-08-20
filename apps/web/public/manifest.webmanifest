@@ -7,9 +7,9 @@
   "display": "fullscreen",
   "icons": [
     {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/omdsh-icon.jpg",
+      "sizes": "351x351",
+      "type": "image/jpeg",
       "purpose": "any"
     }
   ]

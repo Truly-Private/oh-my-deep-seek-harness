@@ -1,4 +1,4 @@
-# Agent Note: official DeepSeek first-run credential setup
+# Agent Note: first-party provider credential setup on first run
 
 Status: implemented
 
@@ -6,13 +6,13 @@ English | [中文](2026-07-30-deepseek-onboarding-credential-setup.zh.md)
 
 ## Problem
 
-The [web configuration plane](../architecture/2026-07-30-web-config-plane.md) makes provider settings and credentials live-editable, but a first-time user still lands on the empty conversation Hero without an actionable explanation when the shipped `deepseek-official` route has no credential. The Models page can repair that state, yet requiring the user to discover it weakens onboarding. A prompt must not confuse a missing credential with a missing adapter: the browser can store a value for an existing credential reference, but it cannot dynamically mount the `llm-deepseek` Cordis plugin.
+The [web configuration plane](../architecture/2026-07-30-web-config-plane.md) makes provider settings and credentials live-editable, but a first-time user still lands on the empty conversation Hero without an actionable explanation when the shipped first-party route has no credential. The Models page can repair that state, yet requiring the user to discover it weakens onboarding. A prompt must not confuse a missing credential with a missing adapter: the browser can store a value for an existing credential reference, but it cannot dynamically mount the route's Cordis plugin. The base distribution's target is the [`9router` route](2026-08-20-first-party-9router-provider.md).
 
 ## Decision
 
-**One readiness projection owns both Models and onboarding facts.** `ui-settings-models` keeps a single store that joins `llm.providers({})`, redacted `settings.describe({})`, and batched `credentials.describe({refs})`. The onboarding projection selects the `deepseek-official` configurable-provider entry owned by the `llm-deepseek` namespace and empty settings path, reads the effective `apiKeyEnv`, and evaluates the matching credential descriptor. A live route with the same provider id but no matching configurable-provider declaration is adapter-absent for onboarding. A configured process-environment credential is ready and remains read-only.
+**One readiness projection owns both Models and onboarding facts.** `ui-settings-models` keeps a single store that joins `llm.providers({})`, redacted `settings.describe({})`, and batched `credentials.describe({refs})`. The onboarding projection selects the `9router` configurable-provider entry owned by the `llm-pi-ai` namespace at `providers.9router`, reads the effective `apiKeyEnv`, and evaluates the matching credential descriptor. A live route with the same provider id but no matching configurable-provider declaration is adapter-absent for onboarding. A configured process-environment credential is ready and remains read-only.
 
-**The settings shell contributes ordering, not provider policy.** `ui-settings` declares a root-scoped `settings.onboarding` list slot and mounts one ordered step at a time while the current surface is the empty Hero. The active registrant receives `complete()` and a private `openSection(id)` callback; completion transfers ownership to the next entry. `ui-settings-models` registers the DeepSeek step, the preceding welcome notice, and its Models section through `slots.inject()`, so every contribution follows one client Cordis plugin's lifecycle and the dialogs cannot stack. Their common presentation is owned by the [shared-modal onboarding decision](2026-08-13-shared-modal-product-onboarding.md).
+**The settings shell contributes ordering, not provider policy.** `ui-settings` declares a root-scoped `settings.onboarding` list slot and mounts one ordered step at a time while the current surface is the empty Hero. The active registrant receives `complete()` and a private `openSection(id)` callback; completion transfers ownership to the next entry. `ui-settings-models` registers the provider step, the preceding welcome notice, and its Models section through `slots.inject()`, so every contribution follows one client Cordis plugin's lifecycle and the dialogs cannot stack. Their common presentation is owned by the [shared-modal onboarding decision](2026-08-13-shared-modal-product-onboarding.md).
 
 **The prompt renders the existing credential editor inline.** A mounted, active adapter with a resolved, writable, unconfigured reference renders `ProviderEditor` in credential-only mode inside the shared onboarding modal. The same component owns the password input, validation, `credentials.set({ref, value})`, write failures, and post-write refresh; credential-only mode emits no provider-settings mutation. Configure later completes only this coordinator pass. An absent adapter remains skipped because the browser cannot mount a missing Cordis plugin.
 
@@ -26,7 +26,7 @@ The [web configuration plane](../architecture/2026-07-30-web-config-plane.md) ma
 
 **Writing the API key into provider settings** — rejected because a literal secret would enter the settings mutation path and whole-section replacement cannot safely reconstruct redacted values. Credential storage is already the product seam and supplies immediate invalidation.
 
-**Showing the prompt when `llm-deepseek` is absent** — rejected because browser navigation has no supported operation that mounts the missing Cordis plugin.
+**Showing the prompt when `llm-pi-ai` is absent** — rejected because browser navigation has no supported operation that mounts the missing Cordis plugin.
 
 ## Consequences
 

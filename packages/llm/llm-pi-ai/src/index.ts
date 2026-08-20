@@ -61,7 +61,11 @@ import { assertUsableApiKey, LlmError } from '@truly-private/omdsh-llm'
 import type { AdapterRegistrationHandle, DirectoryRegistrationHandle, LlmConfigurableProvider } from '@truly-private/omdsh-llm'
 import { deepEqualJson, installSettingsSection, settingsNamespace } from '@truly-private/omdsh-settings'
 import { PiAiAdapter } from './adapter.ts'
-import { catalogProviderIds, catalogProviderTakesApiKey } from './catalog.ts'
+import {
+  catalogProviderIds,
+  catalogProviderTakesApiKey,
+  firstPartyProviderIds,
+} from './catalog.ts'
 import { assertServiceable, Config, resolveProfiles } from './config.ts'
 import type { ResolvedPiAiProviderProfile } from './config.ts'
 import { discoverModels } from './discovery.ts'
@@ -121,6 +125,7 @@ function directoryEntries(
   profiles: ReadonlyMap<string, ResolvedPiAiProviderProfile>,
 ): LlmConfigurableProvider[] {
   const catalog = new Set(catalogProviderIds())
+  const shipped = new Set([...catalog, ...firstPartyProviderIds()])
   const entries = new Map<string, LlmConfigurableProvider>()
   const declare = (provider: string, displayName: string): void => {
     entries.set(provider, {
@@ -128,10 +133,10 @@ function directoryEntries(
       displayName,
       settingsNs: NS,
       settingsPath: ['providers', provider],
-      // Membership of the installed catalog, not of the settings document:
-      // narrowing a shipped provider's models stores a profile too, and that
-      // route is still one pi-ai knows.
-      declared: !catalog.has(provider),
+      // Membership of the installed catalog or this distribution's preset
+      // roster, not of the settings document: narrowing a shipped provider's
+      // models stores a profile too, and that does not make the route custom.
+      declared: !shipped.has(provider),
     })
   }
   // A provider whose only native method is OAuth leaves this adapter nothing
