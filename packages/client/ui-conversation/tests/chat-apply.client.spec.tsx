@@ -6,15 +6,11 @@
 // entries. Tool composition belongs to ui-tool and its machinery spec.
 
 import { describe, expect, it, vi } from 'vitest'
-import { SlotTestRuntime, usePinnedBrowserLanguages, stubSettingsScope } from '@truly-private/omdsh-client-test-runtime'
+import { SlotTestRuntime, stubSettingsScope } from '@truly-private/omdsh-client-test-runtime'
 import { resolveSlotLabel } from '@truly-private/omdsh-client-ui-slots'
 import { LocaleRuntime } from '@truly-private/omdsh-client-locale/client'
 import type { SessionId } from '@truly-private/omdsh-client-runtime/client'
 import { apply, inject } from '@truly-private/omdsh-client-ui-conversation/client'
-
-// The service reads its initial locale from the browser; these specs assert
-// the shipped Chinese copy, so they state the browser they assume.
-usePinnedBrowserLanguages('zh-CN')
 
 const ROOT = 'root-1' as SessionId
 const CHILD = 'child-1' as SessionId
@@ -62,7 +58,7 @@ describe('apply wiring', () => {
     const entries = b.slots.entries('conversation.view')
     expect(entries.map(e => e.options.id)).toEqual(['chat'])
     // Label is a locale thunk resolving through the zh dictionary.
-    expect(resolveSlotLabel(entries[0]?.options.label)).toBe('对话')
+    expect(resolveSlotLabel(entries[0]?.options.label)).toBe('Chat')
     expect(entries[0]?.options.order).toBe(0)
     // Declaring is claiming: the chat entry's registration put the hole on
     // the ledger with the contract's kind/scope.

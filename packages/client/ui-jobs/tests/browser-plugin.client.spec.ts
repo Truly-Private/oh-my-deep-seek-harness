@@ -59,13 +59,13 @@ describe('ui-job browser half', () => {
   it('registers both dictionaries under its own namespace and releases them with the fiber', async () => {
     const { ctx, fiber } = await bench()
     const translate = ctx.locale.bind(NS)
-    expect(translate('list.aria')).toBe(zh['list.aria'])
-    ctx.locale.setLocale('en')
     expect(translate('list.aria')).toBe(en['list.aria'])
+    ctx.locale.setLocale('zh')
+    expect(translate('list.aria')).toBe(zh['list.aria'])
 
     // Withdrawn dictionaries leave the key unresolved rather than translated.
     await fiber.dispose()
-    expect(translate('list.aria')).not.toBe(en['list.aria'])
+    expect(translate('list.aria')).not.toBe(zh['list.aria'])
   })
 
   it('keeps the English dictionary key-identical to the Chinese source of truth', () => {

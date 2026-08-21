@@ -5,15 +5,10 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { SlotRegistry } from '@truly-private/omdsh-client-runtime/client'
 import type { DirectoryListing } from '@truly-private/omdsh-client-runtime/client'
 import { LocaleRuntime } from '@truly-private/omdsh-client-locale/client'
-import { usePinnedBrowserLanguages } from '@truly-private/omdsh-client-test-runtime'
 import type { DirectoryFlowOwnerProps } from '@truly-private/omdsh-client-ui-workspace/client'
 import { apply, inject } from '../src/client/index.ts'
 import { BrowseDirectoryFlow } from '../src/client/flow.ts'
 import { apply as nodeApply } from '../src/index.ts'
-
-// The service reads its initial locale from the browser; these specs assert
-// the shipped Chinese copy, so they state the browser they assume.
-usePinnedBrowserLanguages('zh-CN')
 
 afterEach(cleanup)
 

@@ -376,17 +376,29 @@ describe.skipIf(!existsSync(dshBin))('dsh BUILT bin (node lib/bin.js, no tsx)', 
     })
     const home = mkdtempSync(join(tmpdir(), 'dsh-built-headless-'))
     try {
+      writeFileSync(join(home, 'settings.yaml'), [
+        'llm-pi-ai:',
+        '  providers:',
+        '    9router:',
+        '      displayName: 9Router',
+        '      apiKeyEnv: NINE_ROUTER_API_KEY',
+        '      api: openai-completions',
+        `      baseURL: ${server.baseURL}/v1`,
+        '      models:',
+        '        - id: kr/claude-sonnet-4.5',
+        '          name: Claude Sonnet 4.5 (Kiro)',
+        '',
+      ].join('\n'))
       const result = await runBuiltBin(['--profile', 'headless', 'answer', 'from', 'the', 'published', 'entry'], {
         DSH_HOME: home,
         DSH_TELEMETRY_DISABLED: '1',
-        DEEPSEEK_API_KEY: apiKey,
-        DEEPSEEK_BASE_URL: server.baseURL,
+        NINE_ROUTER_API_KEY: apiKey,
       })
       expect(result.code, result.stderr).toBe(0)
       expect(result.stdout).toBe('published headless profile reached the mock')
       expect(result.stderr).toBe('')
       expect(server.requests.length).toBeGreaterThan(0)
-      expect(server.requests.every(request => request.path === '/chat/completions')).toBe(true)
+      expect(server.requests.every(request => request.path === '/v1/chat/completions')).toBe(true)
       expect(JSON.stringify(server.requests.map(request => request.body))).toContain('answer from the published entry')
     } finally {
       await server.close()

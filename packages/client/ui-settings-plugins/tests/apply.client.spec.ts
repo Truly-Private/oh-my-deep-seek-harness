@@ -5,16 +5,12 @@ import { describe, expect, it, vi } from 'vitest'
 import { resolveSlotLabel } from '@truly-private/omdsh-client-ui-slots'
 import { SlotRegistry } from '@truly-private/omdsh-client-runtime/client'
 import { LocaleRuntime } from '@truly-private/omdsh-client-locale/client'
-import { TestRemote, usePinnedBrowserLanguages } from '@truly-private/omdsh-client-test-runtime'
+import { TestRemote } from '@truly-private/omdsh-client-test-runtime'
 import { SettingsScopeBinder } from '@truly-private/omdsh-client-ui-settings/client'
 import { apply, inject } from '@truly-private/omdsh-client-ui-settings-plugins/client'
 import type {
   ConfigurablePluginsTabInjected, PluginsSettingsSectionInjected,
 } from '@truly-private/omdsh-client-ui-settings-plugins/client'
-
-// The service reads its initial locale from the browser; these specs assert
-// the shipped Chinese copy, so they state the browser they assume.
-usePinnedBrowserLanguages('zh-CN')
 
 async function bench() {
   const ctx = new Context()
@@ -58,11 +54,11 @@ describe('ui-settings-plugins apply', () => {
     const section = slots.entries('settings.section')[0]!
     expect(section.options).toMatchObject({ id: 'plugins', order: 15 })
     // The nav label is a locale-following thunk; owners resolve it at read time.
-    expect(resolveSlotLabel(section.options.label)).toBe('插件')
+    expect(resolveSlotLabel(section.options.label)).toBe('Plugins')
     expect(slots.spec('settings.plugins.tab')).toMatchObject({ kind: 'list', scope: 'root' })
     const tab = slots.entries('settings.plugins.tab')[0]!
     expect(tab.options).toMatchObject({ id: 'configurable', order: 0 })
-    expect(resolveSlotLabel(tab.options.label)).toBe('插件配置')
+    expect(resolveSlotLabel(tab.options.label)).toBe('Plugin configuration')
     expect(slots.spec('settings.plugin.item')).toMatchObject({ kind: 'list', scope: 'root' })
   })
 
@@ -85,7 +81,7 @@ describe('ui-settings-plugins apply', () => {
     const sectionFace = (section.inject as unknown as () => PluginsSettingsSectionInjected)()
     const initialTabs = sectionFace.hooks.tabs.getSnapshot()
     expect(initialTabs).toEqual([
-      { id: 'configurable', order: 0, label: '插件配置' },
+      { id: 'configurable', order: 0, label: 'Plugin configuration' },
     ])
     expect(sectionFace.hooks.tabs.getSnapshot()).toBe(initialTabs)
 
@@ -93,7 +89,7 @@ describe('ui-settings-plugins apply', () => {
     const unsubscribe = sectionFace.hooks.tabs.subscribe(listener)
     slots.register({ name: 'settings.plugins.tab', id: 'plain' } as never, () => null)
     expect(sectionFace.hooks.tabs.getSnapshot()).toEqual([
-      { id: 'configurable', order: 0, label: '插件配置' },
+      { id: 'configurable', order: 0, label: 'Plugin configuration' },
       { id: 'plain', order: 0, label: '' },
     ])
     unsubscribe()

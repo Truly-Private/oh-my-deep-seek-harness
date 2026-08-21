@@ -2,15 +2,10 @@ import { Context } from '@deepseek-ai/cordis'
 import { describe, expect, it, vi } from 'vitest'
 import { SlotRegistry } from '@truly-private/omdsh-client-runtime/client'
 import { LocaleRuntime } from '@truly-private/omdsh-client-locale/client'
-import { usePinnedBrowserLanguages } from '@truly-private/omdsh-client-test-runtime'
 import { apply, inject } from '@truly-private/omdsh-client-ui-workspace/client'
 import type { WorkspaceBrowserInjected, WorkspacePickerInjected } from '@truly-private/omdsh-client-ui-workspace/client'
 import { WorkspaceBrowser } from '../src/client/WorkspaceBrowser.tsx'
 import { WorkspacePicker } from '../src/client/WorkspacePicker.tsx'
-
-// The service reads its initial locale from the browser; these specs assert
-// the shipped Chinese copy, so they state the browser they assume.
-usePinnedBrowserLanguages('zh-CN')
 
 async function bench() {
   const ctx = new Context()
@@ -65,7 +60,7 @@ describe('ui-workspace apply', () => {
     // Copy rides the standard locale seat: the entry declares the namespace
     // and apply registered both dictionaries.
     expect(before.slots.entries('sidebar.workspaces')[0]!.locale).toBe('workspace')
-    expect(before.locale.bind('workspace')('session.new')).toBe('新会话')
+    expect(before.locale.bind('workspace')('session.new')).toBe('New Session')
 
     const after = await bench()
     await after.ctx.plugin({ inject: [...inject], apply }).await()

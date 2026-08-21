@@ -5,12 +5,10 @@ import { cleanup } from '@testing-library/react'
 import { LocaleRuntime } from '@truly-private/omdsh-client-locale/client'
 import { SlotRegistry } from '@truly-private/omdsh-client-runtime/client'
 import { resolveSlotLabel } from '@truly-private/omdsh-client-ui-slots'
-import { usePinnedBrowserLanguages } from '@truly-private/omdsh-client-test-runtime'
 import { apply, inject, NS } from '../src/client/index.ts'
 import { PluginInventorySettingsTab } from '../src/client/PluginInventorySettingsTab.tsx'
 import type { PluginInventorySettingsTabInjected } from '../src/client/PluginInventorySettingsTab.tsx'
 
-usePinnedBrowserLanguages('zh-CN')
 afterEach(cleanup)
 
 const EMPTY = { entries: [] }
@@ -56,7 +54,7 @@ describe('ui-settings-plugin-inventory browser plugin', () => {
     expect(entry.component).toBe(PluginInventorySettingsTab)
     expect(entry.options).toMatchObject({ id: 'all', order: 10 })
     expect(entry.locale).toBe(NS)
-    expect(resolveSlotLabel(entry.options.label)).toBe('插件列表')
+    expect(resolveSlotLabel(entry.options.label)).toBe('Plugin list')
     expect(b.list).not.toHaveBeenCalled()
 
     const injected = (entry.inject as unknown as () => PluginInventorySettingsTabInjected)()
@@ -75,6 +73,8 @@ describe('ui-settings-plugin-inventory browser plugin', () => {
 
     const stop = declare(b.slots)
     await vi.waitFor(() => { expect(b.slots.entries('settings.plugins.tab')).toHaveLength(1) })
+    b.locale.setLocale('zh')
+    expect(resolveSlotLabel(b.slots.entries('settings.plugins.tab')[0]!.options.label)).toBe('插件列表')
     b.locale.setLocale('en')
     expect(resolveSlotLabel(b.slots.entries('settings.plugins.tab')[0]!.options.label)).toBe('Plugin list')
 
