@@ -12,7 +12,7 @@ The documentation root opened the Chinese guide and used the upstream DeepSeek w
 
 The documentation root redirects to the existing English guide under `/en/`. The language menu continues to expose the Chinese route tree, so the change selects the public entry language without removing maintained translations.
 
-The navigation lockup, favicon, site title, description, GitHub link, and edit links identify Oh My DeepSeek Harness and the Truly-Private repository. VitePress serves `apps/web/public/omdsh-logo.jpg` and its square `apps/web/public/omdsh-icon.jpg` derivative from the documentation base path. The static page chrome references those authoritative assets without tracing, regenerating, or maintaining another copy.
+The navigation lockup, favicon, site title, description, GitHub link, edit links, and projected links to unpublished repository sources identify Oh My DeepSeek Harness and the Truly-Private repository. VitePress serves `apps/web/public/omdsh-logo.jpg` and its square `apps/web/public/omdsh-icon.jpg` derivative from the documentation base path. The static page chrome references those authoritative assets without tracing, regenerating, or maintaining another copy.
 
 ## Alternatives considered
 
