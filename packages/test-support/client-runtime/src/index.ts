@@ -43,6 +43,9 @@ export { makeTranslate } from './translate.ts'
 /** Erased register face for the internal root call (the public declaration contract holds the typing). */
 type ErasedRegister = (options: object, component: unknown) => () => void
 
+/** String-valued slot keys visible to this test runtime's program. */
+type SlotKey = Extract<keyof SlotMap, string>
+
 /**
  * One rendered slot's local view, from {@link SlotTestRuntime.renderSlot}:
  * the renderer's own `[data-slot]` outlet anchor is the snapshot root
@@ -50,7 +53,7 @@ type ErasedRegister = (options: object, component: unknown) => () => void
  * output), Testing Library queries are bound inside it, and `update`
  * re-renders with new owner props.
  */
-export interface SlotView<K extends keyof SlotMap & string> {
+export interface SlotView<K extends SlotKey> {
   /** The renderer's `<div data-slot="<key>">` anchor around the slot's rendered output. */
   readonly container: HTMLElement
   /** Testing Library queries scoped to {@link SlotView.container}. */
@@ -143,7 +146,7 @@ export class TestRoot {
    */
   async declare<const D extends ChildrenDecl>(
     children: D,
-    frame: SlotComponent<ComposedProps<'root', never, keyof NoInfer<D> & keyof SlotMap & string, undefined, object>>,
+    frame: SlotComponent<ComposedProps<'root', never, Extract<keyof NoInfer<D>, SlotKey>, undefined, object>>,
   ): Promise<void> {
     await this.stabilize(() => {
       // Erased hop (same pattern as SlotRegistry's own implementation arm);
@@ -313,7 +316,7 @@ export class SlotTestRuntime {
    * @param owner - owner props share for the render site.
    * @returns the slot-local view (snapshot container, scoped queries, owner updates).
    */
-  renderSlot<K extends keyof SlotMap & string>(key: K, owner: OwnerOf<K>): SlotView<K> {
+  renderSlot<K extends SlotKey>(key: K, owner: OwnerOf<K>): SlotView<K> {
     if (!this.autoDeclared.has(key)) {
       throw new Error(`renderSlot('${key}') without declare() — declare the key first (or use root.declare for a custom frame)`)
     }
@@ -341,7 +344,7 @@ export class SlotTestRuntime {
    * @param scopeKey - session id for session-scope slots; omit for root scope.
    * @returns the live store instance.
    */
-  storeOf(key: keyof SlotMap & string, scopeKey?: string): StoreInstanceLike {
+  storeOf(key: SlotKey, scopeKey?: string): StoreInstanceLike {
     if (this.host === undefined) {
       throw new Error('storeOf before renderRoot() — the host face exists only inside the installed renderer')
     }
