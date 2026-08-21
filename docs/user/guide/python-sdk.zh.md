@@ -17,8 +17,8 @@
 克隆仓库以使用其中的可运行示例，创建虚拟环境，并安装 SDK 及其同版本内置运行时：
 
 ```sh
-git clone https://github.com/deepseek-ai/deepseek-harness.git
-cd deepseek-harness
+git clone https://github.com/Truly-Private/oh-my-deepseek-harness.git
+cd oh-my-deepseek-harness
 python -m venv .venv
 . .venv/bin/activate
 python -m pip install deepseek-harness-sdk

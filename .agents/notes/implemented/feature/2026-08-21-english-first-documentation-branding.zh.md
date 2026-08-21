@@ -12,7 +12,7 @@ Status: implemented
 
 文档根路径重定向到 `/en/` 下现有的英文指南。语言菜单继续提供中文路由树，因此该变更会选择公开入口语言，但不会删除已维护的译文。
 
-导航栏组合标识、favicon、站点标题、描述、GitHub 链接和页面编辑链接均标识 Oh My DeepSeek Harness 与 Truly-Private 仓库。VitePress 从文档基础路径提供 `apps/web/public/omdsh-logo.jpg` 及其方形衍生资源 `apps/web/public/omdsh-icon.jpg`。静态页面外观会引用这些权威资源，而不会描摹、重新生成或维护其他副本。
+导航栏组合标识、favicon、站点标题、描述、GitHub 链接、页面编辑链接以及指向未发布仓库源文件的投影链接，均标识 Oh My DeepSeek Harness 与 Truly-Private 仓库。VitePress 从文档基础路径提供 `apps/web/public/omdsh-logo.jpg` 及其方形衍生资源 `apps/web/public/omdsh-icon.jpg`。静态页面外观会引用这些权威资源，而不会描摹、重新生成或维护其他副本。
 
 ## 曾考虑的替代方案
 

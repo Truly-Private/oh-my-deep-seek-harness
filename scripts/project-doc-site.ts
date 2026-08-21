@@ -15,7 +15,8 @@ import { gfm } from 'micromark-extension-gfm'
 import type { Nodes } from 'mdast'
 import { docsPages, type DocsLocale, type DocsPage } from '../website/docs.ts'
 
-const REPOSITORY_URL = 'https://github.com/deepseek-ai/deepseek-harness'
+const REPOSITORY_SLUG = 'Truly-Private/oh-my-deepseek-harness'
+const REPOSITORY_URL = `https://github.com/${REPOSITORY_SLUG}`
 const root = resolve(import.meta.dirname, '..')
 const generatedRoot = resolve(root, 'website/.generated')
 
@@ -209,7 +210,7 @@ function githubTarget(
   image: boolean,
 ): string {
   const path = repoPath(absPath, repoRoot)
-  if (image) return `https://raw.githubusercontent.com/deepseek-ai/deepseek-harness/${repositoryRef}/${path}${suffix}`
+  if (image) return `https://raw.githubusercontent.com/${REPOSITORY_SLUG}/${repositoryRef}/${path}${suffix}`
   const kind = lstatSync(absPath).isDirectory() ? 'tree' : 'blob'
   const lineSuffix = line === undefined ? suffix : `#L${line}`
   return `${REPOSITORY_URL}/${kind}/${repositoryRef}/${path}${lineSuffix}`
