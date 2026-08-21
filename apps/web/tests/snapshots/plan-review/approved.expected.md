@@ -47,8 +47,8 @@
 - button "Commands":
   - img
 - 'button "Access mode, current: Workspace Write"': Workspace Write
-- button "Select model, current DeepSeek-V4-Flash":
-  - text: DeepSeek-V4-Flash
+- button "Select model, current Claude Sonnet 4.5 (Kiro)":
+  - text: Claude Sonnet 4.5 (Kiro)
   - img
 - button "4% of context used"
 - button "Send message" [disabled]

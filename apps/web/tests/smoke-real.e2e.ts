@@ -1,6 +1,6 @@
-// Real-host smoke: spawn `dsh web` with a real key, walk the full flow
+// Real-host smoke: spawn `dsh web` with a real 9Router key, walk the full flow
 // list in a real chromium, screenshot every screen into .artifacts/ for the
-// figma comparison pass. Self-skips without DEEPSEEK_API_KEY (repo e2e
+// figma comparison pass. Self-skips without NINE_ROUTER_API_KEY (repo e2e
 // convention); vitest.web.config.ts loads the repo-root .env before this file
 // runs (the CLI only auto-loads .env from its cwd — a temp dir here, so
 // sessions never land in the repo's .sessions).
@@ -138,6 +138,24 @@ async function detailsTrack(page: Page): Promise<number> {
   return Number(cols.split(' ').pop()!.replace('px', ''))
 }
 
+/** Point the shipped first-party route at one test-owned OpenAI-compatible endpoint. */
+function writeNineRouterSettings(harnessHome: string, baseURL: string): void {
+  mkdirSync(harnessHome, { recursive: true })
+  writeFileSync(join(harnessHome, 'settings.yaml'), [
+    'llm-pi-ai:',
+    '  providers:',
+    '    9router:',
+    '      displayName: 9Router',
+    '      apiKeyEnv: NINE_ROUTER_API_KEY',
+    '      api: openai-completions',
+    `      baseURL: ${baseURL}`,
+    '      models:',
+    '        - id: kr/claude-sonnet-4.5',
+    '          name: Claude Sonnet 4.5 (Kiro)',
+    '',
+  ].join('\n'))
+}
+
 // Readiness gate: `dsh web` serves every production manifest plugin; until every UI
 // plugin's client bundle exists and exports apply, the loader fail-louds and
 // the frame never appears.
@@ -165,7 +183,7 @@ describe('dsh web keyless CLI smoke', () => {
         cwd: sessionsDir,
         env: {
           ...process.env,
-          DEEPSEEK_API_KEY: 'keyless-web-no-call',
+          NINE_ROUTER_API_KEY: 'keyless-web-no-call',
           DSH_HOME: join(sessionsDir, '.dsh'),
           DSH_AGENTS_HOME: join(sessionsDir, '.agents'),
           TSX_TSCONFIG_PATH: join(REPO_ROOT, 'tsconfig.json'),
@@ -223,6 +241,8 @@ describe('dsh web keyless CLI smoke', () => {
     await new Promise<void>(resolve => provider.listen(0, '127.0.0.1', resolve))
     const address = provider.address()
     if (address === null || typeof address === 'string') throw new Error('mock provider did not bind a TCP port')
+    const harnessHome = join(workspace, '.dsh')
+    writeNineRouterSettings(harnessHome, `http://127.0.0.1:${address.port}/v1`)
     const tsxLoader = pathToFileURL(createRequire(join(REPO_ROOT, 'package.json')).resolve('tsx')).href
     const child = spawn(
       process.execPath,
@@ -231,9 +251,8 @@ describe('dsh web keyless CLI smoke', () => {
         cwd: workspace,
         env: {
           ...process.env,
-          DEEPSEEK_API_KEY: 'keyless-web-workspace',
-          DEEPSEEK_BASE_URL: `http://127.0.0.1:${address.port}`,
-          DSH_HOME: join(workspace, '.dsh'),
+          NINE_ROUTER_API_KEY: 'keyless-web-workspace',
+          DSH_HOME: harnessHome,
           DSH_AGENTS_HOME: join(workspace, '.agents'),
           TSX_TSCONFIG_PATH: join(REPO_ROOT, 'tsconfig.json'),
         },
@@ -306,8 +325,12 @@ describe('dsh web keyless CLI smoke', () => {
       request.setEncoding('utf8')
       request.on('data', (chunk: string) => { body += chunk })
       request.on('end', () => {
-        const parsed = JSON.parse(body) as { max_tokens?: number; messages?: unknown[] }
-        const titleRequest = parsed.max_tokens === 64
+        const parsed = JSON.parse(body) as {
+          max_completion_tokens?: number
+          max_tokens?: number
+          messages?: unknown[]
+        }
+        const titleRequest = parsed.max_tokens === 64 || parsed.max_completion_tokens === 64
         const mainRequest = !titleRequest && body.includes(promptMarker)
         response.writeHead(200, { 'content-type': 'text/event-stream' })
         if (!mainRequest) {
@@ -336,6 +359,8 @@ describe('dsh web keyless CLI smoke', () => {
     await new Promise<void>(resolve => provider.listen(0, '127.0.0.1', resolve))
     const address = provider.address()
     if (address === null || typeof address === 'string') throw new Error('mock provider did not bind a TCP port')
+    const harnessHome = join(workspace, '.dsh')
+    writeNineRouterSettings(harnessHome, `http://127.0.0.1:${address.port}/v1`)
     const tsxLoader = pathToFileURL(createRequire(join(REPO_ROOT, 'package.json')).resolve('tsx')).href
     const child = spawn(
       process.execPath,
@@ -344,9 +369,8 @@ describe('dsh web keyless CLI smoke', () => {
         cwd: workspace,
         env: {
           ...process.env,
-          DEEPSEEK_API_KEY: 'keyless-web-retry',
-          DEEPSEEK_BASE_URL: `http://127.0.0.1:${address.port}`,
-          DSH_HOME: join(workspace, '.dsh'),
+          NINE_ROUTER_API_KEY: 'keyless-web-retry',
+          DSH_HOME: harnessHome,
           TSX_TSCONFIG_PATH: join(REPO_ROOT, 'tsconfig.json'),
         },
         stdio: ['ignore', 'pipe', 'pipe'],
@@ -418,6 +442,8 @@ describe('dsh web keyless CLI smoke', () => {
     await new Promise<void>(resolve => provider.listen(0, '127.0.0.1', resolve))
     const address = provider.address()
     if (address === null || typeof address === 'string') throw new Error('mock provider did not bind a TCP port')
+    const harnessHome = join(workspace, '.dsh')
+    writeNineRouterSettings(harnessHome, `http://127.0.0.1:${address.port}/v1`)
     const tsxLoader = pathToFileURL(createRequire(join(REPO_ROOT, 'package.json')).resolve('tsx')).href
     const child = spawn(
       process.execPath,
@@ -426,10 +452,9 @@ describe('dsh web keyless CLI smoke', () => {
         cwd: workspace,
         env: {
           ...process.env,
-          DEEPSEEK_API_KEY: 'keyless-web-code-mode',
-          DEEPSEEK_BASE_URL: `http://127.0.0.1:${address.port}`,
+          NINE_ROUTER_API_KEY: 'keyless-web-code-mode',
           DSH_TOOLS_MODE: 'code',
-          DSH_HOME: join(workspace, '.dsh'),
+          DSH_HOME: harnessHome,
           DSH_AGENTS_HOME: join(workspace, '.agents'),
           TSX_TSCONFIG_PATH: join(REPO_ROOT, 'tsconfig.json'),
         },
@@ -466,7 +491,7 @@ describe('dsh web keyless CLI smoke', () => {
   })
 })
 
-describe.skipIf(!process.env.DEEPSEEK_API_KEY || notReady.length > 0)('web smoke (real host, real key)', () => {
+describe.skipIf(!process.env.NINE_ROUTER_API_KEY || notReady.length > 0)('web smoke (real host, real key)', () => {
   let child: ChildProcess
   let sessionsDir: string
   let baseUrl: string
@@ -534,7 +559,7 @@ describe.skipIf(!process.env.DEEPSEEK_API_KEY || notReady.length > 0)('web smoke
   it('empty-state first send completes a real model round', async () => {
     onTestFailed(() => saveFailureShot(page, 'w5-first-round'))
     // This scenario spawns its own server against a fresh $DSH_HOME with the
-    // DeepSeek credential inherited from the environment, so no onboarding
+    // 9Router credential inherited from the environment, so no onboarding
     // step mounts and the page is immediately interactive.
     // Fresh world: connect a Workspace so the composer starts live.
     await connectFreshWorkspace(page, sessionsDir)
