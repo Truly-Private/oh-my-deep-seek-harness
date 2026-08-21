@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-subprocess-local",
   "description": "Local-subprocess implementation of the DeepSeek Harness subprocess seam",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publishConfig": {
     "access": "public"
   },

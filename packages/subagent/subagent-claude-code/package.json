@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-subagent-claude-code",
   "description": "One-shot Claude Code subagent provider over the official Agent SDK",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publishConfig": {
     "access": "public"
   },

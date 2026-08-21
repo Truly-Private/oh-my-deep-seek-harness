@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-client-ui-tool",
   "description": "Client Tool call-tree renderer and keyed per-tool presentation slot",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publishConfig": {
     "access": "public"
   },

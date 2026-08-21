@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-client-ui-slots",
   "description": "Slot registry pure core: SlotMap declaration merging, single register composition API, four-share props types, store-seat types, renderer install seam",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publishConfig": {
     "access": "public"
   },

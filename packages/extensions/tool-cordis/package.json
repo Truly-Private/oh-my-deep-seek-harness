@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-tool-cordis",
   "description": "Self-referential cordis toolset: inspect the live runtime, mount and dispose model-written plugins",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publishConfig": {
     "access": "public"
   },

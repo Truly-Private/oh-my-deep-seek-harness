@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-subprocess",
   "description": "Subprocess seam (ctx.subprocess) for the DeepSeek Harness — managed process groups, bounded spill-backed output, and escalated kills behind one abstract service",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publishConfig": {
     "access": "public"
   },

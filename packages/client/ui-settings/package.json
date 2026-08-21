@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-client-ui-settings",
   "description": "Settings domain base plugin: the settings-namespace scope service and the canonical settings slot-type contract",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publishConfig": {
     "access": "public"
   },
