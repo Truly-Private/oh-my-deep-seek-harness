@@ -1,0 +1,37 @@
+Build a complete, polished browser game with Three.js. Give it an original name and visual identity; it may be inspired by falling-block puzzle games and the spatial challenge of fitting pieces around obstacles, but do not copy another game's branding, assets, sounds, or interface.
+
+Core game
+
+- Render an inviting 3D 6×6 board with exactly seven pegs occupying seven distinct cells. Generate a new solvable peg layout for every round.
+- Use a finite set of 3D polyomino-style pieces that can cover every unblocked cell exactly when correctly arranged. Pieces must have readable depth, lighting, shadows, and distinct materials or colors.
+- Present one piece at a time above the board. The player cannot choose or reorder the incoming piece. It descends on a visible timer, creating real pressure without becoming unfair.
+- Let the player move and rotate the incoming piece. Show a clear translucent ghost on the board whenever the current orientation has a valid landing position.
+- A manual drop or the fall timer places the piece at the current valid ghost position. If the timer expires without a valid player-selected position, the game chooses a valid remaining placement when one exists.
+- Already placed pieces remain draggable or otherwise selectable, rotatable, and replaceable. Moving a placed piece must preserve collision and board-boundary rules.
+- If the timer expires and the piece has no valid placement, animate the board tipping over and the pieces bursting outward, then end the run with an unmistakable loss state and a quick restart path.
+- Completing the board awards points based primarily on completion speed, with a visible round bonus and running total, then immediately creates a fresh solvable board and continues endlessly with a new peg layout and piece order.
+
+Friend challenges
+
+- Make randomness seedable. The URL query `?seed=<integer>` must reproduce the peg layouts and piece stream for a challenge.
+- Provide a fully local challenge flow that works without accounts or a backend: create/copy a challenge link, show the current seed, store personal bests locally, and produce a concise shareable score summary. You may add an optional online leaderboard design, but the complete game and challenge loop must work offline after installation.
+- Make the score comparable: include completed boards, total score, elapsed time, and seed in the result summary.
+
+Interaction and presentation
+
+- Support mouse and touch. Add clear keyboard controls and show them in the interface. Prevent accidental page scrolling during board interaction.
+- Give the game a strong creative art direction, satisfying movement, responsive feedback, and restrained sound with a mute control. Favor clarity over excessive effects.
+- Keep the camera and controls usable on desktop and mobile. Provide reduced-motion behavior and do not rely on color alone for valid/invalid placement feedback.
+- Include a short first-run explanation, pause/resume, restart, and visible incoming-piece timer.
+
+Implementation and verification
+
+- Create the app in the empty working directory. Use a conventional npm project with dependencies installed locally; do not load Three.js or other runtime code from a CDN.
+- `npm run dev -- --host 0.0.0.0 --port 4173` must start the development server, and `npm run build` must succeed.
+- Keep game rules, seeded generation, collision checks, placement, scoring, and render/input code separated enough to test and maintain.
+- Add focused automated tests for deterministic seeded generation, legal placement/collision behavior, and scoring. `npm test` must run once and exit. Run the tests and production build before finishing.
+- Add these stable hooks without changing the visual design: `data-testid="game-canvas"`, `data-testid="score"`, `data-testid="round"`, `data-testid="start-game"`, and `data-testid="restart-game"` on their corresponding elements.
+- When `demo=1` is in the URL, use seed `314159` if no seed was supplied, open on a screenshot-ready start screen, and make the first active-piece fall interval at least 12 seconds so automated visual capture is deterministic.
+- Write a concise README with controls, rules, challenge-link behavior, commands, and the architecture choices that matter to future maintainers.
+
+You own the product design and implementation details not fixed above. Surprise us with coherent mechanics, visual polish, and one memorable original touch. Deliver a runnable game rather than a mockup, and verify the actual result.

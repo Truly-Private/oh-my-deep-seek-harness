@@ -89,6 +89,12 @@
         "tsx"
       ]
     },
+    "integrations/comparison-bench": {
+      "entry": [
+        "capture.mjs",
+        "pi-runner.ts"
+      ]
+    },
     "packages/util/home": {
       "entry": [
         "tests/**/*.spec.ts"

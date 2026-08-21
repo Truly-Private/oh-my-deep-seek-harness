@@ -9,6 +9,8 @@ packages:
   - apps/*
   # Downstream host-agent extensions and their shared ACP client.
   - integrations/host-bridge
+  # Reproducible Pi baseline-versus-harness comparison runner.
+  - integrations/comparison-bench
   - website
   # The runnable demo leaves join as ONE workspace member: examples/package.json
   # declares the union of every leaf's cordis.yml plugins as workspace:*, so a
