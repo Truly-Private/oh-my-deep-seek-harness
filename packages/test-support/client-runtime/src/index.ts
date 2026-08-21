@@ -10,10 +10,6 @@
  * machinery — everything mounts the production implementations.
  * @module @truly-private/omdsh-client-test-runtime
  */
-/* oxlint-disable typescript/no-redundant-type-constituents --
- * `keyof SlotMap & string` is the declare-merge key pattern (see ui-slots):
- * this compilation unit sees only the runtime's 'root' row, but consumer
- * programs merge their own keys in; the rule fires on the narrow-map view. */
 import { Context, Inject } from '@deepseek-ai/cordis'
 import type { Fiber, Plugin } from '@deepseek-ai/cordis'
 import { createElement, Fragment, useSyncExternalStore } from 'react'
@@ -43,7 +39,6 @@ export { TestRemote } from './remote.ts'
 export { conversationSnapshot, workspaceListState } from './fixtures.ts'
 export type { SessionBehaviorOverrides, SessionFixture, Stabilizer } from './fixtures.ts'
 export { makeTranslate } from './translate.ts'
-export { usePinnedBrowserLanguages } from './locale-env.ts'
 
 /** Erased register face for the internal root call (the public declaration contract holds the typing). */
 type ErasedRegister = (options: object, component: unknown) => () => void
