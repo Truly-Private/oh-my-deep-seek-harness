@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-client-locale",
   "description": "Locale plugin: Host-backed zh/en preference, English product default, locale snapshots, and typed namespace dictionaries",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publishConfig": {
     "access": "public"
   },

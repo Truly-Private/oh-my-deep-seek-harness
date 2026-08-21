@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-settings",
   "description": "Abstract user-settings seam (ctx.settings) for the DeepSeek Harness",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publishConfig": {
     "access": "public"
   },
