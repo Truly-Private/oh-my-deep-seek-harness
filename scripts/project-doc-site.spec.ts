@@ -251,7 +251,7 @@ describe('rewriteMarkdown', () => {
 })
 
 describe('docsPages locale routes', () => {
-  it('redirects both locale roots to their locale-relative quick-start page', () => {
+  it('redirects the public root to English and the English locale root to its quick start', () => {
     const homes = docsPages.filter(page => page.sidebar === null)
     expect(homes.map(page => page.route).sort()).toEqual(['en/index.md', 'index.md'])
     for (const page of homes) {
@@ -259,8 +259,10 @@ describe('docsPages locale routes', () => {
       const projected = projectedPageContent(source, page)
       expect(projected).toContain('layout: false')
       expect(projected).toContain('http-equiv: refresh')
-      expect(projected).toContain('content: 0; url=./guide/quickstart')
-      expect(projected).not.toContain('# DeepSeek Harness')
+      expect(projected).toContain(page.locale === 'root'
+        ? 'content: 0; url=./en/guide/quickstart'
+        : 'content: 0; url=./guide/quickstart')
+      expect(projected).not.toContain('# Oh My DeepSeek Harness')
     }
   })
 

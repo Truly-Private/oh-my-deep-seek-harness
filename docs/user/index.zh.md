@@ -3,9 +3,9 @@ layout: false
 head:
   - - meta
     - http-equiv: refresh
-      content: 0; url=./guide/quickstart
+      content: 0; url=./en/guide/quickstart
 ---
 
-# DeepSeek Harness
+# Oh My DeepSeek Harness
 
 [English](index.md) | 中文

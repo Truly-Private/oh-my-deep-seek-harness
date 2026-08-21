@@ -147,14 +147,14 @@ const sharedTheme: Pick<DefaultTheme.Config, 'search' | 'socialLinks' | 'editLin
     },
   },
   socialLinks: [
-    { icon: 'github', link: 'https://github.com/deepseek-ai/deepseek-harness' },
+    { icon: 'github', link: 'https://github.com/Truly-Private/oh-my-deepseek-harness' },
   ],
   editLink: {
     pattern: ({ frontmatter }: PageData) => {
       const data: unknown = frontmatter
       const editSource: unknown = typeof data === 'object' && data !== null ? Reflect.get(data, 'editSource') : undefined
       if (typeof editSource !== 'string') throw new Error('Projected documentation page has no editSource frontmatter.')
-      return `https://github.com/deepseek-ai/deepseek-harness/edit/master/${editSource}`
+      return `https://github.com/Truly-Private/oh-my-deepseek-harness/edit/master/${editSource}`
     },
     text: '在 GitHub 上编辑此页',
   },
@@ -163,13 +163,15 @@ const sharedTheme: Pick<DefaultTheme.Config, 'search' | 'socialLinks' | 'editLin
 /** Site base path, carrying the leading and trailing slashes VitePress requires. */
 const base = process.env.DOCS_BASE ?? '/'
 
-/**
- * The DeepSeek wordmark, inlined so its `currentColor` fills follow the active
- * theme. An `<img>` would freeze the mark at the colors the file declares.
- */
-const wordmark = readFileSync(resolve(import.meta.dirname, '../public/wordmark.svg'), 'utf8')
-  .trim()
-  .replace('<svg ', '<svg class="dsh-wordmark" ')
+/** Owned product artwork embedded into the static page chrome. */
+const logoDataUri = `data:image/jpeg;base64,${readFileSync(
+  resolve(import.meta.dirname, '../../apps/web/public/omdsh-logo.jpg'),
+).toString('base64')}`
+
+/** Square derivative of the owned artwork embedded as the browser icon. */
+const iconDataUri = `data:image/jpeg;base64,${readFileSync(
+  resolve(import.meta.dirname, '../../apps/web/public/omdsh-icon.jpg'),
+).toString('base64')}`
 
 /**
  * Styles the default theme does not provide, carried inline because the site
@@ -183,20 +185,18 @@ const wordmark = readFileSync(resolve(import.meta.dirname, '../public/wordmark.s
  * stay behind a query only Firefox answers.
  */
 const siteStyle = `
-.dsh-lockup { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
-.dsh-wordmark { display: block; height: 22px; width: auto; color: var(--vp-c-text-1); }
-.dsh-tag {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid var(--vp-c-brand-soft);
-  border-radius: 999px;
-  padding: 1px 9px;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 18px;
-  white-space: nowrap;
-  color: var(--vp-c-brand-1);
+.omdsh-lockup { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.omdsh-logo {
+  display: block;
+  width: 30px;
+  height: 26px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+  object-fit: cover;
+  background: #f7f4ed;
 }
+.omdsh-name { color: var(--vp-c-text-1); font-weight: 600; white-space: nowrap; }
+@media (max-width: 640px) { .omdsh-name { font-size: 14px; } }
 
 .VPSidebar::-webkit-scrollbar { width: 6px; }
 .VPSidebar::-webkit-scrollbar-track { background: transparent; }
@@ -236,23 +236,21 @@ const scrollbarScript = `
 `
 
 /**
- * Navigation-bar title: the DeepSeek wordmark and the release-stage tag.
+ * Navigation-bar title: the owned product mark and distribution name.
  * VitePress renders `siteTitle` as HTML.
  *
- * @param previewTag - Localized release-stage label.
  * @returns Markup placed beside the navigation-bar home link.
  */
-function siteTitle(previewTag: string): string {
-  return `<span class="dsh-lockup">${wordmark}<span class="dsh-tag">${previewTag}</span></span>`
+function siteTitle(): string {
+  return `<span class="omdsh-lockup"><img class="omdsh-logo" src="${logoDataUri}" alt="" aria-hidden="true"><span class="omdsh-name">Oh My DeepSeek Harness</span></span>`
 }
 
 export default withMermaid({
-  title: 'DeepSeek Harness',
-  description: '用于构建 Agent Harness 的插件化 SDK',
+  title: 'Oh My DeepSeek Harness',
+  description: 'A security-review-first DeepSeek Harness distribution for English-speaking operators and integrators.',
   base,
   head: [
-    // VitePress leaves head hrefs untouched, so the base belongs here explicitly.
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}favicon.svg` }],
+    ['link', { rel: 'icon', type: 'image/jpeg', href: iconDataUri }],
     ['style', {}, siteStyle],
     ['script', {}, scrollbarScript],
   ],
@@ -265,7 +263,7 @@ export default withMermaid({
       label: '简体中文',
       lang: 'zh-CN',
       themeConfig: {
-        siteTitle: siteTitle('技术预览'),
+        siteTitle: siteTitle(),
         nav: [
           { text: '入门', link: landingLink('root', guideModules.root.guide), activeMatch: '^/guide/' },
           ...moduleNav('root'),
@@ -291,7 +289,7 @@ export default withMermaid({
       lang: 'en-US',
       link: '/en/',
       themeConfig: {
-        siteTitle: siteTitle('Preview'),
+        siteTitle: siteTitle(),
         nav: [
           { text: 'Guide', link: landingLink('en', guideModules.en.guide), activeMatch: '^/en/guide/' },
           ...moduleNav('en'),
@@ -306,7 +304,7 @@ export default withMermaid({
             const data: unknown = frontmatter
             const editSource: unknown = typeof data === 'object' && data !== null ? Reflect.get(data, 'editSource') : undefined
             if (typeof editSource !== 'string') throw new Error('Projected documentation page has no editSource frontmatter.')
-            return `https://github.com/deepseek-ai/deepseek-harness/edit/master/${editSource}`
+            return `https://github.com/Truly-Private/oh-my-deepseek-harness/edit/master/${editSource}`
           },
           text: 'Edit this page on GitHub',
         },
