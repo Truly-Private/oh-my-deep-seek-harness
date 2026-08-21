@@ -7,17 +7,20 @@ import { readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { fileURLToPath } from 'node:url'
 import { afterEach, expect, it } from 'vitest'
-import { CallId } from '@deepseek-ai/dsh-llm'
-import { canonicalPath, writableRoots } from '@deepseek-ai/dsh-sandbox'
-import { SessionId } from '@deepseek-ai/dsh-session'
+import { credentialRef } from '@truly-private/omdsh-credentials'
+import { CallId } from '@truly-private/omdsh-llm'
+import { canonicalPath, writableRoots } from '@truly-private/omdsh-sandbox'
+import { SessionId } from '@truly-private/omdsh-session'
+import { settingsNamespace } from '@truly-private/omdsh-settings'
 // Empty type imports carry the tools/sandboxPolicy/approval Context merges.
-import type {} from '@deepseek-ai/dsh-tools'
-import type {} from '@deepseek-ai/dsh-sandbox-policy'
-import type {} from '@deepseek-ai/dsh-user-approval'
-import type {} from '@deepseek-ai/dsh-permission-presets'
-import type {} from '@deepseek-ai/dsh-agent-presets'
-import type {} from '@deepseek-ai/dsh-commands'
-import type {} from '@deepseek-ai/dsh-system-prompt'
+import type {} from '@truly-private/omdsh-tools'
+import type {} from '@truly-private/omdsh-sandbox-policy'
+import type {} from '@truly-private/omdsh-user-approval'
+import type {} from '@truly-private/omdsh-permission-presets'
+import type {} from '@truly-private/omdsh-agent-presets'
+import type {} from '@truly-private/omdsh-agent-default-model'
+import type {} from '@truly-private/omdsh-commands'
+import type {} from '@truly-private/omdsh-system-prompt'
 import { launchWebScaffold, type WebScaffold } from './scaffold.ts'
 
 const FILE_REFERENCE_PROMPT = fileURLToPath(new URL(
@@ -74,8 +77,39 @@ afterEach(async () => {
 })
 
 it('assembles the shipped Web catalog, file-reference guidance, and confined access default', async () => {
-  scaffold = await launchWebScaffold()
+  scaffold = await launchWebScaffold({ firstPartyMissingCredential: true })
   const ctx = scaffold.ctx
+  expect(ctx.agentDefaultModel.currentSelection()).toEqual({
+    provider: '9router',
+    model: 'kr/claude-sonnet-4.5',
+  })
+  expect(ctx.llm.listProviders()).toContainEqual({ id: '9router', name: '9Router' })
+  expect(await ctx.llm.listModels('9router')).toEqual([{
+    provider: '9router',
+    id: 'kr/claude-sonnet-4.5',
+    name: 'Claude Sonnet 4.5 (Kiro)',
+    inputModalities: ['text'],
+  }])
+  expect(ctx.llm.listConfigurableProviders()).toContainEqual({
+    provider: '9router',
+    displayName: '9Router',
+    settingsNs: 'llm-pi-ai',
+    settingsPath: ['providers', '9router'],
+    declared: false,
+  })
+  expect(ctx.settings.get(settingsNamespace('llm-pi-ai'))).toMatchObject({
+    providers: {
+      '9router': {
+        apiKeyEnv: 'NINE_ROUTER_API_KEY',
+        api: 'openai-completions',
+        baseURL: 'http://127.0.0.1:20128/v1',
+      },
+    },
+  })
+  await expect(ctx.credentials.describe(credentialRef('NINE_ROUTER_API_KEY'))).resolves.toEqual({
+    configured: false,
+    writable: true,
+  })
   // The catalog belongs to an AGENT, not to the process: every model-facing row
   // now lives in a preset mounted under one session's scope, so the global
   // layer holds nothing and a caller must name the agent to see anything. This

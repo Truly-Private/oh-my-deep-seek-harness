@@ -11,7 +11,7 @@
  *
  * ```yaml
  * - id: llm
- *   name: '@deepseek-ai/dsh-llm-pi-ai'
+ *   name: '@truly-private/omdsh-llm-pi-ai'
  *   config:
  *     providers:
  *       # Catalog route: everything but the credential comes from pi-ai.
@@ -52,16 +52,20 @@
  *               max: ultra
  * ```
  *
- * @module @deepseek-ai/dsh-llm-pi-ai
+ * @module @truly-private/omdsh-llm-pi-ai
  */
 
 import type { Context } from '@deepseek-ai/cordis'
-import { launchEnvironmentOf } from '@deepseek-ai/dsh-launch-environment'
-import { assertUsableApiKey, LlmError } from '@deepseek-ai/dsh-llm'
-import type { AdapterRegistrationHandle, DirectoryRegistrationHandle, LlmConfigurableProvider } from '@deepseek-ai/dsh-llm'
-import { deepEqualJson, installSettingsSection, settingsNamespace } from '@deepseek-ai/dsh-settings'
+import { launchEnvironmentOf } from '@truly-private/omdsh-launch-environment'
+import { assertUsableApiKey, LlmError } from '@truly-private/omdsh-llm'
+import type { AdapterRegistrationHandle, DirectoryRegistrationHandle, LlmConfigurableProvider } from '@truly-private/omdsh-llm'
+import { deepEqualJson, installSettingsSection, settingsNamespace } from '@truly-private/omdsh-settings'
 import { PiAiAdapter } from './adapter.ts'
-import { catalogProviderIds, catalogProviderTakesApiKey } from './catalog.ts'
+import {
+  catalogProviderIds,
+  catalogProviderTakesApiKey,
+  firstPartyProviderIds,
+} from './catalog.ts'
 import { assertServiceable, Config, resolveProfiles } from './config.ts'
 import type { ResolvedPiAiProviderProfile } from './config.ts'
 import { discoverModels } from './discovery.ts'
@@ -121,6 +125,7 @@ function directoryEntries(
   profiles: ReadonlyMap<string, ResolvedPiAiProviderProfile>,
 ): LlmConfigurableProvider[] {
   const catalog = new Set(catalogProviderIds())
+  const shipped = new Set([...catalog, ...firstPartyProviderIds()])
   const entries = new Map<string, LlmConfigurableProvider>()
   const declare = (provider: string, displayName: string): void => {
     entries.set(provider, {
@@ -128,10 +133,10 @@ function directoryEntries(
       displayName,
       settingsNs: NS,
       settingsPath: ['providers', provider],
-      // Membership of the installed catalog, not of the settings document:
-      // narrowing a shipped provider's models stores a profile too, and that
-      // route is still one pi-ai knows.
-      declared: !catalog.has(provider),
+      // Membership of the installed catalog or this distribution's preset
+      // roster, not of the settings document: narrowing a shipped provider's
+      // models stores a profile too, and that does not make the route custom.
+      declared: !shipped.has(provider),
     })
   }
   // A provider whose only native method is OAuth leaves this adapter nothing

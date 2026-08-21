@@ -3,13 +3,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, waitFor, within } from '@testing-library/react'
 import { useState } from 'react'
-import { LocaleRuntime } from '@deepseek-ai/dsh-client-locale/client'
-import type { ISession, SessionId } from '@deepseek-ai/dsh-client-runtime/client'
-import type { PropsRenderSlots } from '@deepseek-ai/dsh-client-ui-slots'
-import { SlotTestRuntime, usePinnedBrowserLanguages, stubSettingsScope } from '@deepseek-ai/dsh-client-test-runtime'
-import { apply, inject, type EmptyWorkspaceOwnerProps } from '@deepseek-ai/dsh-client-ui-conversation/client'
-
-usePinnedBrowserLanguages('zh-CN')
+import { LocaleRuntime } from '@truly-private/omdsh-client-locale/client'
+import type { ISession, SessionId } from '@truly-private/omdsh-client-runtime/client'
+import type { PropsRenderSlots } from '@truly-private/omdsh-client-ui-slots'
+import { SlotTestRuntime, stubSettingsScope } from '@truly-private/omdsh-client-test-runtime'
+import { apply, inject, type EmptyWorkspaceOwnerProps } from '@truly-private/omdsh-client-ui-conversation/client'
 
 const SID = 's1' as SessionId
 
@@ -99,10 +97,10 @@ describe('resident composer', () => {
     fireEvent.click(textarea!)
     expect(view.getByTestId('workspace-probe').textContent).toBe('true:0')
     expect(textarea!.getAttribute('aria-expanded')).toBe('true')
-    fireEvent.click(view.getByRole('button', { name: '选择工作区' }))
+    fireEvent.click(view.getByRole('button', { name: 'Choose workspace' }))
     fireEvent.keyDown(textarea!, { key: 'Enter' })
     expect(view.getByTestId('workspace-probe').textContent).toBe('true:0')
-    expect(view.getByRole('button', { name: '选择工作区' })).toBeTruthy()
+    expect(view.getByRole('button', { name: 'Choose workspace' })).toBeTruthy()
     await runtime.dispose()
   })
 
@@ -128,7 +126,7 @@ describe('resident composer', () => {
     const scrollBody = view.container.querySelector('[data-conversation-scroll]')!
     const composerSeat = view.container.querySelector('[data-composer-seat]')!
     const textarea = view.container.querySelector('textarea')!
-    const workspaceChip = view.getByRole('button', { name: '选择工作区' })
+    const workspaceChip = view.getByRole('button', { name: 'Choose workspace' })
     const workspaceProbe = view.getByTestId('workspace-probe')
     expect(textarea.disabled).toBe(false)
     expect(textarea.readOnly).toBe(true)
@@ -147,7 +145,7 @@ describe('resident composer', () => {
     expect(view.container.querySelector('[data-conversation-scroll]')).toBe(scrollBody)
     expect(view.container.querySelector('[data-composer-seat]')).toBe(composerSeat)
     expect(view.container.querySelector('textarea')).toBe(textarea)
-    expect(view.getByRole('button', { name: '选择工作区' })).toBe(workspaceChip)
+    expect(view.getByRole('button', { name: 'Choose workspace' })).toBe(workspaceChip)
     expect(view.getByTestId('workspace-probe')).toBe(workspaceProbe)
     expect(workspaceProbe.textContent).toBe('true:1')
     expect(textarea.disabled).toBe(false)
@@ -221,7 +219,7 @@ describe('title projection across assembled surfaces', () => {
   it('one summary update re-labels the current-session crumb', async () => {
     const runtime = await bench()
     const view = runtime.renderRoot()
-    const hierarchy = view.getByRole('navigation', { name: '会话层级' })
+    const hierarchy = view.getByRole('navigation', { name: 'Session hierarchy' })
     expect(within(hierarchy).getByRole('button', { name: 'S' }).hasAttribute('disabled')).toBe(true)
 
     await runtime.sessions.updateSummary(SID, { displayTitle: '修订标题', title: '修订标题' })

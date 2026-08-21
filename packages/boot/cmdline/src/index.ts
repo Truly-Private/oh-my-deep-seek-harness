@@ -1,5 +1,5 @@
 /**
- * @deepseek-ai/dsh-cmdline — the command line a dsh launcher hands to the app
+ * @truly-private/omdsh-cmdline — the command line a dsh launcher hands to the app
  * it boots.
  *
  * The launcher parses only its own flags (`--profile`, `--patch`, the config
@@ -13,7 +13,7 @@
  * can inject that service and read it from lazily resolved config —
  * `port: !!js ctx.webStartup.port ?? 3080` — so a flag beats the value written
  * beside it. No row has launcher-level command-line status.
- * @module @deepseek-ai/dsh-cmdline
+ * @module @truly-private/omdsh-cmdline
  */
 
 import type { Command } from 'commander'

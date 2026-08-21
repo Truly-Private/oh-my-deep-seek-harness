@@ -1,13 +1,13 @@
 {
-  "name": "@deepseek-ai/dsh-terminal-bash",
+  "name": "@truly-private/omdsh-terminal-bash",
   "description": "Persistent shell PTY backend over the DeepSeek Harness subprocess terminal primitive",
-  "version": "0.1.0-rc.5",
+  "version": "0.0.1",
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
+    "url": "git+https://github.com/Truly-Private/oh-my-deepseek-harness.git",
     "directory": "packages/terminal/terminal-bash"
   },
   "type": "module",
@@ -32,27 +32,27 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-agent": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
-    "@deepseek-ai/dsh-terminal": "workspace:^",
-    "@deepseek-ai/dsh-sandbox": "workspace:^",
-    "@deepseek-ai/dsh-sandbox-policy": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-subprocess": "workspace:^",
+    "@truly-private/omdsh-agent": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-terminal": "workspace:^",
+    "@truly-private/omdsh-sandbox": "workspace:^",
+    "@truly-private/omdsh-sandbox-policy": "workspace:^",
+    "@truly-private/omdsh-session": "workspace:^",
+    "@truly-private/omdsh-subprocess": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^"
   },
   "dependencies": {
     "@deepseek-ai/schemastery": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-agent": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
-    "@deepseek-ai/dsh-terminal": "workspace:^",
-    "@deepseek-ai/dsh-sandbox": "workspace:^",
-    "@deepseek-ai/dsh-sandbox-policy": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-subprocess": "workspace:^",
-    "@deepseek-ai/dsh-subprocess-local": "workspace:^",
+    "@truly-private/omdsh-agent": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-terminal": "workspace:^",
+    "@truly-private/omdsh-sandbox": "workspace:^",
+    "@truly-private/omdsh-sandbox-policy": "workspace:^",
+    "@truly-private/omdsh-session": "workspace:^",
+    "@truly-private/omdsh-subprocess": "workspace:^",
+    "@truly-private/omdsh-subprocess-local": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^"
   }
 }

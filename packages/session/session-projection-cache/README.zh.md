@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-session-projection-cache
+# @truly-private/omdsh-session-projection-cache
 
 [English](README.md) | 中文
 
@@ -39,7 +39,7 @@
 
 ```yaml
 - id: session-projection-cache
-  name: '@deepseek-ai/dsh-session-projection-cache'
+  name: '@truly-private/omdsh-session-projection-cache'
   config:
     writeEveryEvents: 200
     writeIntervalMs: 5000

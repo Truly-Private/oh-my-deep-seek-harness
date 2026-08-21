@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-session-telemetry
+# @truly-private/omdsh-session-telemetry
 
 English | [中文](README.zh.md)
 

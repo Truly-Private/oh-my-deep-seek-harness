@@ -24,7 +24,7 @@
 
 /* Rail geometry (figma rail spec): 36x36 control boxes centered in the 56px
    rail (10px side padding), 12px vertical rhythm, 18px from the rail top to
-   the whale's box (24px to the 24-wide whale glyph itself). */
+   the logo's box (24px to the 24-wide image itself). */
 .root.collapsed {
   padding: 18px 10px 6px;
 }
@@ -107,10 +107,8 @@
   justify-content: flex-start;
 }
 
-/* Brand group (figma I133:7632): the full wordmark rides the text ink
-   (figma flows: the main-screen instance is black; blue is brand
-   emphasis only). A button only in behavior (New Session shortcut): the
-   pointer cursor is the sole affordance — no hover chrome on the mark. */
+/* Brand group. A button only in behavior (New Session shortcut): the pointer
+   cursor is the sole affordance, with no hover chrome on the mark. */
 .brand {
   flex: 1;
   min-width: 0;
@@ -148,9 +146,9 @@
   height: 36px;
 }
 
-/* Rail logo swap: collapsed, the toggle rests as the whale mark (brand ink,
-   no hover circle) and hovering reveals the panel icon — the expand
-   affordance (figma sidebar-hover flow). Expanded it is a plain panel icon. */
+/* Rail logo swap: collapsed, the toggle rests as the product mark with no
+   hover circle; hovering reveals the panel icon. Expanded it is a plain panel
+   icon. */
 .collapsed .toggle .panelIcon {
   display: none;
 }
@@ -159,7 +157,7 @@
   display: inline;
 }
 
-.collapsed .toggle:hover .railFish {
+.collapsed .toggle:hover .railLogo {
   display: none;
 }
 

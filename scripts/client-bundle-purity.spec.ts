@@ -14,7 +14,7 @@ interface CssModulePlugin {
   load?: (this: { addWatchFile: (id: string) => void }, id: string) => Promise<unknown>
 }
 
-function clientConfigs(id = '@deepseek-ai/dsh-client-test') {
+function clientConfigs(id = '@truly-private/omdsh-client-test') {
   return clientBundle(id, ['lib/types/index.js', 'lib/types/invariant.js'])(
     { env: { DSH_BUILD_FACE: 'client' } },
   ).filter(config => config.platform === 'browser')
@@ -22,7 +22,7 @@ function clientConfigs(id = '@deepseek-ai/dsh-client-test') {
 
 describe('client bundle build faces', () => {
   it('watches source in development and consumes emitted JavaScript in the Client build', () => {
-    const bundle = clientBundle('@deepseek-ai/dsh-client-test', ['lib/types/index.js'])
+    const bundle = clientBundle('@truly-private/omdsh-client-test', ['lib/types/index.js'])
     const development = bundle({ env: {} }).find(config => config.platform === 'browser')
     const artifact = bundle({ env: { DSH_BUILD_FACE: 'client' } })
       .find(config => config.platform === 'browser')
@@ -60,46 +60,46 @@ describe('client bundle purity gate', () => {
   const resolveId = purityResolveId()
 
   it('leaves platform table entries and non-scoped specifiers alone', () => {
-    expect(resolveId('@deepseek-ai/dsh-client-ui-slots')).toBeNull()
-    expect(resolveId('@deepseek-ai/dsh-client-web-react')).toBeNull()
-    expect(resolveId('@deepseek-ai/dsh-client-ui-primitives')).toBeNull()
+    expect(resolveId('@truly-private/omdsh-client-ui-slots')).toBeNull()
+    expect(resolveId('@truly-private/omdsh-client-web-react')).toBeNull()
+    expect(resolveId('@truly-private/omdsh-client-ui-primitives')).toBeNull()
     expect(resolveId('react')).toBeNull()
     expect(resolveId('zod')).toBeNull()
   })
 
   it('rejects retired table entries (web-react/store left the 8-entry seed)', () => {
-    expect(() => resolveId('@deepseek-ai/dsh-client-web-react/store')).toThrow(/purity/)
+    expect(() => resolveId('@truly-private/omdsh-client-web-react/store')).toThrow(/purity/)
   })
 
   it('lets inline-safe wire layers inline', () => {
-    expect(resolveId('@deepseek-ai/dsh-host-apiproxy/api')).toBeNull()
-    expect(resolveId('@deepseek-ai/dsh-session/surface')).toBeNull()
-    expect(resolveId('@deepseek-ai/dsh-brand')).toBeNull()
+    expect(resolveId('@truly-private/omdsh-host-apiproxy/api')).toBeNull()
+    expect(resolveId('@truly-private/omdsh-session/surface')).toBeNull()
+    expect(resolveId('@truly-private/omdsh-brand')).toBeNull()
   })
 
   it('lets exact generated Remote contributions inline without admitting their package implementation', () => {
-    expect(resolveId('@deepseek-ai/dsh-goal/remote')).toBeNull()
-    expect(() => resolveId('@deepseek-ai/dsh-goal')).toThrow(/purity/)
-    expect(() => resolveId('@deepseek-ai/dsh-goal/client')).toThrow(/purity/)
-    expect(() => resolveId('@deepseek-ai/dsh-goal/remote/nested')).toThrow(/purity/)
+    expect(resolveId('@truly-private/omdsh-goal/remote')).toBeNull()
+    expect(() => resolveId('@truly-private/omdsh-goal')).toThrow(/purity/)
+    expect(() => resolveId('@truly-private/omdsh-goal/client')).toThrow(/purity/)
+    expect(() => resolveId('@truly-private/omdsh-goal/remote/nested')).toThrow(/purity/)
   })
 
-  it('throws on any other @deepseek-ai leak', () => {
-    expect(() => resolveId('@deepseek-ai/dsh-agent')).toThrow(/purity/)
-    expect(() => resolveId('@deepseek-ai/dsh-client-web')).toThrow(/purity/)
+  it('throws on any other harness package leak', () => {
+    expect(() => resolveId('@truly-private/omdsh-agent')).toThrow(/purity/)
+    expect(() => resolveId('@truly-private/omdsh-client-web')).toThrow(/purity/)
   })
 
   it('throws on cross-plugin value imports — bare plugin names and /client subpaths alike (the rewrite arm is gone)', () => {
-    expect(() => resolveId('@deepseek-ai/dsh-client-connection')).toThrow(/purity/)
-    expect(() => resolveId('@deepseek-ai/dsh-client-runtime')).toThrow(/purity/)
-    expect(() => resolveId('@deepseek-ai/dsh-client-ui-layout/client')).toThrow(/purity/)
+    expect(() => resolveId('@truly-private/omdsh-client-connection')).toThrow(/purity/)
+    expect(() => resolveId('@truly-private/omdsh-client-runtime')).toThrow(/purity/)
+    expect(() => resolveId('@truly-private/omdsh-client-ui-layout/client')).toThrow(/purity/)
   })
 
   it('carries exactly one documented temporary exemption: runtime/client (store engine pending rehoming)', () => {
-    expect(resolveId('@deepseek-ai/dsh-client-runtime/client')).toBeNull()
+    expect(resolveId('@truly-private/omdsh-client-runtime/client')).toBeNull()
     const clientChannels = CLIENT_EXTERNALS.filter(
-      entry => entry.startsWith('@deepseek-ai/') && entry.endsWith('/client'))
-    expect(clientChannels).toEqual(['@deepseek-ai/dsh-client-runtime/client'])
+      entry => entry.startsWith('@truly-private/') && entry.endsWith('/client'))
+    expect(clientChannels).toEqual(['@truly-private/omdsh-client-runtime/client'])
   })
 })
 
@@ -110,7 +110,7 @@ describe('client bundle debug artifacts', () => {
   })
 
   it('maps first-party sources to their repository package paths', () => {
-    const configs = clientConfigs('@deepseek-ai/dsh-client-ui-goal')
+    const configs = clientConfigs('@truly-private/omdsh-client-ui-goal')
     const outputOptions = configs[0]?.outputOptions
     if (typeof outputOptions !== 'object' || outputOptions === null) throw new Error('client output options missing')
     const transform = outputOptions.sourcemapPathTransform
@@ -118,12 +118,12 @@ describe('client bundle debug artifacts', () => {
 
     const source = transform('../src/client/GoalBar.tsx', clientSourceMapPath('client/ui-goal'))
     expect(source).toBe('../../../packages/client/ui-goal/src/client/GoalBar.tsx')
-    const resolved = new URL(source, 'https://dsh.test/plugins/@deepseek-ai/dsh-client-ui-goal/client.js.map')
+    const resolved = new URL(source, 'https://dsh.test/plugins/@truly-private/omdsh-client-ui-goal/client.js.map')
     expect(resolved.pathname).toBe('/packages/client/ui-goal/src/client/GoalBar.tsx')
   })
 
   it('maps dual-face host sources to the host package group', () => {
-    const configs = clientConfigs('@deepseek-ai/dsh-host-directory-picker-native')
+    const configs = clientConfigs('@truly-private/omdsh-host-directory-picker-native')
     const outputOptions = configs[0]?.outputOptions
     if (typeof outputOptions !== 'object' || outputOptions === null) throw new Error('client output options missing')
     const transform = outputOptions.sourcemapPathTransform
@@ -134,7 +134,7 @@ describe('client bundle debug artifacts', () => {
   })
 
   it('maps inlined workspace sources to packages and leaves dependencies outside it unchanged', () => {
-    const configs = clientConfigs('@deepseek-ai/dsh-client-connection')
+    const configs = clientConfigs('@truly-private/omdsh-client-connection')
     const outputOptions = configs[0]?.outputOptions
     if (typeof outputOptions !== 'object' || outputOptions === null) throw new Error('client output options missing')
     const transform = outputOptions.sourcemapPathTransform
@@ -143,7 +143,7 @@ describe('client bundle debug artifacts', () => {
     const sourceMapPath = clientSourceMapPath('client/connection')
     const workspaceSource = transform('../../../host/apiproxy/src/api/rpc.ts', sourceMapPath)
     expect(workspaceSource).toBe('../../../packages/host/apiproxy/src/api/rpc.ts')
-    const resolved = new URL(workspaceSource, 'https://dsh.test/plugins/@deepseek-ai/dsh-client-connection/client.js.map')
+    const resolved = new URL(workspaceSource, 'https://dsh.test/plugins/@truly-private/omdsh-client-connection/client.js.map')
     expect(resolved.pathname).toBe('/packages/host/apiproxy/src/api/rpc.ts')
 
     const dependencySource = '../../../../node_modules/.pnpm/zod@4.4.3/node_modules/zod/index.js'

@@ -1,8 +1,12 @@
-# oh-my-deepseek-harness
+# oh-my-deep-seek-harness
 
 English | [中文](README.zh.md)
 
-`oh-my-deepseek-harness` is a security-review-first downstream distribution of [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) for English-speaking operators and integrators. It intentionally trails upstream when review needs more time.
+<p align="center">
+  <img src="assets/omdsh-readme-hero.jpg" alt="oh-my-deep-seek-harness whale rider emblem" width="1000">
+</p>
+
+`oh-my-deep-seek-harness` is a security-review-first downstream distribution of [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) for English-speaking operators and integrators. It intentionally trails upstream when review needs more time.
 
 The distribution prioritizes Pi and Oh My Pi (OMP), Hermes Agent, OpenClaw, and 9Router interoperability. [Current integration status](docs/fork/integrations.md) distinguishes working paths from compatibility targets.
 
@@ -22,43 +26,83 @@ DeepSeek Harness is currently in _developer preview_ and is iterating rapidly. *
 
 ## Quick starts
 
-### Chat with the coding agent
+> [!NOTE]
+>
+> The reviewed downstream package is `@truly-private/omdsh`. npm package names are lowercase, so use this spelling even though the GitHub organization is `Truly-Private`. Pin `@0.0.1` when you need the exact first release.
 
-Install `Node.js`, then run:
+### Use DeepSeek Harness with 9Router
+
+This path sends model requests through [9Router](https://github.com/decolua/9router). DeepSeek Harness does not need `DEEPSEEK_API_KEY`; 9Router owns the credentials for the upstream providers and accounts you connect.
+
+#### 1. Install the prerequisites
+
+Install Node.js `^22.19.0` or `>=24.0.0`, then verify npm can resolve this distribution:
 
 ```sh
-npx @deepseek-ai/dsh web
+node --version
+npm view @truly-private/omdsh@0.0.1 version
 ```
 
-The command starts the Web UI, served at `http://127.0.0.1:3080` by default. See [Web UI guide](docs/user/guide/index.md).
-
-### Connect 9Router
-
-In another terminal, install and start [9Router](https://github.com/decolua/9router), then use its dashboard to connect an upstream provider or account, create a 9Router endpoint key, and note the exact model or combo ID you want to use:
+Install 9Router:
 
 ```sh
 npm install -g 9router
+```
+
+#### 2. Start 9Router
+
+Run 9Router and leave this terminal open:
+
+```sh
 9router
 ```
 
-In the DeepSeek Harness Web UI, open **Settings → Models → Add a custom provider** and enter:
+9Router opens its dashboard and serves its OpenAI-compatible API at `http://127.0.0.1:20128/v1`.
+
+#### 3. Configure a model in 9Router
+
+In the 9Router dashboard, connect **Kiro AI** for the shipped `kr/claude-sonnet-4.5` starter model. You may instead connect another provider or create a combo; in that case, copy its exact model or combo ID. Copy the 9Router endpoint key from the dashboard.
+
+#### 4. Start DeepSeek Harness in your project
+
+Open a second terminal in the directory the coding agent may edit:
+
+```sh
+cd /path/to/project
+npx --yes @truly-private/omdsh@0.0.1 web
+```
+
+Open the printed URL; the default is `http://127.0.0.1:3080`.
+
+#### 5. Connect the first-party 9Router provider
+
+On first launch, the Web UI opens **Connect 9Router to get started**. Paste the 9Router endpoint key and choose **Save and continue**. The shipped setup already supplies:
 
 | Field | Value |
 | --- | --- |
-| Provider ID | `9router` |
 | Base URL | `http://127.0.0.1:20128/v1` |
 | API protocol | `openai-completions` |
-| API key | The endpoint key from the 9Router dashboard |
-| Model | The exact 9Router model or combo ID |
+| Credential reference | `NINE_ROUTER_API_KEY` |
+| Starter model | `kr/claude-sonnet-4.5` |
 
-Save the provider, start a session, and select its model once. The harness stores the credential under `$DSH_HOME` and uses that selection as the default for new Web UI sessions and headless runs. For file-based setup, use the [`settings.yaml` example](integrations/9router/settings.yaml.example) and the [9Router integration guide](docs/fork/integrations.md#configure-9router).
+9Router now appears as a first-party row under **Settings → Models**, not under **Add a custom provider**. To use another model or combo, choose **Edit → Customized settings → Fetch available models**, select the exact ID from step 3, and apply the change. The custom-provider form remains available for other OpenAI-compatible gateways.
+
+#### 6. Select the model and run a task
+
+Choose the project directory as the workspace, start a new session, open the model picker, and select the model under **9Router**. Then send a task such as:
+
+> Inspect this repository, explain its main packages, and identify one useful improvement.
+
+A successful response confirms that requests are passing through 9Router. The harness stores the endpoint key under `$DSH_HOME` using the `NINE_ROUTER_API_KEY` reference. The shipped 9Router model is the initial default; selecting another model makes it the default for new Web UI sessions and headless runs.
+
+For file-based setup, use the [`settings.yaml` example](integrations/9router/settings.yaml.example) and the [9Router integration guide](docs/fork/integrations.md#configure-9router).
 
 ### Run one coding task
 
-After selecting the 9Router model above, run the headless profile from the directory the agent may edit:
+After completing the 9Router steps above, run the headless profile from the directory the agent may edit:
 
 ```sh
-npx @deepseek-ai/dsh --profile headless \
+npx --yes @truly-private/omdsh@0.0.1 --profile headless \
   "Inspect this repository, fix the failing tests, and verify the result."
 ```
 
@@ -69,23 +113,22 @@ The command creates and persists a fresh session, prints the final response, and
 Enable Code Mode and explicitly request a workflow when agents should coordinate typed tool calls in code:
 
 ```sh
-DSH_TOOLS_MODE=code npx @deepseek-ai/dsh --profile headless \
+DSH_TOOLS_MODE=code npx --yes @truly-private/omdsh@0.0.1 --profile headless \
   "From a run_code program, use the workflow tool to ask independent agents to review security, tests, and architecture. Return one evidence-backed report."
 ```
 
 The workflow runs a model-written JavaScript program whose `agent()` calls fan out child sessions, while Code Mode lets the parent compose typed tool calls in TypeScript. The root and child sessions persist under `~/.dsh/sessions` or `$DSH_HOME/sessions`. Each event carries a monotonic sequence number and epoch-millisecond timestamp; the logs cover model-visible inputs, tool calls and results, Code Mode sub-dispatches, and workflow lifecycle. Session headers preserve parent-child lineage. Start the Web UI with the same harness home to inspect the saved run.
 
-Use `npx @deepseek-ai/dsh --profile headless --dump-config` to inspect the effective plugin tree without booting it. The [plugin configuration catalog](https://deepseek-harness.github.io/deepseek-harness/reference/config-catalog) lists every configurable plugin, and the [persistence catalog](docs/persistence-catalog.md) defines the recorded event types.
+Use `npx --yes @truly-private/omdsh@0.0.1 --profile headless --dump-config` to inspect the effective plugin tree without booting it. The [plugin configuration catalog](https://deepseek-harness.github.io/deepseek-harness/reference/config-catalog) lists every configurable plugin, and the [persistence catalog](docs/persistence-catalog.md) defines the recorded event types.
 
 ### Run from source
 
-To run from a repository checkout:
+When the harness repository itself is the workspace, use its source launcher:
 
 ```sh
 git clone https://github.com/Truly-Private/oh-my-deepseek-harness.git
 cd oh-my-deepseek-harness
 pnpm install
-pnpm run build
 pnpm dsh web
 ```
 

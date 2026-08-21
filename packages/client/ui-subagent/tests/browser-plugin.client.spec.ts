@@ -12,16 +12,16 @@
  * source's own contract.
  */
 import { Context } from '@deepseek-ai/cordis'
-import { stubSettingsScope } from '@deepseek-ai/dsh-client-test-runtime'
+import { stubSettingsScope } from '@truly-private/omdsh-client-test-runtime'
 import { describe, expect, it } from 'vitest'
 import {
   SlotRegistry, type ConversationSnapshot, type SessionId, type SessionListState,
   type SessionSummary, type SubagentAddress,
-} from '@deepseek-ai/dsh-client-runtime/client'
-import type { ComposerChainProps } from '@deepseek-ai/dsh-client-ui-conversation/client'
-import { InputTriggerService } from '@deepseek-ai/dsh-client-ui-input-trigger/client'
-import type { ClientSessionContext, InputTriggerSource } from '@deepseek-ai/dsh-client-ui-input-trigger/client'
-import { apply as applyLocale, inject as localeInject } from '@deepseek-ai/dsh-client-locale/client'
+} from '@truly-private/omdsh-client-runtime/client'
+import type { ComposerChainProps } from '@truly-private/omdsh-client-ui-conversation/client'
+import { InputTriggerService } from '@truly-private/omdsh-client-ui-input-trigger/client'
+import type { ClientSessionContext, InputTriggerSource } from '@truly-private/omdsh-client-ui-input-trigger/client'
+import { apply as applyLocale, inject as localeInject } from '@truly-private/omdsh-client-locale/client'
 import {
   SubagentCatalogAction, type SubagentCatalogInjected,
 } from '../src/client/SubagentCatalogAction.tsx'

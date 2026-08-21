@@ -8,85 +8,85 @@ The headless snapshot composition combines the real DeepSeek adapter and coding 
 ```mermaid
 flowchart LR
   cfg["examples/headless-agent<br/>cordis.yml"]
-  plugin_headless_settings["settings<br/>@deepseek-ai/dsh-settings-file"]
+  plugin_headless_settings["settings<br/>@truly-private/omdsh-settings-file"]
   cfg --> plugin_headless_settings
-  plugin_headless_credentials["credentials<br/>@deepseek-ai/dsh-credentials-local"]
+  plugin_headless_credentials["credentials<br/>@truly-private/omdsh-credentials-local"]
   cfg --> plugin_headless_credentials
-  plugin_headless_llm_deepseek["llm-deepseek<br/>@deepseek-ai/dsh-llm-deepseek"]
+  plugin_headless_llm_deepseek["llm-deepseek<br/>@truly-private/omdsh-llm-deepseek"]
   cfg --> plugin_headless_llm_deepseek
-  plugin_headless_subprocess["subprocess<br/>@deepseek-ai/dsh-subprocess-local"]
+  plugin_headless_subprocess["subprocess<br/>@truly-private/omdsh-subprocess-local"]
   cfg --> plugin_headless_subprocess
-  plugin_headless_bash["bash<br/>@deepseek-ai/dsh-bash-local"]
+  plugin_headless_bash["bash<br/>@truly-private/omdsh-bash-local"]
   cfg --> plugin_headless_bash
-  plugin_headless_agent_spine["agent-spine<br/>@deepseek-ai/dsh-agent-spine-demo"]
+  plugin_headless_agent_spine["agent-spine<br/>@truly-private/omdsh-agent-spine-demo"]
   cfg --> plugin_headless_agent_spine
-  plugin_headless_persistence["persistence<br/>@deepseek-ai/dsh-session-persistence-jsonl"]
+  plugin_headless_persistence["persistence<br/>@truly-private/omdsh-session-persistence-jsonl"]
   cfg --> plugin_headless_persistence
-  plugin_headless_checkpoint_policy["checkpoint-policy<br/>@deepseek-ai/dsh-session-checkpoint-policy"]
+  plugin_headless_checkpoint_policy["checkpoint-policy<br/>@truly-private/omdsh-session-checkpoint-policy"]
   cfg --> plugin_headless_checkpoint_policy
-  plugin_headless_token_meter["token-meter<br/>@deepseek-ai/dsh-token-meter"]
+  plugin_headless_token_meter["token-meter<br/>@truly-private/omdsh-token-meter"]
   cfg --> plugin_headless_token_meter
-  plugin_headless_compaction_basic["compaction-basic<br/>@deepseek-ai/dsh-compaction-basic"]
+  plugin_headless_compaction_basic["compaction-basic<br/>@truly-private/omdsh-compaction-basic"]
   cfg --> plugin_headless_compaction_basic
-  plugin_headless_session_projection["session-projection<br/>@deepseek-ai/dsh-session-projection"]
+  plugin_headless_session_projection["session-projection<br/>@truly-private/omdsh-session-projection"]
   cfg --> plugin_headless_session_projection
-  plugin_headless_subagent["subagent<br/>@deepseek-ai/dsh-subagent"]
+  plugin_headless_subagent["subagent<br/>@truly-private/omdsh-subagent"]
   cfg --> plugin_headless_subagent
-  plugin_headless_subagent_spawn_in_process["subagent-spawn-in-process<br/>@deepseek-ai/dsh-subagent-spawn-in-process"]
+  plugin_headless_subagent_spawn_in_process["subagent-spawn-in-process<br/>@truly-private/omdsh-subagent-spawn-in-process"]
   cfg --> plugin_headless_subagent_spawn_in_process
-  plugin_headless_subagent_fork_in_process["subagent-fork-in-process<br/>@deepseek-ai/dsh-subagent-fork-in-process"]
+  plugin_headless_subagent_fork_in_process["subagent-fork-in-process<br/>@truly-private/omdsh-subagent-fork-in-process"]
   cfg --> plugin_headless_subagent_fork_in_process
-  plugin_headless_tool_subagent_control["tool-subagent-control<br/>@deepseek-ai/dsh-tool-subagent-control"]
+  plugin_headless_tool_subagent_control["tool-subagent-control<br/>@truly-private/omdsh-tool-subagent-control"]
   cfg --> plugin_headless_tool_subagent_control
-  plugin_headless_tool_subagent_report["tool-subagent-report<br/>@deepseek-ai/dsh-tool-subagent-report"]
+  plugin_headless_tool_subagent_report["tool-subagent-report<br/>@truly-private/omdsh-tool-subagent-report"]
   cfg --> plugin_headless_tool_subagent_report
-  plugin_headless_tool_subagent["tool-subagent<br/>@deepseek-ai/dsh-tool-subagent"]
+  plugin_headless_tool_subagent["tool-subagent<br/>@truly-private/omdsh-tool-subagent"]
   cfg --> plugin_headless_tool_subagent
-  plugin_headless_tool_subagent_fork["tool-subagent-fork<br/>@deepseek-ai/dsh-tool-subagent"]
+  plugin_headless_tool_subagent_fork["tool-subagent-fork<br/>@truly-private/omdsh-tool-subagent"]
   cfg --> plugin_headless_tool_subagent_fork
-  plugin_headless_workflow_worker_thread["workflow-worker-thread<br/>@deepseek-ai/dsh-workflow-worker-thread"]
+  plugin_headless_workflow_worker_thread["workflow-worker-thread<br/>@truly-private/omdsh-workflow-worker-thread"]
   cfg --> plugin_headless_workflow_worker_thread
-  plugin_headless_tool_workflow["tool-workflow<br/>@deepseek-ai/dsh-tool-workflow"]
+  plugin_headless_tool_workflow["tool-workflow<br/>@truly-private/omdsh-tool-workflow"]
   cfg --> plugin_headless_tool_workflow
-  plugin_headless_tool_ralph["tool-ralph<br/>@deepseek-ai/dsh-tool-ralph"]
+  plugin_headless_tool_ralph["tool-ralph<br/>@truly-private/omdsh-tool-ralph"]
   cfg --> plugin_headless_tool_ralph
-  plugin_headless_tool_todo["tool-todo<br/>@deepseek-ai/dsh-tool-todo"]
+  plugin_headless_tool_todo["tool-todo<br/>@truly-private/omdsh-tool-todo"]
   cfg --> plugin_headless_tool_todo
-  plugin_headless_fs_local["fs-local<br/>@deepseek-ai/dsh-fs-local"]
+  plugin_headless_fs_local["fs-local<br/>@truly-private/omdsh-fs-local"]
   cfg --> plugin_headless_fs_local
-  plugin_headless_fs_observation_policy["fs-observation-policy<br/>@deepseek-ai/dsh-fs-observation-policy"]
+  plugin_headless_fs_observation_policy["fs-observation-policy<br/>@truly-private/omdsh-fs-observation-policy"]
   cfg --> plugin_headless_fs_observation_policy
-  plugin_headless_tool_fs["tool-fs<br/>@deepseek-ai/dsh-tool-fs"]
+  plugin_headless_tool_fs["tool-fs<br/>@truly-private/omdsh-tool-fs"]
   cfg --> plugin_headless_tool_fs
 ```
 
 | Plugin id | Package / module |
 | --- | --- |
-| `settings` | `@deepseek-ai/dsh-settings-file` |
-| `credentials` | `@deepseek-ai/dsh-credentials-local` |
-| `llm-deepseek` | `@deepseek-ai/dsh-llm-deepseek` |
-| `subprocess` | `@deepseek-ai/dsh-subprocess-local` |
-| `bash` | `@deepseek-ai/dsh-bash-local` |
-| `agent-spine` | `@deepseek-ai/dsh-agent-spine-demo` |
-| `persistence` | `@deepseek-ai/dsh-session-persistence-jsonl` |
-| `checkpoint-policy` | `@deepseek-ai/dsh-session-checkpoint-policy` |
-| `token-meter` | `@deepseek-ai/dsh-token-meter` |
-| `compaction-basic` | `@deepseek-ai/dsh-compaction-basic` |
-| `session-projection` | `@deepseek-ai/dsh-session-projection` |
-| `subagent` | `@deepseek-ai/dsh-subagent` |
-| `subagent-spawn-in-process` | `@deepseek-ai/dsh-subagent-spawn-in-process` |
-| `subagent-fork-in-process` | `@deepseek-ai/dsh-subagent-fork-in-process` |
-| `tool-subagent-control` | `@deepseek-ai/dsh-tool-subagent-control` |
-| `tool-subagent-report` | `@deepseek-ai/dsh-tool-subagent-report` |
-| `tool-subagent` | `@deepseek-ai/dsh-tool-subagent` |
-| `tool-subagent-fork` | `@deepseek-ai/dsh-tool-subagent` |
-| `workflow-worker-thread` | `@deepseek-ai/dsh-workflow-worker-thread` |
-| `tool-workflow` | `@deepseek-ai/dsh-tool-workflow` |
-| `tool-ralph` | `@deepseek-ai/dsh-tool-ralph` |
-| `tool-todo` | `@deepseek-ai/dsh-tool-todo` |
-| `fs-local` | `@deepseek-ai/dsh-fs-local` |
-| `fs-observation-policy` | `@deepseek-ai/dsh-fs-observation-policy` |
-| `tool-fs` | `@deepseek-ai/dsh-tool-fs` |
+| `settings` | `@truly-private/omdsh-settings-file` |
+| `credentials` | `@truly-private/omdsh-credentials-local` |
+| `llm-deepseek` | `@truly-private/omdsh-llm-deepseek` |
+| `subprocess` | `@truly-private/omdsh-subprocess-local` |
+| `bash` | `@truly-private/omdsh-bash-local` |
+| `agent-spine` | `@truly-private/omdsh-agent-spine-demo` |
+| `persistence` | `@truly-private/omdsh-session-persistence-jsonl` |
+| `checkpoint-policy` | `@truly-private/omdsh-session-checkpoint-policy` |
+| `token-meter` | `@truly-private/omdsh-token-meter` |
+| `compaction-basic` | `@truly-private/omdsh-compaction-basic` |
+| `session-projection` | `@truly-private/omdsh-session-projection` |
+| `subagent` | `@truly-private/omdsh-subagent` |
+| `subagent-spawn-in-process` | `@truly-private/omdsh-subagent-spawn-in-process` |
+| `subagent-fork-in-process` | `@truly-private/omdsh-subagent-fork-in-process` |
+| `tool-subagent-control` | `@truly-private/omdsh-tool-subagent-control` |
+| `tool-subagent-report` | `@truly-private/omdsh-tool-subagent-report` |
+| `tool-subagent` | `@truly-private/omdsh-tool-subagent` |
+| `tool-subagent-fork` | `@truly-private/omdsh-tool-subagent` |
+| `workflow-worker-thread` | `@truly-private/omdsh-workflow-worker-thread` |
+| `tool-workflow` | `@truly-private/omdsh-tool-workflow` |
+| `tool-ralph` | `@truly-private/omdsh-tool-ralph` |
+| `tool-todo` | `@truly-private/omdsh-tool-todo` |
+| `fs-local` | `@truly-private/omdsh-fs-local` |
+| `fs-observation-policy` | `@truly-private/omdsh-fs-observation-policy` |
+| `tool-fs` | `@truly-private/omdsh-tool-fs` |
 
 Source config: [`examples/headless-agent/cordis.yml`](cordis.yml).
 

@@ -11,9 +11,9 @@ import {
   type SessionNotification,
   type Stream,
 } from '@agentclientprotocol/sdk'
-import { type GenerateOptions, LlmAdapter, type StreamChunk } from '@deepseek-ai/dsh-llm'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import { mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
+import { type GenerateOptions, LlmAdapter, type StreamChunk } from '@truly-private/omdsh-llm'
+import AgentLoop from '@truly-private/omdsh-agent-loop'
+import { mountAgentLoopTestDependencies } from '@truly-private/omdsh-agent-loop-testkit'
 import * as AcpPlugin from '../src/index.ts'
 import type { AcpConfig } from '../src/index.ts'
 

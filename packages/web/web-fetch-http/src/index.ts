@@ -1,15 +1,15 @@
 /**
- * `@deepseek-ai/dsh-web-fetch-http`: registers an anonymous public HTTP(S)
+ * `@truly-private/omdsh-web-fetch-http`: registers an anonymous public HTTP(S)
  * `WebFetchProvider` with `ctx.web`. A function/namespace plugin (NOT a
  * default-export service): it registers INTO the seam's fetch registry, like the
  * search providers register into the search registry.
  *
- * @module @deepseek-ai/dsh-web-fetch-http
+ * @module @truly-private/omdsh-web-fetch-http
  */
 
 import type { Context } from '@deepseek-ai/cordis'
 import z from '@deepseek-ai/schemastery'
-import type {} from '@deepseek-ai/dsh-web'
+import type {} from '@truly-private/omdsh-web'
 import { HttpFetchProvider } from './provider.ts'
 import type { HttpFetchLimits } from './provider.ts'
 

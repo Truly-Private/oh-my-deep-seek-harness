@@ -1,12 +1,12 @@
 /**
- * Package-owned invariant companion for `@deepseek-ai/dsh-web-app`.
- * @module @deepseek-ai/dsh-web-app/invariant
+ * Package-owned invariant companion for `@truly-private/omdsh-web-app`.
+ * @module @truly-private/omdsh-web-app/invariant
  */
 
 import type { Context } from '@deepseek-ai/cordis'
-import type { InvariantInstaller } from '@deepseek-ai/dsh-invariants'
+import type { InvariantInstaller } from '@truly-private/omdsh-invariants'
 
-const PACKAGE_NAME = '@deepseek-ai/dsh-web-app'
+const PACKAGE_NAME = '@truly-private/omdsh-web-app'
 
 /** Cordis companion plugin name. */
 export const name = 'web-app-invariant'

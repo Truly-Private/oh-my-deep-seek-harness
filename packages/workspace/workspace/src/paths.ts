@@ -1,6 +1,6 @@
 /**
  * Path canonicalization for workspace identity.
- * @module @deepseek-ai/dsh-workspace/src/paths
+ * @module @truly-private/omdsh-workspace/src/paths
  */
 
 import { realpath } from 'node:fs/promises'

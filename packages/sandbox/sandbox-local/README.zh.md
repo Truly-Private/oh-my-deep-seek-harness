@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-sandbox-local
+# @truly-private/omdsh-sandbox-local
 
 [English](README.md) | 中文
 
@@ -18,10 +18,10 @@ Windows 档为每个工作区保留一个确定性写入 SID 和常驻 ACE，但
 
 ```yaml
 - id: sandbox
-  name: '@deepseek-ai/dsh-sandbox-local'
+  name: '@truly-private/omdsh-sandbox-local'
 ```
 
-消费方：[`@deepseek-ai/dsh-bash-sandbox`](../../shell/bash-sandbox/)；可运行的默认组合见 [acp-agent 示例](../../../examples/acp-agent/)。
+消费方：[`@truly-private/omdsh-bash-sandbox`](../../shell/bash-sandbox/)；可运行的默认组合见 [acp-agent 示例](../../../examples/acp-agent/)。
 
 ## 模型体验
 

@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { startMockLlmServer } from '@deepseek-ai/dsh-llm-mock-server'
+import { startMockLlmServer } from '@truly-private/omdsh-llm-mock-server'
 import { execa } from 'execa'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
@@ -186,7 +186,7 @@ function createEnvironmentProbeProfile(home: string, project: string): void {
     name: 'dsh-profile-environment-probe',
     private: true,
     dependencies: {},
-    dsh: { profile: { bundles: ['@deepseek-ai/dsh-base'] } },
+    dsh: { profile: { bundles: ['@truly-private/omdsh-base'] } },
   }, undefined, 2))
   writeFileSync(join(profileDir, 'cordis.patch.yml'), [
     '- insert:',
@@ -209,7 +209,7 @@ interface StartupFixture {
  * A custom profile whose ordinary provider plugin injects `cmdlineArgs`, plus
  * a row that reads its app-owned service through a `!!js` config expression.
  * Both plugin modules resolve
- * `@deepseek-ai/dsh-cmdline` and `commander` through the profile module
+ * `@truly-private/omdsh-cmdline` and `commander` through the profile module
  * fallback, exactly as an installed out-of-tree bundle does.
  */
 function createStartupFixture(): StartupFixture {
@@ -222,7 +222,7 @@ function createStartupFixture(): StartupFixture {
   mkdirSync(bundleDir, { recursive: true })
   writeFileSync(join(bundleDir, 'startup.mjs'), [
     "import { Command } from 'commander'",
-    "import { parseCmdline } from '@deepseek-ai/dsh-cmdline'",
+    "import { parseCmdline } from '@truly-private/omdsh-cmdline'",
     "export const name = 'fixture-startup'",
     "export const inject = ['cmdlineArgs']",
     'export function apply(ctx) {',
@@ -376,17 +376,29 @@ describe.skipIf(!existsSync(dshBin))('dsh BUILT bin (node lib/bin.js, no tsx)', 
     })
     const home = mkdtempSync(join(tmpdir(), 'dsh-built-headless-'))
     try {
+      writeFileSync(join(home, 'settings.yaml'), [
+        'llm-pi-ai:',
+        '  providers:',
+        '    9router:',
+        '      displayName: 9Router',
+        '      apiKeyEnv: NINE_ROUTER_API_KEY',
+        '      api: openai-completions',
+        `      baseURL: ${server.baseURL}/v1`,
+        '      models:',
+        '        - id: kr/claude-sonnet-4.5',
+        '          name: Claude Sonnet 4.5 (Kiro)',
+        '',
+      ].join('\n'))
       const result = await runBuiltBin(['--profile', 'headless', 'answer', 'from', 'the', 'published', 'entry'], {
         DSH_HOME: home,
         DSH_TELEMETRY_DISABLED: '1',
-        DEEPSEEK_API_KEY: apiKey,
-        DEEPSEEK_BASE_URL: server.baseURL,
+        NINE_ROUTER_API_KEY: apiKey,
       })
       expect(result.code, result.stderr).toBe(0)
       expect(result.stdout).toBe('published headless profile reached the mock')
       expect(result.stderr).toBe('')
       expect(server.requests.length).toBeGreaterThan(0)
-      expect(server.requests.every(request => request.path === '/chat/completions')).toBe(true)
+      expect(server.requests.every(request => request.path === '/v1/chat/completions')).toBe(true)
       expect(JSON.stringify(server.requests.map(request => request.body))).toContain('answer from the published entry')
     } finally {
       await server.close()
@@ -670,7 +682,7 @@ describe.skipIf(!existsSync(dshBin))('dsh BUILT bin (node lib/bin.js, no tsx)', 
         name: 'dsh-profile-up',
         private: true,
         dependencies: { 'late-bundle': 'file:./late-bundle' },
-        dsh: { profile: { bundles: ['@deepseek-ai/dsh-base'] } },
+        dsh: { profile: { bundles: ['@truly-private/omdsh-base'] } },
       }))
       writeFileSync(join(profileDir, 'cordis.patch.yml'), '[]\n')
       // v1: no dsh manifest — a plain dependency.
@@ -678,7 +690,7 @@ describe.skipIf(!existsSync(dshBin))('dsh BUILT bin (node lib/bin.js, no tsx)', 
       const first = await runBuiltBin(['plugin', '--profile', 'up', 'root'], { DSH_HOME: home })
       expect(first.code).toBe(0)
       let manifest = JSON.parse(readFileSync(join(profileDir, 'package.json'), 'utf8')) as { dsh: { profile: { bundles: string[] } } }
-      expect(manifest.dsh.profile.bundles).toEqual(['@deepseek-ai/dsh-base'])
+      expect(manifest.dsh.profile.bundles).toEqual(['@truly-private/omdsh-base'])
       // v2: the installed package now declares dsh.bundle (an update landed).
       writeFileSync(join(installed, 'package.json'), JSON.stringify({
         name: 'late-bundle', version: '2.0.0', dsh: { bundle: { patch: './cordis.patch.yml' } },
@@ -687,7 +699,7 @@ describe.skipIf(!existsSync(dshBin))('dsh BUILT bin (node lib/bin.js, no tsx)', 
       const second = await runBuiltBin(['plugin', '--profile', 'up', 'root'], { DSH_HOME: home })
       expect(second.code).toBe(0)
       manifest = JSON.parse(readFileSync(join(profileDir, 'package.json'), 'utf8')) as { dsh: { profile: { bundles: string[] } } }
-      expect(manifest.dsh.profile.bundles).toEqual(['@deepseek-ai/dsh-base', 'late-bundle'])
+      expect(manifest.dsh.profile.bundles).toEqual(['@truly-private/omdsh-base', 'late-bundle'])
     } finally {
       rmSync(home, { recursive: true, force: true })
     }
@@ -702,10 +714,10 @@ describe.skipIf(!existsSync(dshBin))('dsh BUILT bin (node lib/bin.js, no tsx)', 
       const { stdout, code, stderr } = await runBuiltBin(['--profile', 'web', '--dump-default-config'], { DSH_HOME: home })
       expect(code).toBe(0)
       expect(stderr).toBe('')
-      expect(stdout).toContain("name: '@deepseek-ai/dsh-agent-loop'")
+      expect(stdout).toContain("name: '@truly-private/omdsh-agent-loop'")
       expect(stdout).toContain('agents: []')
-      expect(stdout).toContain('# == @deepseek-ai/dsh-base')
-      expect(stdout).toContain("name: '@deepseek-ai/dsh-host-webserver'")
+      expect(stdout).toContain('# == @truly-private/omdsh-base')
+      expect(stdout).toContain("name: '@truly-private/omdsh-host-webserver'")
     }, 30_000)
 
     it('prints the headless profile without Host or browser layers', async () => {
@@ -715,10 +727,10 @@ describe.skipIf(!existsSync(dshBin))('dsh BUILT bin (node lib/bin.js, no tsx)', 
       )
       expect(code).toBe(0)
       expect(stderr).toBe('')
-      expect(stdout).toContain("name: '@deepseek-ai/dsh-headless'")
-      expect(stdout).not.toMatch(/name: '@deepseek-ai\/dsh-host-/)
-      expect(stdout).not.toContain("name: '@deepseek-ai/dsh-web-app'")
-      expect(stdout).not.toMatch(/name: '@deepseek-ai\/dsh-client-/)
+      expect(stdout).toContain("name: '@truly-private/omdsh-headless'")
+      expect(stdout).not.toMatch(/name: '@truly-private\/omdsh-host-/)
+      expect(stdout).not.toContain("name: '@truly-private/omdsh-web-app'")
+      expect(stdout).not.toMatch(/name: '@truly-private\/omdsh-client-/)
     }, 30_000)
 
     it('composes the profile user layer and a --patch overlay in order', async () => {

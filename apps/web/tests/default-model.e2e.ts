@@ -16,8 +16,8 @@ import { join } from 'node:path'
 import type { Browser, Page } from 'playwright'
 import { chromium } from 'playwright'
 import { afterAll, beforeAll, describe, expect, it, onTestFailed } from 'vitest'
-import { SessionId } from '@deepseek-ai/dsh-session'
-import { settingsNamespace } from '@deepseek-ai/dsh-settings'
+import { SessionId } from '@truly-private/omdsh-session'
+import { settingsNamespace } from '@truly-private/omdsh-settings'
 import { launchWebScaffold, watchConsole, type WebScaffold } from './scaffold.ts'
 import { ZH_BROWSER_LOCALE, connectFreshWorkspaceZh, saveFailureShot } from './support.ts'
 
@@ -58,7 +58,11 @@ describe('web e2e: the composer model switch is the default for later sessions',
   }
 
   beforeAll(async () => {
-    scaffold = await launchWebScaffold({ extraOverlayPath: OVERLAY })
+    scaffold = await launchWebScaffold({
+      extraOverlayPath: OVERLAY,
+      firstPartyMissingCredential: true,
+      localePreference: 'zh',
+    })
     // Two routes so the picker has somewhere to start and somewhere to go.
     // Declared through the settings seam rather than the Models page: this
     // scenario is about the composer, and the declaring flow is covered by

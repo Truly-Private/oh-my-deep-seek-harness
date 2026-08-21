@@ -1,13 +1,13 @@
 {
-  "name": "@deepseek-ai/dsh-skill-badge",
+  "name": "@truly-private/omdsh-skill-badge",
   "description": "Bundled dsh badge skill provider for DeepSeek Harness",
-  "version": "0.1.0-rc.5",
+  "version": "0.0.1",
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
+    "url": "git+https://github.com/Truly-Private/oh-my-deepseek-harness.git",
     "directory": "packages/skill/skill-badge"
   },
   "type": "module",
@@ -32,13 +32,13 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-invariants": "workspace:^",
-    "@deepseek-ai/dsh-skill": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-skill": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-invariants": "workspace:^",
-    "@deepseek-ai/dsh-skill": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-skill": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^"
   }
 }

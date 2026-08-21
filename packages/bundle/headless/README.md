@@ -1,4 +1,4 @@
-# `@deepseek-ai/dsh-headless`
+# `@truly-private/omdsh-headless`
 
 English | [中文](README.zh.md)
 

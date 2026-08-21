@@ -14,7 +14,7 @@ Credential Service Definition (`ctx.credentials`). One doctrine, three consequen
 
 ```ts
 import type { Context } from '@deepseek-ai/cordis'
-import { credentialRef } from '@deepseek-ai/dsh-credentials'
+import { credentialRef } from '@truly-private/omdsh-credentials'
 
 declare const ctx: Context
 

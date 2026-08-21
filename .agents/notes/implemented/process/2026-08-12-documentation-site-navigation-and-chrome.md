@@ -38,4 +38,4 @@ The reference sidebar measures 1452px with every subsystem group collapsed, agai
 
 Canonical Markdown is unchanged by the chrome stripping — the switcher and badge still serve GitHub readers. The cost is that the projector now knows two presentation conventions of the source corpus, which a page written with a different switcher wording would not match.
 
-The wordmark is a second copy of a mark that also lives in `apps/web/public/favicon.svg` and `packages/client/ui-primitives/src/FishLogo.tsx`, each carrying its own presentation. A change to the DeepSeek wordmark reaches the documentation site only by updating this copy.
+The documentation wordmark remains a documentation-site asset with theme-following vector fills. The Web product surface and browser icon use the separately supplied raster artwork, so changing either identity asset does not silently change the other.

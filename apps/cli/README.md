@@ -1,8 +1,19 @@
-# `@deepseek-ai/dsh`
+# `@truly-private/omdsh`
 
 English | [中文](README.zh.md)
 
 The `dsh` command is the product launcher for profiles: ordered stacks of plugin-bundle patch layers under the user's own overrides. [`src/args.ts`](src/args.ts) owns the command grammar, and [`src/bin.ts`](src/bin.ts) loads only the selected runner. Invalid commands, options from another mode, configuration errors, and boot failures exit nonzero.
+
+## Run from npm
+
+Run the reviewed downstream package without a global installation:
+
+```sh
+npx --yes @truly-private/omdsh@0.0.1 web
+npx --yes @truly-private/omdsh@0.0.1 --profile headless "job"
+```
+
+The package installs the `dsh` binary. A global installation may therefore use the shorter commands in the reference below.
 
 ## Entry modes
 
@@ -36,7 +47,7 @@ The tree composes over an empty root:
 - then the profile's `cordis.patch.yml`, then the home-level `$DSH_HOME/cordis.patch.yml`
 - then `--patch` overlays
 
-Bundles named in `dsh.profile.bundles` resolve from the dsh installation first (`@deepseek-ai/dsh-base`, `@deepseek-ai/dsh-web-app`, `@deepseek-ai/dsh-headless`), then from the profile's own `node_modules`, where pnpm installs out-of-tree plugins.
+Bundles named in `dsh.profile.bundles` resolve from the dsh installation first (`@truly-private/omdsh-base`, `@truly-private/omdsh-web-app`, `@truly-private/omdsh-headless`), then from the profile's own `node_modules`, where pnpm installs out-of-tree plugins.
 
 Use `--dump-default-config` and `--dump-config` to inspect the composed tree without booting it.
 

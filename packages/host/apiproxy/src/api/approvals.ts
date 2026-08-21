@@ -5,8 +5,8 @@
  * RpcReceipt carrier receipt as the HTTP response body; the final outcome arrives in the resolved frame.
  */
 
-import type { ApprovalRequestId } from '@deepseek-ai/dsh-user-approval/types'
-import type { SessionId } from '@deepseek-ai/dsh-session/types'
+import type { ApprovalRequestId } from '@truly-private/omdsh-user-approval/types'
+import type { SessionId } from '@truly-private/omdsh-session/types'
 
 /**
  * Approval answer payload (the result.value slot of a client-response). outcome accepts only

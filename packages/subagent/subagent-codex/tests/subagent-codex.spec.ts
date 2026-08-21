@@ -2,16 +2,16 @@ import { PassThrough } from 'node:stream'
 import { Context } from '@deepseek-ai/cordis'
 import Loader from '@deepseek-ai/cordis-plugin-loader'
 import { describe, expect, it, vi } from 'vitest'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import type { InvariantInstaller } from '@deepseek-ai/dsh-invariants'
-import type { ContentBlock } from '@deepseek-ai/dsh-llm'
-import SubagentRuntime from '@deepseek-ai/dsh-subagent'
-import { MAX_TIMER_DELAY_MS } from '@deepseek-ai/dsh-timeout'
+import type { Agent } from '@truly-private/omdsh-agent'
+import type { InvariantInstaller } from '@truly-private/omdsh-invariants'
+import type { ContentBlock } from '@truly-private/omdsh-llm'
+import SubagentRuntime from '@truly-private/omdsh-subagent'
+import { MAX_TIMER_DELAY_MS } from '@truly-private/omdsh-timeout'
 import type {
   SubprocessHandle,
   SubprocessOutcome,
-} from '@deepseek-ai/dsh-subprocess'
-import LocalSubprocessRuntime from '@deepseek-ai/dsh-subprocess-local'
+} from '@truly-private/omdsh-subprocess'
+import LocalSubprocessRuntime from '@truly-private/omdsh-subprocess-local'
 import * as codex from '../src/index.ts'
 import * as invariant from '../src/invariant.ts'
 import {
@@ -350,7 +350,7 @@ describe('task admission and package contracts', () => {
     const ctx = { invariants: { register } } as unknown as Context
     await expect(invariant.apply(ctx)).resolves.toBe(dispose)
     expect(register).toHaveBeenCalledWith(
-      '@deepseek-ai/dsh-subagent-codex',
+      '@truly-private/omdsh-subagent-codex',
       expect.any(Function),
     )
     const install = register.mock.calls[0]![1]

@@ -1,13 +1,13 @@
 {
-  "name": "@deepseek-ai/dsh-session-query-sqlite",
+  "name": "@truly-private/omdsh-session-query-sqlite",
   "description": "Concrete ctx.sessionQuery backend with SQLite FTS5 search",
-  "version": "0.1.0-rc.5",
+  "version": "0.0.1",
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
+    "url": "git+https://github.com/Truly-Private/oh-my-deepseek-harness.git",
     "directory": "packages/session-query/session-query-sqlite"
   },
   "type": "module",
@@ -32,14 +32,14 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-invariants": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-session-persistence": "workspace:^",
-    "@deepseek-ai/dsh-session-query": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-session": "workspace:^",
+    "@truly-private/omdsh-session-persistence": "workspace:^",
+    "@truly-private/omdsh-session-query": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^"
   },
   "peerDependenciesMeta": {
-    "@deepseek-ai/dsh-session-persistence": {
+    "@truly-private/omdsh-session-persistence": {
       "optional": true
     }
   },
@@ -48,11 +48,11 @@
   },
   "devDependencies": {
     "@deepseek-ai/cordis-plugin-loader": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-session-persistence": "workspace:^",
-    "@deepseek-ai/dsh-session-persistence-sqlite": "workspace:^",
-    "@deepseek-ai/dsh-session-query": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-session": "workspace:^",
+    "@truly-private/omdsh-session-persistence": "workspace:^",
+    "@truly-private/omdsh-session-persistence-sqlite": "workspace:^",
+    "@truly-private/omdsh-session-query": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^"
   }
 }

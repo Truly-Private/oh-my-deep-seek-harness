@@ -1,5 +1,5 @@
 /**
- * @deepseek-ai/dsh-web-app — the browser-surface bundle's runtime glue plugin
+ * @truly-private/omdsh-web-app — the browser-surface bundle's runtime glue plugin
  * plus the bundle patch (`cordis.patch.yml`, declared by the `dsh.bundle.patch`
  * manifest field). The plugin owns the browser-surface glue: it resolves
  * the built frontend dist (workspace knowledge of this bundle, never user
@@ -7,7 +7,7 @@
  * harness-source and web-surface prompt sections, the bash-visible web runtime
  * variable, and the URL line. App command-line values arrive through the
  * `webStartup` service expressions in the bundle patch.
- * @module @deepseek-ai/dsh-web-app
+ * @module @truly-private/omdsh-web-app
  */
 
 import { createRequire } from 'node:module'
@@ -15,12 +15,12 @@ import { networkInterfaces } from 'node:os'
 import { fileURLToPath } from 'node:url'
 import type { Context } from '@deepseek-ai/cordis'
 import z from '@deepseek-ai/schemastery'
-import { addHarnessSourceSection } from '@deepseek-ai/dsh-app-boot'
-import * as FrontendStatic from '@deepseek-ai/dsh-host-frontend-static'
+import { addHarnessSourceSection } from '@truly-private/omdsh-app-boot'
+import * as FrontendStatic from '@truly-private/omdsh-host-frontend-static'
 import type {} from '@deepseek-ai/cordis-plugin-loader'
-import type {} from '@deepseek-ai/dsh-host-webserver'
-import type {} from '@deepseek-ai/dsh-system-prompt'
-import type {} from '@deepseek-ai/dsh-shell-env'
+import type {} from '@truly-private/omdsh-host-webserver'
+import type {} from '@truly-private/omdsh-system-prompt'
+import type {} from '@truly-private/omdsh-shell-env'
 
 /** Stable Cordis plugin name. */
 export const name = 'web-app'
@@ -116,7 +116,7 @@ function localWebUrl(ctx: Context): string {
 function resolveDistIndex(): string {
   const require = createRequire(import.meta.url)
   try {
-    return require.resolve('@deepseek-ai/dsh-web-frontend/dist/index.html')
+    return require.resolve('@truly-private/omdsh-web-frontend/dist/index.html')
   } catch {
     /* v8 ignore next 2 -- reachable only on a checkout without a built dist; the test tree builds it */
     throw new Error('web-app: frontend dist not built; run pnpm run build from the repository root first')

@@ -12,10 +12,15 @@
     "commit": "de9e880c19cdd37166caf3912fbbb794ed388c32"
   },
   "review": {
-    "status": "candidate",
-    "reviewedCommit": null,
-    "reviewedAt": null,
-    "evidence": []
+    "status": "reviewed",
+    "reviewedCommit": "47f943859bef60e4160492346772ded9b24f765a",
+    "reviewedAt": "2026-08-20T02:56:31Z",
+    "evidence": [
+      "security/reviews/2026-08-15-bootstrap.md",
+      "security/reviews/2026-08-16-gitleaks-triage.md",
+      "https://github.com/Truly-Private/oh-my-deepseek-harness/actions/runs/31934015026",
+      "maintainer approval for primary commit recorded 2026-08-20"
+    ]
   },
   "policy": {
     "automaticMerge": false,

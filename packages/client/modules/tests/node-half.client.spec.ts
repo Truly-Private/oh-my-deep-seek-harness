@@ -7,7 +7,7 @@ import { dirname, join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { Context } from '@deepseek-ai/cordis'
 import { afterEach, describe, expect, it } from 'vitest'
-import type { WebServer, WebRoute } from '@deepseek-ai/dsh-host-webserver'
+import type { WebServer, WebRoute } from '@truly-private/omdsh-host-webserver'
 import { ClientModuleRegistry } from '../src/index.ts'
 
 let root: string | undefined

@@ -21,50 +21,37 @@
   - paragraph: 填入各提供方的 API 密钥即可使用其模型。
   - list:
     - listitem:
-      - text: DeepSeek
+      - text: 9Router
       - img "API 密钥已配置"
-      - button "编辑 DeepSeek (deepseek-official)": 编辑
-      - text: DeepSeek deepseek-official API 密钥
+      - button "编辑 9Router (9router)": 编辑
+      - text: 9Router 9router API 密钥
       - textbox "API 密钥":
         - /placeholder: 已配置——输入新值可替换
       - group:
         - text: 自定义设置 API 地址
         - textbox "API 地址":
-          - /placeholder: https://api.deepseek.com
+          - /placeholder: http://127.0.0.1:20128/v1
         - region "模型目录":
           - text: 模型目录 已自定义模型目录
           - button "恢复默认模型"
+          - button "获取可用模型"
           - textbox "模型 ID 1":
             - /placeholder: 模型 ID
-            - text: deepseek-v4-pro
+            - text: private-preview
           - textbox "显示名称 1":
             - /placeholder: 显示名称
-            - text: DeepSeek-V4-Pro
-          - button "容量 1":
-            - img
-          - button "删除模型 1":
-            - img
-          - textbox "模型 ID 2":
-            - /placeholder: 模型 ID
-            - text: private-preview
-          - textbox "显示名称 2":
-            - /placeholder: 显示名称
             - text: Private Preview
-          - button "容量 2" [expanded]:
-            - img
-          - button "删除模型 2":
-            - img
+          - button "容量 1" [expanded]
+          - button "删除模型 1"
           - text: 上下文窗口
-          - textbox "上下文窗口 2":
-            - /placeholder: 1M
-            - text: "131072"
-          - text: 最大输出 token 数
-          - textbox "最大输出 token 数 2":
+          - textbox "上下文窗口 1":
             - /placeholder: 256K
+            - text: "131072"
+          - text: 最大输出 token
+          - textbox "最大输出 token 1":
+            - /placeholder: 32K
             - text: 64K
-          - button "添加模型":
-            - img
-            - text: 添加模型
+          - button "添加模型"
       - button "取消"
       - button "保存"
   - button "添加提供方":

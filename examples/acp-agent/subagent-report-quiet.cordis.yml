@@ -9,7 +9,7 @@
     path: ./cordis.yml
     patches:
       - id: tool-subagent-report
-        name: '@deepseek-ai/dsh-tool-subagent-report'
+        name: '@truly-private/omdsh-tool-subagent-report'
         config:
           reportDelivery: quiet
 

@@ -10,17 +10,17 @@ import type {
   AssistantMessageNode, CommandNode, CompactionSummaryNode, ConversationNode, ConversationSnapshot,
   ModelRetryNode, RunningToolCall, SessionId, SessionListState, ToolCallBlock, ToolResultNode, TurnErrorNode,
   TurnMaxTokensNode, UserMessageNode, WorkspaceListState,
-} from '@deepseek-ai/dsh-client-runtime/client'
-import { bindSnapshotSelector } from '@deepseek-ai/dsh-client-web-react'
+} from '@truly-private/omdsh-client-runtime/client'
+import { bindSnapshotSelector } from '@truly-private/omdsh-client-web-react'
 import {
   createSnapshotStore, EMPTY_CONVERSATION_VIEWS, PendingWait,
-} from '@deepseek-ai/dsh-client-runtime/client'
-import { RpcId } from '@deepseek-ai/dsh-client-connection/client'
+} from '@truly-private/omdsh-client-runtime/client'
+import { RpcId } from '@truly-private/omdsh-client-connection/client'
 import type {
   ChatNode, ChatNodeOwnerProps, ChatNodeViewProps, ChatViewSlotProps, SelectionTarget, UseChatNodeTurnData,
-} from '@deepseek-ai/dsh-client-ui-conversation/client'
-import { makeTranslate } from '@deepseek-ai/dsh-client-test-runtime'
-import { zh as commonZh } from '@deepseek-ai/dsh-client-locale/src/locales/zh.ts'
+} from '@truly-private/omdsh-client-ui-conversation/client'
+import { makeTranslate } from '@truly-private/omdsh-client-test-runtime'
+import { zh as commonZh } from '@truly-private/omdsh-client-locale/src/locales/zh.ts'
 import { createChatStore } from '../src/client/stores.ts'
 import { ChatView } from '../src/client/chat/ChatView.tsx'
 import { zh } from '../src/client/locales.ts'

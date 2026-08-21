@@ -8,11 +8,11 @@
  * program picks this merge up transitively through its ui-input-trigger imports.
  */
 // Type-only edge: the SlotMap augmentation below merges into this package's interface.
-import type {} from '@deepseek-ai/dsh-client-ui-slots'
-import type { SnapshotStore } from '@deepseek-ai/dsh-client-runtime/client'
+import type {} from '@truly-private/omdsh-client-ui-slots'
+import type { SnapshotStore } from '@truly-private/omdsh-client-runtime/client'
 import type { MenuState } from '../core/contract.ts'
 
-declare module '@deepseek-ai/dsh-client-ui-slots' {
+declare module '@truly-private/omdsh-client-ui-slots' {
   interface SlotMap {
     /**
      * The InputBar floating overlay anchor: MenuView (this package) and the

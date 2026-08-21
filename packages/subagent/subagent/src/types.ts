@@ -6,14 +6,14 @@
  * continuation host in `./continuation.ts` — so this module stays the published
  * surface rather than a bag of everything type-shaped.
  *
- * @module @deepseek-ai/dsh-subagent/types
+ * @module @truly-private/omdsh-subagent/types
  */
 
-import type { Agent, AgentOptions } from '@deepseek-ai/dsh-agent'
-import type { Branded } from '@deepseek-ai/dsh-brand'
-import type { ContentBlock } from '@deepseek-ai/dsh-llm'
-import type { SessionEvent, SessionId } from '@deepseek-ai/dsh-session'
-import type { ObjectJsonSchema, ToolRestriction } from '@deepseek-ai/dsh-tools'
+import type { Agent, AgentOptions } from '@truly-private/omdsh-agent'
+import type { Branded } from '@truly-private/omdsh-brand'
+import type { ContentBlock } from '@truly-private/omdsh-llm'
+import type { SessionEvent, SessionId } from '@truly-private/omdsh-session'
+import type { ObjectJsonSchema, ToolRestriction } from '@truly-private/omdsh-tools'
 import type { SubagentDescriptorData } from './descriptor.ts'
 
 /** Identifies one accepted subagent run across its lifecycle event pair. */

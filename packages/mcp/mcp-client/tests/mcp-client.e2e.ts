@@ -19,12 +19,12 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import { z } from 'zod'
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
-import { CallId } from '@deepseek-ai/dsh-llm'
-import { apply } from '@deepseek-ai/dsh-mcp-client/src/index.ts'
-import { publicToolName } from '@deepseek-ai/dsh-mcp-client/src/tools.ts'
-import type { Config } from '@deepseek-ai/dsh-mcp-client'
+import SystemPrompt from '@truly-private/omdsh-system-prompt'
+import ToolRuntime from '@truly-private/omdsh-tools'
+import { CallId } from '@truly-private/omdsh-llm'
+import { apply } from '@truly-private/omdsh-mcp-client/src/index.ts'
+import { publicToolName } from '@truly-private/omdsh-mcp-client/src/tools.ts'
+import type { Config } from '@truly-private/omdsh-mcp-client'
 
 const testToolSignal = new AbortController().signal
 

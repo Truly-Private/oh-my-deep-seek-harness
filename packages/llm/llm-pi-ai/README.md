@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-llm-pi-ai
+# @truly-private/omdsh-llm-pi-ai
 
 English | [中文](README.zh.md)
 
@@ -10,9 +10,11 @@ The package root exposes the Cordis plugin contract, `PiAiAdapter`, and `support
 
 Configure credentials, the model catalog, and deployment-specific transport settings per provider, keyed by the provider route itself. `apiKeyEnv` is a credential *reference* resolved per request, so no secret enters this file. Omitting it leaves the route unauthenticated, which for an installed catalog route means pi-ai's provider-native ambient discovery; a configured reference that resolves to nothing fails the request with `MISSING_CREDENTIAL` instead, because falling through would authenticate with whatever unrelated key the environment happens to hold. One credential serves every model on its route.
 
+The base distribution configures `9router` as an adapter-owned first-party preset with the local OpenAI-compatible endpoint, the safe `NINE_ROUTER_API_KEY` reference, and a starter model. This preset is first-party only when a composition supplies its complete profile; a bare adapter does not offer an incomplete 9Router row. That keeps “first-party” honest while allowing another distribution to choose a different endpoint or starter roster.
+
 ```yaml
 - id: llm
-  name: '@deepseek-ai/dsh-llm-pi-ai'
+  name: '@truly-private/omdsh-llm-pi-ai'
   config:
     providers:
       # Catalog route: endpoint, protocol, and models all come from pi-ai.
@@ -71,7 +73,7 @@ Configure credentials, the model catalog, and deployment-specific transport sett
               max: ultra
 ```
 
-The dict shape makes duplicate routes unrepresentable, and the pre-release array shape (with per-profile `provider` fields) fails load with migration directions. `providers` may also be empty or omitted entirely: the adapter then mounts **dormant** — zero routes, no extra catalog entries — and registers routes the moment the `llm-pi-ai:` settings section supplies profiles, dropping them again when it empties. Dormant or not, the plugin declares every installed catalog provider in the configurable-provider directory (`ctx.llm.listConfigurableProviders()`, settings path `providers.<provider>`), joined with every route the current profiles declare, so configuration surfaces can offer the full catalog before any route exists and can still address a hand-declared one. Each entry carries `declared`: whether pi-ai ships nothing under that key. It follows the installed catalog, never the settings document, because narrowing a shipped provider's models stores a profile too and that route is still one pi-ai knows — only the adapter can tell the two apart, which is why the directory answers rather than leaving a surface to infer it. Which adapters exist is composition; which providers run can be entirely the user's settings document. Registration with `ctx.llm` is atomic: a collision with any provider route already owned by another adapter fails plugin loading without registering the remaining routes. Model ids are not lifecycle config; a model the route does not configure fails before any provider request with `LlmError('UNKNOWN_MODEL')`.
+The dict shape makes duplicate routes unrepresentable, and the pre-release array shape (with per-profile `provider` fields) fails load with migration directions. `providers` may also be empty or omitted entirely: the adapter then mounts **dormant** — zero routes and no extra models in the picker — and registers routes the moment the `llm-pi-ai:` settings section supplies profiles, dropping them again when it empties. Dormant or not, the plugin declares every installed catalog provider in the configurable-provider directory (`ctx.llm.listConfigurableProviders()`, settings path `providers.<provider>`), joined with every route the current profiles declare, so configuration surfaces can offer the full catalog before any route exists and can still address a hand-declared one. Each entry carries `declared`: whether the installed catalog or an adapter-owned distribution preset ships something under that key. It follows the shipped roster, never the settings document, because narrowing a shipped provider's models stores a profile too without making that route custom. Which adapters exist is composition; which providers run can be entirely the user's settings document. Registration with `ctx.llm` is atomic: a collision with any provider route already owned by another adapter fails plugin loading without registering the remaining routes. Model ids are not lifecycle config; a model the route does not configure fails before any provider request with `LlmError('UNKNOWN_MODEL')`.
 
 ## Catalog resolution
 

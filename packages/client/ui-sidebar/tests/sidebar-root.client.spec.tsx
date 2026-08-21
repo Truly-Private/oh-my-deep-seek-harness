@@ -74,9 +74,9 @@ function mountShell({ collapsed = false, width = 300 }: { collapsed?: boolean; w
 }
 
 describe('SidebarRoot shell', () => {
-  it('routes New Session (capsule + wordmark) and the column toggle', () => {
+  it('routes New Session (capsule + logo) and the column toggle', () => {
     const b = mountShell()
-    // Expanded, both the wordmark and the capsule start a session.
+    // Expanded, both the logo and the capsule start a session.
     const starters = screen.getAllByRole('button', { name: 'New session' })
     expect(starters).toHaveLength(2)
     for (const button of starters) fireEvent.click(button)

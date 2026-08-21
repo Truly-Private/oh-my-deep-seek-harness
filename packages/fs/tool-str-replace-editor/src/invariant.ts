@@ -1,13 +1,13 @@
 /**
- * Package-owned invariant companion for `@deepseek-ai/dsh-tool-str-replace-editor`.
- * @module @deepseek-ai/dsh-tool-str-replace-editor/invariant
+ * Package-owned invariant companion for `@truly-private/omdsh-tool-str-replace-editor`.
+ * @module @truly-private/omdsh-tool-str-replace-editor/invariant
  */
 
 /* jscpd:ignore-start */
 import type { Context } from '@deepseek-ai/cordis'
-import type { InvariantInstaller } from '@deepseek-ai/dsh-invariants'
+import type { InvariantInstaller } from '@truly-private/omdsh-invariants'
 
-const PACKAGE_NAME = '@deepseek-ai/dsh-tool-str-replace-editor'
+const PACKAGE_NAME = '@truly-private/omdsh-tool-str-replace-editor'
 
 /** Cordis companion plugin name. */
 export const name = 'tool-str-replace-editor-invariant'

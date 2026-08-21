@@ -10,20 +10,20 @@
 import { describe, expect, it, vi } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
 import { z } from 'zod'
-import AgentRegistry, { Inbox } from '@deepseek-ai/dsh-agent'
-import { AttachmentStore } from '@deepseek-ai/dsh-attachment'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import SessionStore, { SessionId } from '@deepseek-ai/dsh-session'
-import type { Session } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import type { ProjectionDefinition } from '@deepseek-ai/dsh-session-projection'
-import UserQuestionService from '@deepseek-ai/dsh-user-questions'
-import type { MuxFrame, RpcRequest } from '@deepseek-ai/dsh-host-apiproxy/api'
-import { RpcId } from '@deepseek-ai/dsh-host-apiproxy/api/rpc'
-import { createApiProxy } from '@deepseek-ai/dsh-host-apiproxy'
+import AgentRegistry, { Inbox } from '@truly-private/omdsh-agent'
+import { AttachmentStore } from '@truly-private/omdsh-attachment'
+import type { Agent } from '@truly-private/omdsh-agent'
+import { createUserMessage } from '@truly-private/omdsh-llm'
+import SessionStore, { SessionId } from '@truly-private/omdsh-session'
+import type { Session } from '@truly-private/omdsh-session'
+import SessionProjectionRegistry from '@truly-private/omdsh-session-projection'
+import type { ProjectionDefinition } from '@truly-private/omdsh-session-projection'
+import UserQuestionService from '@truly-private/omdsh-user-questions'
+import type { MuxFrame, RpcRequest } from '@truly-private/omdsh-host-apiproxy/api'
+import { RpcId } from '@truly-private/omdsh-host-apiproxy/api/rpc'
+import { createApiProxy } from '@truly-private/omdsh-host-apiproxy'
 
-declare module '@deepseek-ai/dsh-session-projection/types' {
+declare module '@truly-private/omdsh-session-projection/types' {
   interface SessionProjectionMap {
     'test/last-user': { text: string } | null
   }

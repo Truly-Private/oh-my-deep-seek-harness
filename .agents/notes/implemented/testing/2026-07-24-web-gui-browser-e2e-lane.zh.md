@@ -10,7 +10,7 @@ Web GUI 以一条真实组装链交付——chromium 页面 → client 插件 bu
 
 ## 决策
 
-`pnpm run test:web` 携带 `apps/web/tests/` 下的无密钥、确定性浏览器 e2e 车道：录制的会话日志 fixture 经 `@deepseek-ai/dsh-llm-replay` 对真实进程内 web 组合回放；用户可见状态使用规范化的 aria 预期输出，持久化的世界状态则使用进程内断言。配套的产品约定包括 `dsh-llm-replay` 的节奏控制、消费检查与已校验的索引式覆写 patch；跨包的 `dsh-llm` 失败通过自有数据属性保留经校验的提供方信息；已交付的 web 组合挂载 `llm-retry`，以处理瞬态模型失败。
+`pnpm run test:web` 携带 `apps/web/tests/` 下的无密钥、确定性浏览器 e2e 车道：录制的会话日志 fixture 经 `@truly-private/omdsh-llm-replay` 对真实进程内 web 组合回放；用户可见状态使用规范化的 aria 预期输出，持久化的世界状态则使用进程内断言。配套的产品约定包括 `dsh-llm-replay` 的节奏控制、消费检查与已校验的索引式覆写 patch；跨包的 `dsh-llm` 失败通过自有数据属性保留经校验的提供方信息；已交付的 web 组合挂载 `llm-retry`，以处理瞬态模型失败。
 
 ### Scaffold：`apps/web/tests/scaffold.ts`
 
@@ -28,7 +28,7 @@ Web GUI 以一条真实组装链交付——chromium 页面 → client 插件 bu
 
 不做单次瞬态 DOM 断言：从回放产出到 React 提交的每一跳都可能合并分片，采样 `[data-streaming]` 天然就是竞态。流式输出的增量性由持久化的 `assistant/chunk` 事件断言（模型可见 ⟺ 已记录，使日志成为权威证据）。`dsh-llm-replay` 的可选 `paceMs`（默认缺省 = 突发）只是让浏览器观察到真正增量 SSE 的真实感旋钮；正确性绝不依赖它，且节奏等待期间中止会即时取消。
 
-每个场景都会因任何 pageerror 或客户端的连接丢失/间隙修复控制台警告而失败：否则重连机制加历史重同步会把一条死掉的 SSE 通路自愈掉，套件反而认证了坏 wire。Scaffold 的 `close()` 调用 `ReplayHandle.assertConsumed()` 收尾检查（每个已录脚本都被绑定、每个游标都耗尽），把静默的少放与错绑变成清晰诊断。车道不设 vitest 重试；每文件一个 chromium、每场景一个新 context、每场景一个 host；视口固定；交互选择器锚定 role、`data-*` 属性和可见文本，而 frame 与会话区采集则使用既有的 CSS 模块局部类名锚点。常规场景开启 `en-US` 浏览器，使本地化的 role 定位器和预期输出统一采用明确指定的语言；断言中文文案的场景则开启 `zh-CN` 浏览器，因为 Host settings 文档没有显式偏好时，客户端的暂定 locale 由 `navigator` 推导（[由浏览器推导初始 locale](../feature/2026-07-31-browser-derived-initial-locale.md)）。`settings-chrome.e2e.ts` 还额外覆盖双向切换、全新英文浏览器默认态，以及共享同一 DSH home 的不同端口之间的偏好持久化。
+每个场景都会因任何 pageerror 或客户端的连接丢失/间隙修复控制台警告而失败：否则重连机制加历史重同步会把一条死掉的 SSE 通路自愈掉，套件反而认证了坏 wire。Scaffold 的 `close()` 调用 `ReplayHandle.assertConsumed()` 收尾检查（每个已录脚本都被绑定、每个游标都耗尽），把静默的少放与错绑变成清晰诊断。车道不设 vitest 重试；每文件一个 Chromium、每场景一个新 context、每场景一个 Host；视口固定；交互选择器锚定 role、`data-*` 属性和可见文本，而 frame 与会话区采集则使用既有的 CSS 模块局部类名锚点。常规场景使用英文产品默认值；断言中文文案的场景在浏览器启动前显式向 Host settings 写入 `locale.preference: zh`。`settings-chrome.e2e.ts` 还覆盖双向切换、在 `zh-CN` 浏览器下仍为英文的全新默认态，以及共享同一 DSH home 的不同端口之间的偏好持久化（[由 Host 持久化的 Web 偏好](../bug-fix/2026-08-06-host-backed-web-preferences.md)）。
 
 ### 预期输出
 

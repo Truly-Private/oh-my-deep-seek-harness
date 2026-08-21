@@ -1,19 +1,14 @@
 /** Ownerless-copy registrations: the five seats, dictionaries, thunked labels, and HMR recovery. */
 import { Context } from '@deepseek-ai/cordis'
 import { describe, expect, it, vi } from 'vitest'
-import { resolveSlotLabel } from '@deepseek-ai/dsh-client-ui-slots'
-import { SlotRegistry } from '@deepseek-ai/dsh-client-runtime/client'
-import { LocaleRuntime } from '@deepseek-ai/dsh-client-locale/client'
-import { usePinnedBrowserLanguages } from '@deepseek-ai/dsh-client-test-runtime'
-import { apply, inject } from '@deepseek-ai/dsh-client-ui-settings-general/client'
+import { resolveSlotLabel } from '@truly-private/omdsh-client-ui-slots'
+import { SlotRegistry } from '@truly-private/omdsh-client-runtime/client'
+import { LocaleRuntime } from '@truly-private/omdsh-client-locale/client'
+import { apply, inject } from '@truly-private/omdsh-client-ui-settings-general/client'
 import { CloseLabel, HeaderContent, TriggerContent } from '../src/client/chrome.tsx'
 import { GeneralSection } from '../src/client/GeneralSection.tsx'
 import { SettingsDocumentAction } from '../src/client/SettingsDocumentAction.tsx'
 import type { SettingsDocumentActionInjected } from '../src/client/SettingsDocumentAction.tsx'
-
-// The service reads its initial locale from the browser; these specs assert
-// the shipped Chinese copy, so they state the browser they assume.
-usePinnedBrowserLanguages('zh-CN')
 
 /** The seats this plugin fills for a loopback browser (slot name → expected component). */
 const SEATS = [
@@ -88,7 +83,7 @@ describe('ui-settings-general apply', () => {
     const entry = generalEntry(before.slots)!
     expect(entry.options).toMatchObject({ id: 'general', order: 0 })
     // The nav label is a locale-following thunk; owners resolve at read time.
-    expect(resolveSlotLabel(entry.options.label)).toBe('通用设置')
+    expect(resolveSlotLabel(entry.options.label)).toBe('General')
     expect(before.slots.spec('settings.general.item')).toEqual({ kind: 'list', scope: 'root' })
     expect(before.slots.entries('settings.general.item')).toEqual([])
     // The onboarding hole stays declared for feature-owned steps; this plugin
@@ -122,10 +117,9 @@ describe('ui-settings-general apply', () => {
     declare(b.slots)
     const fiber = b.ctx.plugin({ inject: [...inject], apply })
     await fiber.await()
-    expect(b.locale.bind('settings')('title')).toBe('设置')
-    b.locale.setLocale('en')
-    expect(b.locale.bind('settings')('close')).toBe('Close')
+    expect(b.locale.bind('settings')('title')).toBe('Settings')
     b.locale.setLocale('zh')
+    expect(b.locale.bind('settings')('close')).toBe('关闭')
     await fiber.dispose()
     // The (ns, locale) seats are free again — the dictionary disposer ran.
     expect(() => b.locale.register('settings', 'zh', {})).not.toThrow()
@@ -136,12 +130,11 @@ describe('ui-settings-general apply', () => {
     const b = await bench()
     declare(b.slots)
     await b.ctx.plugin({ inject: [...inject], apply }).await()
-    const zhVersions = SEATS.map(([name]) => b.slots.getVersion(name))
-    b.locale.setLocale('en')
+    const versions = SEATS.map(([name]) => b.slots.getVersion(name))
     // No ledger churn: freshness rides the thunk (and the renderer's locale
     // subscription), not re-registration.
     SEATS.forEach(([name], i) => {
-      expect(b.slots.getVersion(name)).toBe(zhVersions[i]!)
+      expect(b.slots.getVersion(name)).toBe(versions[i]!)
       expect(b.slots.entries(name)).toHaveLength(1)
     })
     expect(resolveSlotLabel(generalEntry(b.slots)!.options.label)).toBe('General')

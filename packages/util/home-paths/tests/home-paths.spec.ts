@@ -11,7 +11,7 @@ import {
   dshHomePath,
   expandHomePath,
   resolveDshHome,
-} from '@deepseek-ai/dsh-home-paths'
+} from '@truly-private/omdsh-home-paths'
 
 afterEach(() => {
   vi.unstubAllEnvs()

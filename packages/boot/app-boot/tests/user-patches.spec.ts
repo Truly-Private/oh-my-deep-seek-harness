@@ -48,12 +48,12 @@ describe('loadOptionalPatches', () => {
     const dir = tmp()
     writeFileSync(join(dir, PROFILE_PATCH_FILENAME), [
       '- id: agent-loop',
-      "  name: '@deepseek-ai/dsh-agent-loop'",
+      "  name: '@truly-private/omdsh-agent-loop'",
       '  config:',
       '    model: !!js process.env.DSH_SPEC_MODEL',
       '- insert:',
       '    - id: llm',
-      "      name: '@deepseek-ai/dsh-llm-pi-ai'",
+      "      name: '@truly-private/omdsh-llm-pi-ai'",
       '',
     ].join('\n'))
     const patches = loadOptionalPatches(NAME, join(dir, PROFILE_PATCH_FILENAME))

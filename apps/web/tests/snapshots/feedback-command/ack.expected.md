@@ -12,10 +12,10 @@
 - text: Reply with the single word LIGHTHOUSE and stop. {{clock}}
 - button "Copy":
   - img
-- button "Context injection @deepseek-ai/dsh-system-prompt":
+- button "Context injection @truly-private/omdsh-system-prompt":
   - img
   - img
-  - text: Context injection @deepseek-ai/dsh-system-prompt
+  - text: Context injection @truly-private/omdsh-system-prompt
 - button "Think The user wants me to reply with a single word. Let me comply.":
   - img
   - img
@@ -38,8 +38,8 @@
 - button "Commands":
   - img
 - 'button "Access mode, current: Workspace Write"': Workspace Write
-- button "Select model, current DeepSeek-V4-Flash":
-  - text: DeepSeek-V4-Flash
+- button "Select model, current Claude Sonnet 4.5 (Kiro)":
+  - text: Claude Sonnet 4.5 (Kiro)
   - img
 - button "6% of context used"
 - button "Send message" [disabled]

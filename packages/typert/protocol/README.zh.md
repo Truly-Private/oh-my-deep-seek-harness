@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-typert-protocol
+# @truly-private/omdsh-typert-protocol
 
 [English](README.md) | 中文
 

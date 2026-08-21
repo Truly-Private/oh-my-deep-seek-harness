@@ -11,40 +11,40 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { act, cleanup } from '@testing-library/react'
 import { afterEach, beforeEach, vi } from 'vitest'
-import type { WebBootEntry } from '@deepseek-ai/dsh-client-modules/client'
-import { AppWebEntry } from '@deepseek-ai/dsh-client-web'
+import type { WebBootEntry } from '@truly-private/omdsh-client-modules/client'
+import { AppWebEntry } from '@truly-private/omdsh-client-web'
 
 /** Boot entries for the minimal assembled graph, each carrying the workspace bundle it loads. */
 const PLUGINS: readonly (WebBootEntry & { bundlePath: string })[] = [
-  { id: '@deepseek-ai/dsh-typert-registry', bundlePath: 'packages/typert/registry/lib/client.js', url: '/plugins/typert-registry.js', rev: 'fx', inject: [], immediately: true },
-  { id: '@deepseek-ai/dsh-client-connection', bundlePath: 'packages/client/connection/lib/client.js', url: '/plugins/connection.js', rev: 'fx', inject: [], immediately: true },
-  { id: '@deepseek-ai/dsh-api-gateway', bundlePath: 'packages/api/gateway/lib/client.js', url: '/plugins/api-gateway.js', rev: 'fx', inject: ['@deepseek-ai/dsh-typert-registry', '@deepseek-ai/dsh-client-connection'], immediately: true },
-  { id: '@deepseek-ai/dsh-api-remotes', bundlePath: 'packages/api/remotes/lib/client.js', url: '/plugins/api-remotes.js', rev: 'fx', inject: ['@deepseek-ai/dsh-api-gateway'], immediately: true },
+  { id: '@truly-private/omdsh-typert-registry', bundlePath: 'packages/typert/registry/lib/client.js', url: '/plugins/typert-registry.js', rev: 'fx', inject: [], immediately: true },
+  { id: '@truly-private/omdsh-client-connection', bundlePath: 'packages/client/connection/lib/client.js', url: '/plugins/connection.js', rev: 'fx', inject: [], immediately: true },
+  { id: '@truly-private/omdsh-api-gateway', bundlePath: 'packages/api/gateway/lib/client.js', url: '/plugins/api-gateway.js', rev: 'fx', inject: ['@truly-private/omdsh-typert-registry', '@truly-private/omdsh-client-connection'], immediately: true },
+  { id: '@truly-private/omdsh-api-remotes', bundlePath: 'packages/api/remotes/lib/client.js', url: '/plugins/api-remotes.js', rev: 'fx', inject: ['@truly-private/omdsh-api-gateway'], immediately: true },
   // The settings domain base: the only provider of ctx.settingsScope, which the
   // locale and ui-theme rows below inject for their preference rows. Without it
   // both stay pending and ui-layout never activates, so nothing renders.
-  { id: '@deepseek-ai/dsh-client-ui-settings', bundlePath: 'packages/client/ui-settings/lib/client.js', url: '/plugins/ui-settings.js', rev: 'fx', inject: ['@deepseek-ai/dsh-client-connection', '@deepseek-ai/dsh-client-runtime', '@deepseek-ai/dsh-api-remotes'], immediately: true },
-  { id: '@deepseek-ai/dsh-client-runtime', bundlePath: 'packages/client/runtime/lib/client.js', url: '/plugins/runtime.js', rev: 'fx', inject: ['@deepseek-ai/dsh-client-connection', '@deepseek-ai/dsh-typert-registry', '@deepseek-ai/dsh-api-gateway'], immediately: true },
-  { id: '@deepseek-ai/dsh-client-ui-theme', bundlePath: 'packages/client/ui-theme/lib/client.js', url: '/plugins/ui-theme.js', rev: 'fx', inject: ['@deepseek-ai/dsh-client-connection', '@deepseek-ai/dsh-client-runtime', '@deepseek-ai/dsh-client-locale', '@deepseek-ai/dsh-client-ui-settings', '@deepseek-ai/dsh-api-remotes'], immediately: true },
-  { id: '@deepseek-ai/dsh-client-locale', bundlePath: 'packages/client/locale/lib/client.js', url: '/plugins/locale.js', rev: 'fx', inject: ['@deepseek-ai/dsh-client-connection', '@deepseek-ai/dsh-client-runtime', '@deepseek-ai/dsh-client-ui-settings', '@deepseek-ai/dsh-api-remotes'], immediately: true },
-  { id: '@deepseek-ai/dsh-client-ui-layout', bundlePath: 'packages/client/ui-layout/lib/client.js', url: '/plugins/ui-layout.js', rev: 'fx', inject: ['@deepseek-ai/dsh-client-runtime'] },
-  { id: '@deepseek-ai/dsh-client-ui-sidebar', bundlePath: 'packages/client/ui-sidebar/lib/client.js', url: '/plugins/ui-sidebar.js', rev: 'fx', inject: ['@deepseek-ai/dsh-client-ui-layout'] },
-  { id: '@deepseek-ai/dsh-client-ui-conversation', bundlePath: 'packages/client/ui-conversation/lib/client.js', url: '/plugins/ui-conversation.js', rev: 'fx', inject: ['@deepseek-ai/dsh-client-ui-layout'] },
-  { id: '@deepseek-ai/dsh-client-ui-tool', bundlePath: 'packages/client/ui-tool/lib/client.js', url: '/plugins/ui-tool.js', rev: 'fx', inject: ['@deepseek-ai/dsh-client-runtime', '@deepseek-ai/dsh-client-locale', '@deepseek-ai/dsh-client-ui-conversation'] },
-  { id: '@deepseek-ai/dsh-client-ui-workflow-run', bundlePath: 'packages/client/ui-workflow-run/lib/client.js', url: '/plugins/ui-workflow-run.js', rev: 'fx', inject: ['@deepseek-ai/dsh-client-locale', '@deepseek-ai/dsh-client-runtime', '@deepseek-ai/dsh-client-ui-conversation'] },
+  { id: '@truly-private/omdsh-client-ui-settings', bundlePath: 'packages/client/ui-settings/lib/client.js', url: '/plugins/ui-settings.js', rev: 'fx', inject: ['@truly-private/omdsh-client-connection', '@truly-private/omdsh-client-runtime', '@truly-private/omdsh-api-remotes'], immediately: true },
+  { id: '@truly-private/omdsh-client-runtime', bundlePath: 'packages/client/runtime/lib/client.js', url: '/plugins/runtime.js', rev: 'fx', inject: ['@truly-private/omdsh-client-connection', '@truly-private/omdsh-typert-registry', '@truly-private/omdsh-api-gateway'], immediately: true },
+  { id: '@truly-private/omdsh-client-ui-theme', bundlePath: 'packages/client/ui-theme/lib/client.js', url: '/plugins/ui-theme.js', rev: 'fx', inject: ['@truly-private/omdsh-client-connection', '@truly-private/omdsh-client-runtime', '@truly-private/omdsh-client-locale', '@truly-private/omdsh-client-ui-settings', '@truly-private/omdsh-api-remotes'], immediately: true },
+  { id: '@truly-private/omdsh-client-locale', bundlePath: 'packages/client/locale/lib/client.js', url: '/plugins/locale.js', rev: 'fx', inject: ['@truly-private/omdsh-client-connection', '@truly-private/omdsh-client-runtime', '@truly-private/omdsh-client-ui-settings', '@truly-private/omdsh-api-remotes'], immediately: true },
+  { id: '@truly-private/omdsh-client-ui-layout', bundlePath: 'packages/client/ui-layout/lib/client.js', url: '/plugins/ui-layout.js', rev: 'fx', inject: ['@truly-private/omdsh-client-runtime'] },
+  { id: '@truly-private/omdsh-client-ui-sidebar', bundlePath: 'packages/client/ui-sidebar/lib/client.js', url: '/plugins/ui-sidebar.js', rev: 'fx', inject: ['@truly-private/omdsh-client-ui-layout'] },
+  { id: '@truly-private/omdsh-client-ui-conversation', bundlePath: 'packages/client/ui-conversation/lib/client.js', url: '/plugins/ui-conversation.js', rev: 'fx', inject: ['@truly-private/omdsh-client-ui-layout'] },
+  { id: '@truly-private/omdsh-client-ui-tool', bundlePath: 'packages/client/ui-tool/lib/client.js', url: '/plugins/ui-tool.js', rev: 'fx', inject: ['@truly-private/omdsh-client-runtime', '@truly-private/omdsh-client-locale', '@truly-private/omdsh-client-ui-conversation'] },
+  { id: '@truly-private/omdsh-client-ui-workflow-run', bundlePath: 'packages/client/ui-workflow-run/lib/client.js', url: '/plugins/ui-workflow-run.js', rev: 'fx', inject: ['@truly-private/omdsh-client-locale', '@truly-private/omdsh-client-runtime', '@truly-private/omdsh-client-ui-conversation'] },
   {
-    id: '@deepseek-ai/dsh-client-ui-workspace',
+    id: '@truly-private/omdsh-client-ui-workspace',
     bundlePath: 'packages/client/ui-workspace/lib/client.js',
     url: '/plugins/ui-workspace.js',
     rev: 'fx',
     inject: [
-      '@deepseek-ai/dsh-client-runtime',
-      '@deepseek-ai/dsh-client-ui-conversation',
-      '@deepseek-ai/dsh-client-ui-sidebar',
+      '@truly-private/omdsh-client-runtime',
+      '@truly-private/omdsh-client-ui-conversation',
+      '@truly-private/omdsh-client-ui-sidebar',
     ],
   },
-  { id: '@deepseek-ai/dsh-session-log-export', bundlePath: 'packages/session-query/session-log-export/lib/client.js', url: '/plugins/session-log-download.js', rev: 'fx', inject: ['@deepseek-ai/dsh-client-ui-commands', '@deepseek-ai/dsh-client-ui-conversation'] },
-  { id: '@deepseek-ai/dsh-client-ui-trajectory', bundlePath: 'packages/client/ui-trajectory/lib/client.js', url: '/plugins/ui-trajectory.js', rev: 'fx', inject: ['@deepseek-ai/dsh-client-ui-conversation'] },
+  { id: '@truly-private/omdsh-session-log-export', bundlePath: 'packages/session-query/session-log-export/lib/client.js', url: '/plugins/session-log-download.js', rev: 'fx', inject: ['@truly-private/omdsh-client-ui-commands', '@truly-private/omdsh-client-ui-conversation'] },
+  { id: '@truly-private/omdsh-client-ui-trajectory', bundlePath: 'packages/client/ui-trajectory/lib/client.js', url: '/plugins/ui-trajectory.js', rev: 'fx', inject: ['@truly-private/omdsh-client-ui-conversation'] },
 ]
 
 const bundles = new Map(PLUGINS.map(plugin => [
@@ -68,20 +68,13 @@ let unmount: (() => void) | undefined
 
 /**
  * Register the per-test jsdom setup and teardown the assembled boot needs:
- * English pinned before boot so role/text locators stay deterministic across
- * localized component migrations (the newEnglishPage e2e convention), the
- * observers and frame callbacks jsdom lacks, and a full reset of the document,
- * the boot globals, and the injected plugin styles afterwards.
+ * The observers and frame callbacks jsdom lacks, plus a full reset of the
+ * document, boot globals, and injected plugin styles after each test. With no
+ * Host locale preference, the assembled client uses the English product default.
  */
 export function installAssembledBootEnv(): void {
   beforeEach(() => {
     localStorage.clear()
-    // The locale service derives its provisional locale from the browser and
-    // takes an explicit choice only from Host settings, which this lane's
-    // fixture transport does not serve; pinning the navigator is what selects
-    // English here.
-    Object.defineProperty(navigator, 'languages', { value: ['en-US'], configurable: true })
-    Object.defineProperty(navigator, 'language', { value: 'en-US', configurable: true })
     document.title = 'DeepSeek Harness'
     vi.stubGlobal('ResizeObserver', ResizeObserverStub)
     vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) =>

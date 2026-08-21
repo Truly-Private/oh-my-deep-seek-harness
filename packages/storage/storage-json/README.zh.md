@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-storage-json
+# @truly-private/omdsh-storage-json
 
 [English](README.md) | 中文
 

@@ -6,10 +6,10 @@
  */
 import { Context } from '@deepseek-ai/cordis'
 import { describe, expect, it } from 'vitest'
-import InvariantRegistry from '@deepseek-ai/dsh-invariants'
-import { SlotRegistry } from '@deepseek-ai/dsh-client-runtime/client'
-import { stubSettingsScope } from '@deepseek-ai/dsh-client-test-runtime'
-import { apply as applyLocale, inject as localeInject } from '@deepseek-ai/dsh-client-locale/client'
+import InvariantRegistry from '@truly-private/omdsh-invariants'
+import { SlotRegistry } from '@truly-private/omdsh-client-runtime/client'
+import { stubSettingsScope } from '@truly-private/omdsh-client-test-runtime'
+import { apply as applyLocale, inject as localeInject } from '@truly-private/omdsh-client-locale/client'
 import { apply, inject } from '../src/client/index.ts'
 import { apply as applyNode } from '../src/index.ts'
 import * as JobInvariant from '../src/invariant.ts'
@@ -59,13 +59,13 @@ describe('ui-job browser half', () => {
   it('registers both dictionaries under its own namespace and releases them with the fiber', async () => {
     const { ctx, fiber } = await bench()
     const translate = ctx.locale.bind(NS)
-    expect(translate('list.aria')).toBe(zh['list.aria'])
-    ctx.locale.setLocale('en')
     expect(translate('list.aria')).toBe(en['list.aria'])
+    ctx.locale.setLocale('zh')
+    expect(translate('list.aria')).toBe(zh['list.aria'])
 
     // Withdrawn dictionaries leave the key unresolved rather than translated.
     await fiber.dispose()
-    expect(translate('list.aria')).not.toBe(en['list.aria'])
+    expect(translate('list.aria')).not.toBe(zh['list.aria'])
   })
 
   it('keeps the English dictionary key-identical to the Chinese source of truth', () => {

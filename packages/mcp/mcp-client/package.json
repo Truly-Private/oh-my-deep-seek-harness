@@ -1,13 +1,13 @@
 {
-  "name": "@deepseek-ai/dsh-mcp-client",
+  "name": "@truly-private/omdsh-mcp-client",
   "description": "MCP client bridge: connects to MCP servers and registers their tools on ctx.tools",
-  "version": "0.1.0-rc.5",
+  "version": "0.0.1",
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
+    "url": "git+https://github.com/Truly-Private/oh-my-deepseek-harness.git",
     "directory": "packages/mcp/mcp-client"
   },
   "type": "module",
@@ -32,11 +32,11 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-invariants": "workspace:^",
-    "@deepseek-ai/dsh-llm": "workspace:^",
-    "@deepseek-ai/dsh-subprocess": "workspace:^",
-    "@deepseek-ai/dsh-timeout": "workspace:^",
-    "@deepseek-ai/dsh-tools": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-llm": "workspace:^",
+    "@truly-private/omdsh-subprocess": "workspace:^",
+    "@truly-private/omdsh-timeout": "workspace:^",
+    "@truly-private/omdsh-tools": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^"
   },
   "dependencies": {
@@ -45,11 +45,11 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-invariants": "workspace:^",
-    "@deepseek-ai/dsh-llm": "workspace:^",
-    "@deepseek-ai/dsh-subprocess": "workspace:^",
-    "@deepseek-ai/dsh-timeout": "workspace:^",
-    "@deepseek-ai/dsh-tools": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-llm": "workspace:^",
+    "@truly-private/omdsh-subprocess": "workspace:^",
+    "@truly-private/omdsh-timeout": "workspace:^",
+    "@truly-private/omdsh-tools": "workspace:^",
     "@modelcontextprotocol/server-everything": "^2026.7.4",
     "@modelcontextprotocol/server-filesystem": "^2026.7.4",
     "@deepseek-ai/cordis": "workspace:^"

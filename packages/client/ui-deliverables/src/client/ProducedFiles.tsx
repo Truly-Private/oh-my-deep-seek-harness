@@ -5,9 +5,9 @@
 // Host machine.
 
 import { useLayoutEffect, useRef, useState } from 'react'
-import type { HostDescriptionSource } from '@deepseek-ai/dsh-client-connection/client'
-import type { InjectFace, PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
-import type { TurnTailOwnerProps } from '@deepseek-ai/dsh-client-ui-conversation/client'
+import type { HostDescriptionSource } from '@truly-private/omdsh-client-connection/client'
+import type { InjectFace, PropsLocale } from '@truly-private/omdsh-client-ui-slots'
+import type { TurnTailOwnerProps } from '@truly-private/omdsh-client-ui-conversation/client'
 import { basename } from './turn-deliverables.ts'
 import type { NS } from './locales.ts'
 import css from './ProducedFiles.module.css'

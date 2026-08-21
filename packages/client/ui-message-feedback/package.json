@@ -1,13 +1,13 @@
 {
-  "name": "@deepseek-ai/dsh-client-ui-message-feedback",
+  "name": "@truly-private/omdsh-client-ui-message-feedback",
   "description": "Per-message feedback controls contributed to the assistant-message action strip, backed by the messageFeedback Host Remote",
-  "version": "0.1.0-rc.5",
+  "version": "0.0.1",
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
+    "url": "git+https://github.com/Truly-Private/oh-my-deepseek-harness.git",
     "directory": "packages/client/ui-message-feedback"
   },
   "type": "module",
@@ -32,10 +32,10 @@
   "dsh": {
     "client": {
       "inject": [
-        "@deepseek-ai/dsh-client-runtime",
-        "@deepseek-ai/dsh-api-remotes",
-        "@deepseek-ai/dsh-client-locale",
-        "@deepseek-ai/dsh-client-ui-conversation"
+        "@truly-private/omdsh-client-runtime",
+        "@truly-private/omdsh-api-remotes",
+        "@truly-private/omdsh-client-locale",
+        "@truly-private/omdsh-client-ui-conversation"
       ],
       "platform": "web"
     }
@@ -46,31 +46,31 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-api-remotes": "workspace:^",
-    "@deepseek-ai/dsh-client-connection": "workspace:^",
-    "@deepseek-ai/dsh-client-locale": "workspace:^",
-    "@deepseek-ai/dsh-client-runtime": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-conversation": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-primitives": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-slots": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
-    "@deepseek-ai/dsh-message-feedback": "workspace:^",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:^",
+    "@truly-private/omdsh-api-remotes": "workspace:^",
+    "@truly-private/omdsh-client-connection": "workspace:^",
+    "@truly-private/omdsh-client-locale": "workspace:^",
+    "@truly-private/omdsh-client-runtime": "workspace:^",
+    "@truly-private/omdsh-client-ui-conversation": "workspace:^",
+    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
+    "@truly-private/omdsh-client-ui-slots": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-message-feedback": "workspace:^",
+    "@truly-private/omdsh-typert-protocol": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^",
     "react": "^18.2.0"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-api-remotes": "workspace:^",
-    "@deepseek-ai/dsh-client-connection": "workspace:^",
-    "@deepseek-ai/dsh-client-locale": "workspace:^",
-    "@deepseek-ai/dsh-client-runtime": "workspace:^",
-    "@deepseek-ai/dsh-client-test-runtime": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-conversation": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-primitives": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-slots": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
-    "@deepseek-ai/dsh-message-feedback": "workspace:^",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:^",
+    "@truly-private/omdsh-api-remotes": "workspace:^",
+    "@truly-private/omdsh-client-connection": "workspace:^",
+    "@truly-private/omdsh-client-locale": "workspace:^",
+    "@truly-private/omdsh-client-runtime": "workspace:^",
+    "@truly-private/omdsh-client-test-runtime": "workspace:^",
+    "@truly-private/omdsh-client-ui-conversation": "workspace:^",
+    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
+    "@truly-private/omdsh-client-ui-slots": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-message-feedback": "workspace:^",
+    "@truly-private/omdsh-typert-protocol": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^",
     "@testing-library/react": "^16.1.0",
     "@types/react": "~18.3.1",

@@ -1,13 +1,13 @@
 {
-  "name": "@deepseek-ai/dsh-launch-environment",
+  "name": "@truly-private/omdsh-launch-environment",
   "description": "Immutable DeepSeek Harness launch environment that records which layer supplied each value",
-  "version": "0.1.0-rc.5",
+  "version": "0.0.1",
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
+    "url": "git+https://github.com/Truly-Private/oh-my-deepseek-harness.git",
     "directory": "packages/util/launch-environment"
   },
   "type": "module",
@@ -32,11 +32,11 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-invariants": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-invariants": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^"
   }
 }

@@ -13,19 +13,19 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup, fireEvent, render } from '@testing-library/react'
 import {
   EMPTY_CHAT_SNAPSHOT, EMPTY_CONVERSATION_VIEWS, SessionRuntime,
-} from '@deepseek-ai/dsh-client-runtime/client'
-import { InputTriggerService } from '@deepseek-ai/dsh-client-ui-input-trigger/client'
-import type { ClientSessionContext, CommandClaim, PickOutcome, SubmitOutcome } from '@deepseek-ai/dsh-client-ui-input-trigger/client'
+} from '@truly-private/omdsh-client-runtime/client'
+import { InputTriggerService } from '@truly-private/omdsh-client-ui-input-trigger/client'
+import type { ClientSessionContext, CommandClaim, PickOutcome, SubmitOutcome } from '@truly-private/omdsh-client-ui-input-trigger/client'
 import { FakeApiClient, fakeRemote, ok } from '../../runtime/tests/fake-api.client.ts'
-import { makeTranslate } from '@deepseek-ai/dsh-client-test-runtime'
-import { zh as commonZh } from '@deepseek-ai/dsh-client-locale/src/locales/zh.ts'
+import { makeTranslate } from '@truly-private/omdsh-client-test-runtime'
+import { zh as commonZh } from '@truly-private/omdsh-client-locale/src/locales/zh.ts'
 import { SessionInputShell } from '../src/client/input/facade.ts'
 import { InputBar } from '../src/client/skeleton/InputBar.tsx'
 import type { InputBarProps } from '../src/client/skeleton/InputBar.tsx'
 import { zh } from '../src/client/locales.ts'
-import { bindSnapshotSelector } from '@deepseek-ai/dsh-client-web-react'
-import { createSnapshotStore } from '@deepseek-ai/dsh-client-runtime/client'
-import type { ConversationSnapshot } from '@deepseek-ai/dsh-client-runtime/client'
+import { bindSnapshotSelector } from '@truly-private/omdsh-client-web-react'
+import { createSnapshotStore } from '@truly-private/omdsh-client-runtime/client'
+import type { ConversationSnapshot } from '@truly-private/omdsh-client-runtime/client'
 
 afterEach(cleanup)
 

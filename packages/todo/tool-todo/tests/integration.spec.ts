@@ -1,11 +1,11 @@
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
+import { createUserMessage } from '@truly-private/omdsh-llm'
 import { describe, expect, it } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
-import { SessionId, type SessionEvent } from '@deepseek-ai/dsh-session'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import { mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
-import * as ToolTodo from '@deepseek-ai/dsh-tool-todo'
+import { SessionId, type SessionEvent } from '@truly-private/omdsh-session'
+import type { Agent } from '@truly-private/omdsh-agent'
+import AgentLoop from '@truly-private/omdsh-agent-loop'
+import { mountAgentLoopTestDependencies } from '@truly-private/omdsh-agent-loop-testkit'
+import * as ToolTodo from '@truly-private/omdsh-tool-todo'
 import { MockAdapter, textResponse, toolCallResponse } from '../../../core/agent-loop/tests/mock-adapter.ts'
 
 /**

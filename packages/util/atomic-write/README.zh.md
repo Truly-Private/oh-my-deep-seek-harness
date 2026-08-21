@@ -7,7 +7,7 @@
 ## 接口面
 
 ```ts
-import { withFileLock, writeFileAtomic } from '@deepseek-ai/dsh-atomic-write'
+import { withFileLock, writeFileAtomic } from '@truly-private/omdsh-atomic-write'
 
 declare const text: string
 declare const render: (previous: string) => string

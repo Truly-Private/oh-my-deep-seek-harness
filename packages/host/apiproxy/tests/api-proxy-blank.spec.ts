@@ -9,19 +9,19 @@
 
 import { describe, expect, it } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
-import AgentRegistry from '@deepseek-ai/dsh-agent'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import SessionStore from '@deepseek-ai/dsh-session'
-import type { Session } from '@deepseek-ai/dsh-session'
-import UserQuestionService from '@deepseek-ai/dsh-user-questions'
-import { CommandId } from '@deepseek-ai/dsh-commands/brand'
+import AgentRegistry from '@truly-private/omdsh-agent'
+import type { Agent } from '@truly-private/omdsh-agent'
+import SessionStore from '@truly-private/omdsh-session'
+import type { Session } from '@truly-private/omdsh-session'
+import UserQuestionService from '@truly-private/omdsh-user-questions'
+import { CommandId } from '@truly-private/omdsh-commands/brand'
 // Side-effect type imports: the knob-event SessionEventMap merges.
-import type {} from '@deepseek-ai/dsh-permission-presets'
-import type {} from '@deepseek-ai/dsh-sandbox-policy'
-import type {} from '@deepseek-ai/dsh-user-approval'
-import type { ApiProxy, RpcRequest } from '@deepseek-ai/dsh-host-apiproxy/api'
-import { RpcId } from '@deepseek-ai/dsh-host-apiproxy/api/rpc'
-import { createApiProxy } from '@deepseek-ai/dsh-host-apiproxy'
+import type {} from '@truly-private/omdsh-permission-presets'
+import type {} from '@truly-private/omdsh-sandbox-policy'
+import type {} from '@truly-private/omdsh-user-approval'
+import type { ApiProxy, RpcRequest } from '@truly-private/omdsh-host-apiproxy/api'
+import { RpcId } from '@truly-private/omdsh-host-apiproxy/api/rpc'
+import { createApiProxy } from '@truly-private/omdsh-host-apiproxy'
 
 let nextRpc = 1
 function request<P>(payload: P): RpcRequest<P> {

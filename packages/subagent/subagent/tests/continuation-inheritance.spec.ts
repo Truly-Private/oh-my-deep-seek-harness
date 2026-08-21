@@ -11,17 +11,17 @@ import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { Context } from '@deepseek-ai/cordis'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import { mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import SandboxPolicyService, { effectiveSandboxMode, setSandboxMode } from '@deepseek-ai/dsh-sandbox-policy'
-import { SessionId } from '@deepseek-ai/dsh-session'
-import type { SessionEvent } from '@deepseek-ai/dsh-session'
-import JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
-import * as SubagentFork from '@deepseek-ai/dsh-subagent-fork-in-process'
-import * as SubagentSpawn from '@deepseek-ai/dsh-subagent-spawn-in-process'
-import ApprovalService, { effectiveApprovalPolicy } from '@deepseek-ai/dsh-user-approval'
+import type { Agent } from '@truly-private/omdsh-agent'
+import AgentLoop from '@truly-private/omdsh-agent-loop'
+import { mountAgentLoopTestDependencies } from '@truly-private/omdsh-agent-loop-testkit'
+import { createUserMessage } from '@truly-private/omdsh-llm'
+import SandboxPolicyService, { effectiveSandboxMode, setSandboxMode } from '@truly-private/omdsh-sandbox-policy'
+import { SessionId } from '@truly-private/omdsh-session'
+import type { SessionEvent } from '@truly-private/omdsh-session'
+import JsonlSessionPersistence from '@truly-private/omdsh-session-persistence-jsonl'
+import * as SubagentFork from '@truly-private/omdsh-subagent-fork-in-process'
+import * as SubagentSpawn from '@truly-private/omdsh-subagent-spawn-in-process'
+import ApprovalService, { effectiveApprovalPolicy } from '@truly-private/omdsh-user-approval'
 import { MockAdapter, textResponse } from '../../../core/agent-loop/tests/mock-adapter.ts'
 import SubagentRuntime from '../src/index.ts'
 
@@ -104,7 +104,7 @@ describe('continuable policy inheritance', () => {
     const runtimeContext = loaded.events.find(
       (event): event is SessionEvent<'user/message'> => event.type === 'user/message'
         && event.data.source.kind === 'plugin'
-        && event.data.source.plugin === '@deepseek-ai/dsh-system-prompt',
+        && event.data.source.plugin === '@truly-private/omdsh-system-prompt',
     )
     const contextText = runtimeContext?.data.content
       .flatMap(block => block.type === 'text' ? [block.text] : [])

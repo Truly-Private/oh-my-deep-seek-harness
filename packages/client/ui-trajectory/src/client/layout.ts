@@ -12,7 +12,7 @@ import type {
   RequestView,
   ToolCallBlock,
   ToolResultNode,
-} from '@deepseek-ai/dsh-client-runtime/client'
+} from '@truly-private/omdsh-client-runtime/client'
 import type {
   TrajectoryCellProps,
   TrajectorySourceBlock,

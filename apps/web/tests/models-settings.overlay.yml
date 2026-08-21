@@ -1,0 +1,5 @@
+# Keep the configurable pi-ai adapter mounted without the distribution's
+# declared 9Router route so this scenario exercises its dormant catalog.
+- id: llm-pi-ai
+  config:
+    providers: {}

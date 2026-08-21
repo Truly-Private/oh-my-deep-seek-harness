@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-agent-instructions
+# @truly-private/omdsh-agent-instructions
 
 English | [中文](README.zh.md)
 

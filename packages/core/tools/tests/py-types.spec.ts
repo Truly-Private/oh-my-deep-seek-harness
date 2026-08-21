@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { jsonSchemaToPy, renderToolsSdkPy } from '@deepseek-ai/dsh-tools/src/py-types.ts'
-import { parameterSchemaSpecToJsonSchema } from '@deepseek-ai/dsh-tools'
-import type { ToolSdkSchema } from '@deepseek-ai/dsh-tools/src/ts-types.ts'
+import { jsonSchemaToPy, renderToolsSdkPy } from '@truly-private/omdsh-tools/src/py-types.ts'
+import { parameterSchemaSpecToJsonSchema } from '@truly-private/omdsh-tools'
+import type { ToolSdkSchema } from '@truly-private/omdsh-tools/src/ts-types.ts'
 
 describe('jsonSchemaToPy', () => {
   it('maps the defineTool DSL subset', () => {

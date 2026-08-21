@@ -14,7 +14,7 @@ import type { Browser, Page } from 'playwright'
 import { chromium } from 'playwright'
 import { afterAll, beforeAll, describe, expect, it, onTestFailed } from 'vitest'
 import { join } from 'node:path'
-import { SessionId } from '@deepseek-ai/dsh-session'
+import { SessionId } from '@truly-private/omdsh-session'
 import {
   acknowledgeReloadConnectionLoss, assertFixtureInventory, captureStableAria, compareOrRefreshGolden,
   launchWebScaffold, watchConsole, webSnapshotMode, type WebScaffold,
@@ -34,10 +34,10 @@ describe('web e2e: settings modal and General preferences', () => {
   let tripwire: ReturnType<typeof watchConsole>
 
   beforeAll(async () => {
-    scaffold = await launchWebScaffold({})
+    scaffold = await launchWebScaffold({ localePreference: 'zh' })
     browser = await chromium.launch()
-    // Chinese browser: the shared page asserts the localized settings surface
-    // the client derives from it (the English default has its own spec below).
+    // This shared page explicitly persists Chinese; the English default has
+    // its own fresh-home regression below.
     page = await browser.newPage({ viewport: { width: 1680, height: 1000 }, locale: ZH_BROWSER_LOCALE })
     tripwire = watchConsole(page)
     await page.goto(scaffold.baseUrl, { waitUntil: 'load' })
@@ -87,7 +87,7 @@ describe('web e2e: settings modal and General preferences', () => {
     await expect.poll(() => openRequests, { timeout: 5_000 }).toBe(1)
     await expect.poll(() => openDocument.isEnabled(), { timeout: 5_000 }).toBe(true)
     await page.unroute('**/api/settings.openDocument')
-    // Golden of the freshly opened dialog (default zh, General active).
+    // Golden of the explicitly Chinese dialog with General active.
     const snapshot = await captureStableAria(page, '[role="dialog"]', scaffold.workspaceCwd)
     await compareOrRefreshGolden(DIALOG_EXPECTED, snapshot, MODE)
     // Section switch: aria-current moves (the Models page itself has its own scenario file).
@@ -453,11 +453,9 @@ describe('web e2e: settings modal and General preferences', () => {
     expect(tripwire.pageErrors).toEqual([])
   }, 90_000)
 
-  it('opens an English browser in English without any stored preference', async () => {
-    // A fresh Host home has no locale preference, so its surface follows the
-    // browser rather than the product fallback.
+  it('opens in English without a stored preference even for a Chinese browser', async () => {
     const fresh = await launchWebScaffold({})
-    const enPage = await browser.newPage({ viewport: { width: 1680, height: 1000 }, locale: 'en-US' })
+    const enPage = await browser.newPage({ viewport: { width: 1680, height: 1000 }, locale: ZH_BROWSER_LOCALE })
     const enTripwire = watchConsole(enPage)
     onTestFailed(() => saveFailureShot(enPage, 'web-e2e-settings-browser-language'))
     try {

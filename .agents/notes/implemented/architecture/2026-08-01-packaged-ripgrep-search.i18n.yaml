@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/architecture/2026-08-01-packaged-ripgrep-search.md
-2026-08-01-packaged-ripgrep-search.md: c401bc1e30df0c3443ad58b37f64523b1c10cb31
-2026-08-01-packaged-ripgrep-search.zh.md: 11f04fb87a8af51cc42e1082899b10ba1328d70b
+2026-08-01-packaged-ripgrep-search.md: 9ad208bd3189433603d466bbbb231b9488388408
+2026-08-01-packaged-ripgrep-search.zh.md: 5d5d660a08dd596471ea9cdd36ae89afb69ea33e

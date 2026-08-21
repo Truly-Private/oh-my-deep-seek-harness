@@ -1,13 +1,13 @@
 {
-  "name": "@deepseek-ai/dsh-attachment",
+  "name": "@truly-private/omdsh-attachment",
   "description": "Durable immutable attachment storage seam for the DeepSeek Harness",
-  "version": "0.1.0-rc.5",
+  "version": "0.0.1",
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
+    "url": "git+https://github.com/Truly-Private/oh-my-deepseek-harness.git",
     "directory": "packages/attachment/attachment"
   },
   "type": "module",
@@ -22,13 +22,13 @@
   "files": ["lib/index.js", "lib/invariant.js", "lib/types/**/*.d.ts"],
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
+    "@truly-private/omdsh-brand": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-brand": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
+    "@truly-private/omdsh-brand": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^"
   }
 }

@@ -9,7 +9,7 @@ import { join } from 'node:path'
 import type { Browser, Page } from 'playwright'
 import { chromium } from 'playwright'
 import { afterAll, beforeAll, describe, expect, it, onTestFailed } from 'vitest'
-import { settingsNamespace } from '@deepseek-ai/dsh-settings'
+import { settingsNamespace } from '@truly-private/omdsh-settings'
 import {
   assertFixtureInventory, captureStableAria, compareOrRefreshGolden,
   launchWebScaffold, watchConsole, webSnapshotMode, type WebScaffold,
@@ -29,7 +29,11 @@ describe.skipIf(MODE === 'record')('web e2e: declared reasoning efforts reach th
   let tripwire: ReturnType<typeof watchConsole>
 
   beforeAll(async () => {
-    scaffold = await launchWebScaffold({ extraOverlayPath: OVERLAY })
+    scaffold = await launchWebScaffold({
+      extraOverlayPath: OVERLAY,
+      firstPartyMissingCredential: true,
+      localePreference: 'zh',
+    })
     // The whole reasoning offer is the profile: key = selectable level, value
     // = the wire spelling dispatch would send (`max: ultra` renames; the
     // valueless `off` means "supported, send nothing"). The route sets no

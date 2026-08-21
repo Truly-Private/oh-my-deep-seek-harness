@@ -1,13 +1,13 @@
 /**
- * Package-owned invariant companion for `@deepseek-ai/dsh-session-persistence-sqlite`.
- * @module @deepseek-ai/dsh-session-persistence-sqlite/invariant
+ * Package-owned invariant companion for `@truly-private/omdsh-session-persistence-sqlite`.
+ * @module @truly-private/omdsh-session-persistence-sqlite/invariant
  */
 
 /* jscpd:ignore-start */
 import type { Context } from '@deepseek-ai/cordis'
-import type { InvariantInstaller } from '@deepseek-ai/dsh-invariants'
+import type { InvariantInstaller } from '@truly-private/omdsh-invariants'
 
-const PACKAGE_NAME = '@deepseek-ai/dsh-session-persistence-sqlite'
+const PACKAGE_NAME = '@truly-private/omdsh-session-persistence-sqlite'
 
 /** Cordis companion plugin name. */
 export const name = 'session-persistence-sqlite-invariant'

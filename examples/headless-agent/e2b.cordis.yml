@@ -13,36 +13,36 @@
     path: ./advanced.cordis.yml
     patches:
       - id: subprocess
-        name: '@deepseek-ai/dsh-subprocess-local'
+        name: '@truly-private/omdsh-subprocess-local'
         disabled: true
       - id: fs-local
-        name: '@deepseek-ai/dsh-fs-local'
+        name: '@truly-private/omdsh-fs-local'
         disabled: true
       - insert:
           - id: e2b
-            name: '@deepseek-ai/dsh-e2b'
+            name: '@truly-private/omdsh-e2b'
             config:
               cwd: !!js process.cwd()
               timeoutMs: 300000
           - id: subprocess-e2b
-            name: '@deepseek-ai/dsh-subprocess-e2b'
+            name: '@truly-private/omdsh-subprocess-e2b'
           - id: fs-e2b
-            name: '@deepseek-ai/dsh-fs-e2b'
+            name: '@truly-private/omdsh-fs-e2b'
           - id: sandbox-policy
-            name: '@deepseek-ai/dsh-sandbox-policy'
+            name: '@truly-private/omdsh-sandbox-policy'
             config:
               mode: danger-full-access
               workspaceRoot: !!js process.cwd()
           - id: pty
-            name: '@deepseek-ai/dsh-terminal'
+            name: '@truly-private/omdsh-terminal'
           - id: terminal-bash
-            name: '@deepseek-ai/dsh-terminal-bash'
+            name: '@truly-private/omdsh-terminal-bash'
           - id: tool-terminal
-            name: '@deepseek-ai/dsh-tool-terminal'
+            name: '@truly-private/omdsh-tool-terminal'
           - id: lsp
-            name: '@deepseek-ai/dsh-lsp'
+            name: '@truly-private/omdsh-lsp'
           - id: lsp-stdio
-            name: '@deepseek-ai/dsh-lsp-stdio'
+            name: '@truly-private/omdsh-lsp-stdio'
             config:
               servers:
                 typescript:
@@ -54,4 +54,4 @@
                     .js: javascript
                     .jsx: javascriptreact
           - id: tool-lsp
-            name: '@deepseek-ai/dsh-tool-lsp'
+            name: '@truly-private/omdsh-tool-lsp'

@@ -7,9 +7,9 @@ import E2BRuntime, {
   FileType,
   SandboxNotFoundError,
   quoteE2BShellArg,
-} from '@deepseek-ai/dsh-e2b'
+} from '@truly-private/omdsh-e2b'
 import * as E2BInvariant from '../src/invariant.ts'
-import InvariantRegistry from '@deepseek-ai/dsh-invariants'
+import InvariantRegistry from '@truly-private/omdsh-invariants'
 
 const sdk = vi.hoisted(() => ({
   create: vi.fn(),

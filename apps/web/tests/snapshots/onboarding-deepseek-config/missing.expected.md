@@ -1,8 +1,8 @@
-- dialog "添加一个 API Key 开始使用":
-  - heading "添加一个 API Key 开始使用" [level=2]
-  - paragraph: 配置 DeepSeek 官方模型，即可开始使用。
+- dialog "连接 9Router 开始使用":
+  - heading "连接 9Router 开始使用" [level=2]
+  - paragraph: 粘贴 9Router 控制面板中的端点密钥。本地端点和入门模型已经配置完成。
   - text: API 密钥
   - textbox "API 密钥":
-    - /placeholder: 输入 API 密钥
+    - /placeholder: 输入 API 密钥，或留空使用环境认证
   - button "稍后配置"
   - button "保存并继续" [disabled]

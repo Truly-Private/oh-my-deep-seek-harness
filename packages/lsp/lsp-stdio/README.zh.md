@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-lsp-stdio
+# @truly-private/omdsh-lsp-stdio
 
 [English](README.md) | 中文
 

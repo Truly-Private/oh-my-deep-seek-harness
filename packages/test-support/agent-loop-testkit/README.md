@@ -1,4 +1,4 @@
-# `@deepseek-ai/dsh-agent-loop-testkit`
+# `@truly-private/omdsh-agent-loop-testkit`
 
 English | [中文](README.zh.md)
 
@@ -8,8 +8,8 @@ The caller registers adapters and optional plugins, mounts `AgentLoop` with the 
 
 ```ts
 import { Context } from '@deepseek-ai/cordis'
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
-import { mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
+import AgentLoop from '@truly-private/omdsh-agent-loop'
+import { mountAgentLoopTestDependencies } from '@truly-private/omdsh-agent-loop-testkit'
 
 const ctx = new Context()
 

@@ -1,11 +1,11 @@
 /** Execution-time authority checks for the model-facing goal tools. */
 
 import type { Context } from '@deepseek-ai/cordis'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import type { GoalView } from '@deepseek-ai/dsh-goal'
-import { HarnessError } from '@deepseek-ai/dsh-llm'
-import type { SessionEvent } from '@deepseek-ai/dsh-session'
-import type { ToolRunContext } from '@deepseek-ai/dsh-tools'
+import type { Agent } from '@truly-private/omdsh-agent'
+import type { GoalView } from '@truly-private/omdsh-goal'
+import { HarnessError } from '@truly-private/omdsh-llm'
+import type { SessionEvent } from '@truly-private/omdsh-session'
+import type { ToolRunContext } from '@truly-private/omdsh-tools'
 
 type TurnStartEvent = Extract<SessionEvent, { type: 'turn/start' }>
 

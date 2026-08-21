@@ -7,10 +7,10 @@
  */
 import type { ReactNode } from 'react'
 import type { Context } from '@deepseek-ai/cordis'
-import { bindSnapshotSelector } from '@deepseek-ai/dsh-client-web-react'
+import { bindSnapshotSelector } from '@truly-private/omdsh-client-web-react'
 import { DocumentTitle } from './DocumentTitle.tsx'
 // Type-only: pulls the runtime's SlotMap declaration merge (the 'root' key) into this program.
-import type {} from '@deepseek-ai/dsh-client-runtime/client'
+import type {} from '@truly-private/omdsh-client-runtime/client'
 
 /** Assembly inputs: the active app-shell plugin ctx (slots/sessions/layout services provided). */
 export interface AssemblyDeps {

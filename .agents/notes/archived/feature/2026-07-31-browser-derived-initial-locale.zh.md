@@ -1,6 +1,7 @@
 # Agent Note: 全新浏览器打开的设置语言由浏览器决定
 
 Status: implemented
+Archived: 2026-08-20
 
 [English](2026-07-31-browser-derived-initial-locale.md) | 中文
 

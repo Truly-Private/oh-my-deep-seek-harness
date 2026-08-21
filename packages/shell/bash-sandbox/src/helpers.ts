@@ -1,12 +1,12 @@
 /**
  * Internal sandbox-result classification helpers.
  *
- * @module @deepseek-ai/dsh-bash-sandbox/helpers
+ * @module @truly-private/omdsh-bash-sandbox/helpers
  */
 
 import { accessSync, constants, statSync } from 'node:fs'
-import type { ShellRunResult } from '@deepseek-ai/dsh-shell'
-import type { RunnerFailureRule } from '@deepseek-ai/dsh-sandbox'
+import type { ShellRunResult } from '@truly-private/omdsh-shell'
+import type { RunnerFailureRule } from '@truly-private/omdsh-sandbox'
 
 /** Node-local spawn codes proven to identify executable resolution or permission failure. */
 const EXECUTABLE_SPAWN_CODES = new Set(['EACCES', 'ENOENT'])

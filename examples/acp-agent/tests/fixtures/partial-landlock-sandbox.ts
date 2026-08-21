@@ -1,6 +1,6 @@
 import { join } from 'node:path'
-import type { ConfinedArgv, SandboxPolicy } from '@deepseek-ai/dsh-sandbox'
-import { SandboxProvider } from '@deepseek-ai/dsh-sandbox'
+import type { ConfinedArgv, SandboxPolicy } from '@truly-private/omdsh-sandbox'
+import { SandboxProvider } from '@truly-private/omdsh-sandbox'
 
 const NOTICE = 'landlock-run: partial enforcement (older Landlock ABI)'
 const MISSING_RUNNER_ENV = 'DSH_SNAPSHOT_MISSING_SANDBOX_RUNNER'

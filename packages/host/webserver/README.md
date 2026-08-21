@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-host-webserver
+# @truly-private/omdsh-host-webserver
 
 English | [中文](README.zh.md)
 

@@ -1,14 +1,14 @@
 /**
  * Model-facing, workspace-authorized session-history search and read tools.
  *
- * @module @deepseek-ai/dsh-tool-session-query
+ * @module @truly-private/omdsh-tool-session-query
  */
 
 import type { Context } from '@deepseek-ai/cordis'
 import z from '@deepseek-ai/schemastery'
-import { MAX_TIMER_DELAY_MS } from '@deepseek-ai/dsh-timeout'
-import { defineTool } from '@deepseek-ai/dsh-tools'
-import type {} from '@deepseek-ai/dsh-system-prompt'
+import { MAX_TIMER_DELAY_MS } from '@truly-private/omdsh-timeout'
+import { defineTool } from '@truly-private/omdsh-tools'
+import type {} from '@truly-private/omdsh-system-prompt'
 import { toolInput } from './input.ts'
 import { operations } from './operations.ts'
 import { presentation } from './presentation.ts'

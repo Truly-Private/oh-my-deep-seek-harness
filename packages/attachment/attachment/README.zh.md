@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-attachment
+# @truly-private/omdsh-attachment
 
 [English](README.md) | 中文
 

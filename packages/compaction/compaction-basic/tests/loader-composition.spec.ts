@@ -6,11 +6,11 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
 import Loader from '@deepseek-ai/cordis-plugin-loader'
 import Include from '@deepseek-ai/cordis-plugin-include'
-import LlmRuntime from '@deepseek-ai/dsh-llm'
-import SessionStore from '@deepseek-ai/dsh-session'
-import TokenMeter from '@deepseek-ai/dsh-token-meter'
-import BasicCompactionEngine from '@deepseek-ai/dsh-compaction-basic'
-import ToolResultPruner from '@deepseek-ai/dsh-compaction-tool-result-pruner'
+import LlmRuntime from '@truly-private/omdsh-llm'
+import SessionStore from '@truly-private/omdsh-session'
+import TokenMeter from '@truly-private/omdsh-token-meter'
+import BasicCompactionEngine from '@truly-private/omdsh-compaction-basic'
+import ToolResultPruner from '@truly-private/omdsh-compaction-tool-result-pruner'
 
 let root: string | undefined
 let context: Context | undefined
@@ -32,11 +32,11 @@ async function loadYaml(lines: readonly string[]): Promise<Context> {
   await context.plugin(Loader)
   context.loader.builtins.include = Include
   const modules = new Map<string, unknown>([
-    ['@deepseek-ai/dsh-llm', LlmRuntime],
-    ['@deepseek-ai/dsh-session', SessionStore],
-    ['@deepseek-ai/dsh-token-meter', TokenMeter],
-    ['@deepseek-ai/dsh-compaction-tool-result-pruner', ToolResultPruner],
-    ['@deepseek-ai/dsh-compaction-basic', BasicCompactionEngine],
+    ['@truly-private/omdsh-llm', LlmRuntime],
+    ['@truly-private/omdsh-session', SessionStore],
+    ['@truly-private/omdsh-token-meter', TokenMeter],
+    ['@truly-private/omdsh-compaction-tool-result-pruner', ToolResultPruner],
+    ['@truly-private/omdsh-compaction-basic', BasicCompactionEngine],
   ])
   context.loader.internal = {
     version: 'v2',
@@ -56,15 +56,15 @@ async function loadYaml(lines: readonly string[]): Promise<Context> {
 describe('real Loader composition', () => {
   it('loads the shipped token-meter, pruning, and compaction-basic YAML order', async () => {
     const loaded = await loadYaml([
-      "- name: '@deepseek-ai/dsh-llm'",
-      "- name: '@deepseek-ai/dsh-session'",
-      "- name: '@deepseek-ai/dsh-token-meter'",
-      "- name: '@deepseek-ai/dsh-compaction-tool-result-pruner'",
+      "- name: '@truly-private/omdsh-llm'",
+      "- name: '@truly-private/omdsh-session'",
+      "- name: '@truly-private/omdsh-token-meter'",
+      "- name: '@truly-private/omdsh-compaction-tool-result-pruner'",
       '  config:',
       '    thresholdChars: 100',
       '    headChars: 20',
       '    tailChars: 10',
-      "- name: '@deepseek-ai/dsh-compaction-basic'",
+      "- name: '@truly-private/omdsh-compaction-basic'",
       '  config:',
       '    thresholdRatio: 0.5',
       '    retainRatio: 0.125',

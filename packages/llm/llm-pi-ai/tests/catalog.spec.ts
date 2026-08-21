@@ -3,12 +3,12 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
-import LlmRuntime, { createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { StreamChunk } from '@deepseek-ai/dsh-llm'
-import FileSettingsProvider from '@deepseek-ai/dsh-settings-file'
-import { settingsNamespace } from '@deepseek-ai/dsh-settings'
-import * as LlmPiAi from '@deepseek-ai/dsh-llm-pi-ai'
-import { PiAiAdapter } from '@deepseek-ai/dsh-llm-pi-ai'
+import LlmRuntime, { createUserMessage } from '@truly-private/omdsh-llm'
+import type { StreamChunk } from '@truly-private/omdsh-llm'
+import FileSettingsProvider from '@truly-private/omdsh-settings-file'
+import { settingsNamespace } from '@truly-private/omdsh-settings'
+import * as LlmPiAi from '@truly-private/omdsh-llm-pi-ai'
+import { PiAiAdapter } from '@truly-private/omdsh-llm-pi-ai'
 import { getBuiltinModels } from '@earendil-works/pi-ai/providers/all'
 import { createModels, getSupportedThinkingLevels } from '@earendil-works/pi-ai'
 import type { Api, Model, OpenAICompletionsCompat, Provider } from '@earendil-works/pi-ai'
@@ -150,7 +150,31 @@ describe('hand-declared providers', () => {
     // provider carries a stored profile the moment anyone corrects it.
     expect(directory.filter(entry => entry.declared).map(entry => entry.provider))
       .toEqual(['acme-gateway'])
+    expect(directory.find(entry => entry.provider === '9router')).toBeUndefined()
     expect(directory.find(entry => entry.provider === 'deepseek')?.declared).toBe(false)
+  })
+
+  it('serves the first-party 9Router route from a profile without labeling it custom', async () => {
+    const ctx = await harness({
+      providers: {
+        '9router': {
+          displayName: '9Router',
+          apiKeyEnv: KEY_ENV,
+          api: 'openai-completions',
+          baseURL: 'http://127.0.0.1:20128/v1',
+          models: [{ id: 'kr/claude-sonnet-4.5', name: 'Claude Sonnet 4.5 (Kiro)' }],
+        },
+      },
+    })
+
+    expect(ctx.llm.listProviders()).toContainEqual({ id: '9router', name: '9Router' })
+    expect(await ctx.llm.listModels('9router')).toEqual([{
+      provider: '9router',
+      id: 'kr/claude-sonnet-4.5',
+      name: 'Claude Sonnet 4.5 (Kiro)',
+      inputModalities: ['text'],
+    }])
+    expect(ctx.llm.listConfigurableProviders().find(entry => entry.provider === '9router')?.declared).toBe(false)
   })
 
   it('sizes a model the catalog cannot describe from the route\u2019s own fallbacks', () => {

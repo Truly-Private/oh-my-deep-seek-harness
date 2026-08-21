@@ -1,13 +1,13 @@
 {
-  "name": "@deepseek-ai/dsh-client-ui-model-selection",
+  "name": "@truly-private/omdsh-client-ui-model-selection",
   "description": "Model selection: the /model popupSelect over session.models / session.selectModel",
-  "version": "0.1.0-rc.5",
+  "version": "0.0.1",
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
+    "url": "git+https://github.com/Truly-Private/oh-my-deepseek-harness.git",
     "directory": "packages/client/ui-model-selection"
   },
   "type": "module",
@@ -32,10 +32,10 @@
   "dsh": {
     "client": {
       "inject": [
-        "@deepseek-ai/dsh-client-locale",
-        "@deepseek-ai/dsh-client-runtime",
-        "@deepseek-ai/dsh-client-ui-commands",
-        "@deepseek-ai/dsh-api-remotes"
+        "@truly-private/omdsh-client-locale",
+        "@truly-private/omdsh-client-runtime",
+        "@truly-private/omdsh-client-ui-commands",
+        "@truly-private/omdsh-api-remotes"
       ],
       "platform": "web"
     }
@@ -46,32 +46,32 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@deepseek-ai/dsh-api-remotes": "workspace:^",
-    "@deepseek-ai/dsh-client-connection": "workspace:^",
-    "@deepseek-ai/dsh-client-locale": "workspace:^",
-    "@deepseek-ai/dsh-client-runtime": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-commands": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-conversation": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-primitives": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-input-trigger": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-slots": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
+    "@truly-private/omdsh-api-remotes": "workspace:^",
+    "@truly-private/omdsh-client-connection": "workspace:^",
+    "@truly-private/omdsh-client-locale": "workspace:^",
+    "@truly-private/omdsh-client-runtime": "workspace:^",
+    "@truly-private/omdsh-client-ui-commands": "workspace:^",
+    "@truly-private/omdsh-client-ui-conversation": "workspace:^",
+    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
+    "@truly-private/omdsh-client-ui-input-trigger": "workspace:^",
+    "@truly-private/omdsh-client-ui-slots": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
     "clsx": "^2.1.1",
     "@deepseek-ai/cordis": "workspace:^",
     "react": "^18.2.0"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-api-remotes": "workspace:^",
-    "@deepseek-ai/dsh-client-connection": "workspace:^",
-    "@deepseek-ai/dsh-client-locale": "workspace:^",
-    "@deepseek-ai/dsh-client-runtime": "workspace:^",
-    "@deepseek-ai/dsh-client-test-runtime": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-commands": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-conversation": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-primitives": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-input-trigger": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-slots": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
+    "@truly-private/omdsh-api-remotes": "workspace:^",
+    "@truly-private/omdsh-client-connection": "workspace:^",
+    "@truly-private/omdsh-client-locale": "workspace:^",
+    "@truly-private/omdsh-client-runtime": "workspace:^",
+    "@truly-private/omdsh-client-test-runtime": "workspace:^",
+    "@truly-private/omdsh-client-ui-commands": "workspace:^",
+    "@truly-private/omdsh-client-ui-conversation": "workspace:^",
+    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
+    "@truly-private/omdsh-client-ui-input-trigger": "workspace:^",
+    "@truly-private/omdsh-client-ui-slots": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
     "@types/react": "~18.3.1",
     "clsx": "^2.1.1",
     "@deepseek-ai/cordis": "workspace:^",

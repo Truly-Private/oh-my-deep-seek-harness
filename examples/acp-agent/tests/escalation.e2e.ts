@@ -12,7 +12,7 @@ import {
   launchAcpTestAgent,
   type AgentUnderTest,
   type LaunchedAcpTestAgent,
-} from '@deepseek-ai/dsh-acp-snapshot'
+} from '@truly-private/omdsh-acp-snapshot'
 import { cleanupAcpExampleTest } from './cleanup.ts'
 
 /**

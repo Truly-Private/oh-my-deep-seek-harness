@@ -1,5 +1,5 @@
 /**
- * @deepseek-ai/dsh-host-frontend-static — SPA dist server over the webserver
+ * @truly-private/omdsh-host-frontend-static — SPA dist server over the webserver
  * fallback seat: serves the built frontend directory with the semantics the
  * Web shell locked at step1 — traversal outside the dist root is 403, any
  * miss falls back to index.html with HTTP 200 (SPA routing), unknown
@@ -8,7 +8,7 @@
  * injection). The dist location is workspace knowledge of the composing
  * application, so `distIndex` is typically supplied through a `!!js`
  * expression, never hardcoded by a deployment.
- * @module @deepseek-ai/dsh-host-frontend-static
+ * @module @truly-private/omdsh-host-frontend-static
  */
 
 import type { ServerResponse } from 'node:http'
@@ -16,7 +16,7 @@ import { readFile } from 'node:fs/promises'
 import { dirname, extname, join, normalize, resolve, sep } from 'node:path'
 import type { Context } from '@deepseek-ai/cordis'
 import z from '@deepseek-ai/schemastery'
-import type {} from '@deepseek-ai/dsh-host-webserver'
+import type {} from '@truly-private/omdsh-host-webserver'
 
 /** Stable Cordis plugin name. */
 export const name = 'frontend-static'

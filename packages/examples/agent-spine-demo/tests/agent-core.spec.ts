@@ -4,13 +4,13 @@ import { join, sep } from 'node:path'
 import { tmpdir } from 'node:os'
 import { Context } from '@deepseek-ai/cordis'
 import Loader from '@deepseek-ai/cordis-plugin-loader'
-import { renderPrompt, TOOL_ORDER_REST } from '@deepseek-ai/dsh-system-prompt'
+import { renderPrompt, TOOL_ORDER_REST } from '@truly-private/omdsh-system-prompt'
 import * as agentCore from '../src/index.ts'
-import { agentEvents, type Agent } from '@deepseek-ai/dsh-agent'
-import { SessionId } from '@deepseek-ai/dsh-session'
-import LocalBashExecutor from '@deepseek-ai/dsh-bash-local'
-import LocalFileSystem from '@deepseek-ai/dsh-fs-local'
-import * as ToolFs from '@deepseek-ai/dsh-tool-fs'
+import { agentEvents, type Agent } from '@truly-private/omdsh-agent'
+import { SessionId } from '@truly-private/omdsh-session'
+import LocalBashExecutor from '@truly-private/omdsh-bash-local'
+import LocalFileSystem from '@truly-private/omdsh-fs-local'
+import * as ToolFs from '@truly-private/omdsh-tool-fs'
 import { MockAdapter, textResponse, toolCallResponse } from '../../../core/agent-loop/tests/mock-adapter.ts'
 import {
   createUserMessage,
@@ -22,16 +22,16 @@ import {
   type Message,
   type ResolvedRetryPolicy,
   type StreamChunk,
-} from '@deepseek-ai/dsh-llm'
-import type { ToolExecution } from '@deepseek-ai/dsh-tools'
-import * as sessionInvariant from '@deepseek-ai/dsh-session/invariant'
-import * as agentInvariant from '@deepseek-ai/dsh-agent/invariant'
-import * as scopeInvariant from '@deepseek-ai/dsh-scope/invariant'
-import * as agentLoopInvariant from '@deepseek-ai/dsh-agent-loop/invariant'
+} from '@truly-private/omdsh-llm'
+import type { ToolExecution } from '@truly-private/omdsh-tools'
+import * as sessionInvariant from '@truly-private/omdsh-session/invariant'
+import * as agentInvariant from '@truly-private/omdsh-agent/invariant'
+import * as scopeInvariant from '@truly-private/omdsh-scope/invariant'
+import * as agentLoopInvariant from '@truly-private/omdsh-agent-loop/invariant'
 
 const testToolSignal = new AbortController().signal
 
-declare module '@deepseek-ai/dsh-jobs' {
+declare module '@truly-private/omdsh-jobs' {
   interface JobKindMap {
     probe: 'probe'
   }
@@ -53,7 +53,7 @@ async function composePrefix(ctx: Context, cwd: string): Promise<Message[]> {
 }
 
 /**
- * Unit coverage for the @deepseek-ai/dsh-agent-spine-demo bundle: mounting it brings
+ * Unit coverage for the @truly-private/omdsh-agent-spine-demo bundle: mounting it brings
  * up the whole default spine in one `ctx.plugin`, and the forwarded
  * `agents` config reaches the loop (default `[]`, or a pre-created agent).
  *
@@ -227,8 +227,8 @@ describe('dsh-agent-spine-demo bundle', () => {
 
     for (const invariants of [
       { enabled: false },
-      { package_allowlist: ['^@deepseek-ai/dsh-agent$'] },
-      { package_blocklist: ['^@deepseek-ai/dsh-session$'] },
+      { package_allowlist: ['^@truly-private/omdsh-agent$'] },
+      { package_blocklist: ['^@truly-private/omdsh-session$'] },
     ]) {
       const filtered = await mount({ workspaceContext: false, invariants })
       expect(() => { nestedTurn(filtered) }).not.toThrow()

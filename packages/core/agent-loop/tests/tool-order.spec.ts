@@ -1,4 +1,4 @@
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
+import { createUserMessage } from '@truly-private/omdsh-llm'
 /**
  * Loop-level tool-order determinism: the request/header event — and therefore the frozen
  * request the adapter receives — carries the assembly's canonical tool order (system-prompt's
@@ -9,14 +9,14 @@ import { createUserMessage } from '@deepseek-ai/dsh-llm'
 
 import { describe, expect, it } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
-import LlmRuntime from '@deepseek-ai/dsh-llm'
-import SessionStore, { SessionId, foldRequestHeader } from '@deepseek-ai/dsh-session'
-import SystemPrompt, { TOOL_ORDER_REST } from '@deepseek-ai/dsh-system-prompt'
-import type { Config as SystemPromptConfig } from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime, { defineContentToolFixture } from '@deepseek-ai/dsh-tools'
-import AgentRegistry, { type Agent } from '@deepseek-ai/dsh-agent'
+import LlmRuntime from '@truly-private/omdsh-llm'
+import SessionStore, { SessionId, foldRequestHeader } from '@truly-private/omdsh-session'
+import SystemPrompt, { TOOL_ORDER_REST } from '@truly-private/omdsh-system-prompt'
+import type { Config as SystemPromptConfig } from '@truly-private/omdsh-system-prompt'
+import ToolRuntime, { defineContentToolFixture } from '@truly-private/omdsh-tools'
+import AgentRegistry, { type Agent } from '@truly-private/omdsh-agent'
 
-import AgentLoop from '@deepseek-ai/dsh-agent-loop'
+import AgentLoop from '@truly-private/omdsh-agent-loop'
 import { MockAdapter, textResponse } from './mock-adapter.ts'
 
 async function harness(adapter: MockAdapter, toolOrder?: SystemPromptConfig['toolOrder']) {

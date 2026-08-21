@@ -3,19 +3,19 @@ import { join, posix } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { Context } from '@deepseek-ai/cordis'
 import { describe, expect, it } from 'vitest'
-import { Inbox } from '@deepseek-ai/dsh-agent'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import { runLoaderSmoke } from '@deepseek-ai/dsh-loader-smoke'
+import { Inbox } from '@truly-private/omdsh-agent'
+import type { Agent } from '@truly-private/omdsh-agent'
+import { runLoaderSmoke } from '@truly-private/omdsh-loader-smoke'
 import {
   FileNotFoundError,
   Sandbox,
   SandboxNotFoundError,
-} from '@deepseek-ai/dsh-e2b'
-import TerminalSessionService, { TerminalSessionId } from '@deepseek-ai/dsh-terminal'
-import { BashTerminalBackend } from '@deepseek-ai/dsh-terminal-bash'
-import SandboxPolicyService from '@deepseek-ai/dsh-sandbox-policy'
-import { Session, SessionId } from '@deepseek-ai/dsh-session'
-import E2BSubprocessRuntime from '@deepseek-ai/dsh-subprocess-e2b'
+} from '@truly-private/omdsh-e2b'
+import TerminalSessionService, { TerminalSessionId } from '@truly-private/omdsh-terminal'
+import { BashTerminalBackend } from '@truly-private/omdsh-terminal-bash'
+import SandboxPolicyService from '@truly-private/omdsh-sandbox-policy'
+import { Session, SessionId } from '@truly-private/omdsh-session'
+import E2BSubprocessRuntime from '@truly-private/omdsh-subprocess-e2b'
 
 const fixtureRoot = fileURLToPath(new URL('../../../../examples/headless-agent/tests/fixtures/e2b/e2b/', import.meta.url))
 const binScript = join(fixtureRoot, 'bin.ts')

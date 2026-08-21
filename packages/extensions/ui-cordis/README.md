@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-client-ui-cordis
+# @truly-private/omdsh-client-ui-cordis
 
 English | [中文](README.zh.md)
 

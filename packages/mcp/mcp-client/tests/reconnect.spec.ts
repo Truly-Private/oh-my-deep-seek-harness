@@ -6,10 +6,10 @@
  */
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime from '@deepseek-ai/dsh-tools'
-import { CallId } from '@deepseek-ai/dsh-llm'
-import type { Config } from '@deepseek-ai/dsh-mcp-client'
+import SystemPrompt from '@truly-private/omdsh-system-prompt'
+import ToolRuntime from '@truly-private/omdsh-tools'
+import { CallId } from '@truly-private/omdsh-llm'
+import type { Config } from '@truly-private/omdsh-mcp-client'
 
 // ---- Mock MCP SDK ----
 
@@ -58,8 +58,8 @@ vi.mock('@modelcontextprotocol/sdk/client/streamableHttp.js', () => ({
 
 // vi.mock is hoisted above static imports, so the modules under test see the
 // mocked SDK even through a static import.
-import { apply } from '@deepseek-ai/dsh-mcp-client/src/index.ts'
-import { RECONNECT_DEFAULTS, resolveReconnectPolicy, startConnection } from '@deepseek-ai/dsh-mcp-client/src/connection.ts'
+import { apply } from '@truly-private/omdsh-mcp-client/src/index.ts'
+import { RECONNECT_DEFAULTS, resolveReconnectPolicy, startConnection } from '@truly-private/omdsh-mcp-client/src/connection.ts'
 
 // ---- Helpers ----
 

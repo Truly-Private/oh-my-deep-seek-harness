@@ -5,7 +5,7 @@
 // layer stack the profile boot composes), patched the
 // snapshot way — so a real chromium exercises the real HTTP uplink/WebSocket
 // downlink, api-gateway, agent loop, tools, and persistence. Modes ride $DSH_SNAPSHOT:
-// replay (default, keyless: normally disables the llm-deepseek row and
+// replay (default, keyless: normally disables the shipped LLM adapter rows and
 // inserts dsh-llm-replay in providers mode), record (real adapter + key,
 // harvests fixtures from live session memory), refresh (keyless replay that
 // rewrites goldens). A first-run option keeps the real adapter mounted while
@@ -18,7 +18,7 @@
 // disabled (recorded fixtures must not embed this repo's AGENTS.md);
 // session-title-llm disabled (its fire-and-forget title call would race the
 // loop for the session's replay cursor); webserver pinned to port 0 with the
-// built dist; ordinary keyless modes disable llm-deepseek and fill the open
+// built dist; ordinary keyless modes disable llm-deepseek and llm-pi-ai, then fill the open
 // llm seam post-boot with installLlmReplay on the settled root ctx
 // (the plugin-row path discards the ReplayHandle; the direct install keeps
 // assertConsumed for the teardown fixture-consumption check).
@@ -33,21 +33,21 @@ import { Context } from '@deepseek-ai/cordis'
 import Loader from '@deepseek-ai/cordis-plugin-loader'
 import Include, { type PatchOptions } from '@deepseek-ai/cordis-plugin-include'
 import Group from '@deepseek-ai/cordis-plugin-group'
-import { scrubRequestHeaders, stabilizeFixtureMessageIds } from '@deepseek-ai/dsh-acp-snapshot'
+import { scrubRequestHeaders, stabilizeFixtureMessageIds } from '@truly-private/omdsh-acp-snapshot'
 import {
   assertEntriesLoaded,
   composeEntries,
   healProfilesModuleFallback,
   loadOverlayPatches,
-} from '@deepseek-ai/dsh-app-boot'
-import { dshHomePath } from '@deepseek-ai/dsh-home-paths'
-import { settingsNamespace } from '@deepseek-ai/dsh-settings'
-import { LlmAdapter } from '@deepseek-ai/dsh-llm'
+} from '@truly-private/omdsh-app-boot'
+import { dshHomePath } from '@truly-private/omdsh-home-paths'
+import { settingsNamespace } from '@truly-private/omdsh-settings'
+import { LlmAdapter } from '@truly-private/omdsh-llm'
 import type {
   LlmModelInfo, LlmProviderInfo, LlmResolvedModelInfo, StreamChunk,
-} from '@deepseek-ai/dsh-llm'
-import type { ReplayHandle } from '@deepseek-ai/dsh-llm-replay'
-import { installLlmReplay, parseSessionLog } from '@deepseek-ai/dsh-llm-replay'
+} from '@truly-private/omdsh-llm'
+import type { ReplayHandle } from '@truly-private/omdsh-llm-replay'
+import { installLlmReplay, parseSessionLog } from '@truly-private/omdsh-llm-replay'
 import SessionStore, {
   packChunkRuns,
   SESSION_FORMAT_VERSION,
@@ -55,22 +55,27 @@ import SessionStore, {
   type Session,
   type SessionEvent,
   type SessionHeader,
-} from '@deepseek-ai/dsh-session'
-import JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
+} from '@truly-private/omdsh-session'
+import JsonlSessionPersistence from '@truly-private/omdsh-session-persistence-jsonl'
 // Empty type imports carry the webServer/agents/sessionPersistence Context merges.
-import type {} from '@deepseek-ai/dsh-host-webserver'
-import type {} from '@deepseek-ai/dsh-agent'
-import { provideCmdline } from '@deepseek-ai/dsh-cmdline'
+import type {} from '@truly-private/omdsh-host-webserver'
+import type {} from '@truly-private/omdsh-agent'
+import { provideCmdline } from '@truly-private/omdsh-cmdline'
 import { REPO_ROOT, requireDist } from './support.ts'
 
-// Host-side web e2e cannot import a browser package: doing so would pull that
-// package's complete TS project into this graph. Mirrored from
-// packages/client/ui-settings-models/src/onboarding-copy.ts; drift makes the
-// default pre-acknowledgement stop suppressing the notice and fails loudly.
+// Host-side web e2e cannot import browser packages: doing so would pull their
+// complete TS projects into this graph. These settings addresses mirror the
+// owning client packages; drift fails loudly when the mutation reaches the Host.
+type LocaleId = 'zh' | 'en'
+const LOCALE_SETTINGS_NAMESPACE = 'locale'
+const LOCALE_PREFERENCE_FIELD = 'preference'
+
+// Mirrored from packages/client/ui-settings-models/src/onboarding-copy.ts;
+// copy drift makes the default pre-acknowledgement stop suppressing the notice.
 // import {
 //   WELCOME_NOTICE_ACK_FIELD, WELCOME_NOTICE_SETTINGS_NAMESPACE,
 //   WELCOME_NOTICE_VERSION, WELCOME_NOTICE_COPY,
-// } from '@deepseek-ai/dsh-client-ui-settings-models'
+// } from '@truly-private/omdsh-client-ui-settings-models'
 export const WELCOME_NOTICE_SETTINGS_NAMESPACE = 'ui-onboarding'
 export const WELCOME_NOTICE_ACK_FIELD = 'welcomeNoticeVersion'
 export const WELCOME_NOTICE_VERSION = '2026-08-13.1'
@@ -79,6 +84,11 @@ export const WELCOME_NOTICE_COPY = {
     title: '内测声明',
     body: 'DeepSeek Harness 目前的 0.1 版本仍处在面向 Harness 开发者进行测试的阶段，还有许多地方需要持续改进和打磨，希望听取广大开发者的反馈建议。预计 DeepSeek Harness 的核心插件以及基础 API 都会在接下来的一段时间内快速迭代、持续演化。\n\n我们期待与全球开发者一起，在开源、开放、可复用、可组合的基础设施之上，共同探索智能上限。欢迎全球 Harness 开发者加入 DSH 插件生态。',
     continueLabel: '继续',
+  },
+  en: {
+    title: 'Internal Testing Notice',
+    body: "DeepSeek Harness 0.1 remains in testing for Harness developers. Many areas need further improvement, and we welcome feedback from the developer community. DeepSeek Harness's core plugins and foundational APIs will continue to evolve rapidly over the coming months.\n\nWe look forward to exploring the limits of intelligence with developers around the world, building on open-source, open, reusable, and composable infrastructure. We welcome Harness developers everywhere to join the DSH plugin ecosystem.",
+    continueLabel: 'Continue',
   },
 } as const
 
@@ -105,11 +115,15 @@ const INSTALL_ANCHOR = join(REPO_ROOT, 'apps/cli/package.json')
 const SHIPPED_PRESET_DIR = join(REPO_ROOT, 'apps/cli/config/agent-presets')
 
 // Replay publishes the provider catalog the gateway routes to (providers
-// mode, never catch-all: with llm-deepseek disabled no adapter exists, so a
+// mode, never catch-all: with both shipped LLM adapters disabled no adapter exists, so a
 // catch-all would leave resolveModelInfo unroutable and compaction-basic's
 // post-step pressure check would warn every step). The published
 // contextWindow keeps that pressure path provably inert for small fixtures.
 const REPLAY_PROVIDERS = [{
+  id: '9router',
+  name: '9Router',
+  models: [{ id: 'kr/claude-sonnet-4.5', name: 'Claude Sonnet 4.5 (Kiro)', contextWindow: 128_000 }],
+}, {
   id: 'deepseek-official',
   name: 'DeepSeek',
   models: [{ id: 'deepseek-v4-flash', name: 'DeepSeek-V4-Flash', contextWindow: 128_000 }],
@@ -195,8 +209,8 @@ export interface LaunchOptions {
    * Replay fixture (session.jsonl) served by the inserted dsh-llm-replay row
    * in replay/refresh modes; ignored in record mode (the real adapter
    * answers). Omit for scenarios issuing no model calls — a stray stream then
-   * fails loud with NO_ADAPTER (llm-deepseek is disabled and no replay row
-   * mounts).
+   * fails loud with NO_ADAPTER (the shipped LLM adapters are disabled and no
+   * replay row mounts).
    */
   replayFixture?: string
   /**
@@ -228,11 +242,12 @@ export interface LaunchOptions {
    */
   cordisTools?: boolean
   /**
-   * Keep the shipped DeepSeek adapter mounted while masking the process
-   * environment's DEEPSEEK_API_KEY for this scaffold lifetime. This is the
-   * keyless first-run configuration lane; the default disables the adapter.
+   * Keep the shipped first-party 9Router route mounted while masking the
+   * process environment's NINE_ROUTER_API_KEY for this scaffold lifetime.
+   * This is the keyless first-run configuration lane; the default disables
+   * both shipped LLM adapters and installs replay routes.
    */
-  deepSeekMissingCredential?: boolean
+  firstPartyMissingCredential?: boolean
   /** Leave the current welcome notice pending; ordinary scenarios pre-acknowledge it before browser boot. */
   welcomeNoticePending?: boolean
   /**
@@ -275,6 +290,8 @@ export interface LaunchOptions {
   remoteAuthority?: string
   /** Reuse an existing harness home so a second Host can verify user settings across origins. */
   harnessHome?: string
+  /** Seed an explicit saved UI language before browser boot; omission exercises the English default. */
+  localePreference?: LocaleId
 }
 
 /** Dispose the booted tree and remove both owned temp roots, reporting every independent cleanup failure. */
@@ -302,19 +319,19 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
       throw new Error('web e2e record mode needs DEEPSEEK_API_KEY (env or repo-root .env)')
     }
   }
-  if (mode === 'record' && options.deepSeekMissingCredential === true) {
-    throw new Error('deepSeekMissingCredential is a keyless replay/refresh option')
+  if (mode === 'record' && options.firstPartyMissingCredential === true) {
+    throw new Error('firstPartyMissingCredential is a keyless replay/refresh option')
   }
-  const maskDeepSeekCredential = mode !== 'record' && options.deepSeekMissingCredential === true
-  const originalDeepSeekCredential = process.env.DEEPSEEK_API_KEY
+  const maskFirstPartyCredential = mode !== 'record' && options.firstPartyMissingCredential === true
+  const originalFirstPartyCredential = process.env.NINE_ROUTER_API_KEY
   let credentialEnvironmentRestored = false
   const restoreCredentialEnvironment = (): void => {
-    if (credentialEnvironmentRestored || !maskDeepSeekCredential) return
+    if (credentialEnvironmentRestored || !maskFirstPartyCredential) return
     credentialEnvironmentRestored = true
-    if (originalDeepSeekCredential === undefined) {
-      Reflect.deleteProperty(process.env, 'DEEPSEEK_API_KEY')
+    if (originalFirstPartyCredential === undefined) {
+      Reflect.deleteProperty(process.env, 'NINE_ROUTER_API_KEY')
     } else {
-      process.env.DEEPSEEK_API_KEY = originalDeepSeekCredential
+      process.env.NINE_ROUTER_API_KEY = originalFirstPartyCredential
     }
   }
   const workspaceCwd = await realpath(await mkdtemp(join(tmpdir(), 'dsh-web-e2e-ws-')))
@@ -360,7 +377,7 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
     if (failures.length > 1) throw new AggregateError(failures, 'web scaffold temp-root setup failed')
     throw error
   }
-  if (maskDeepSeekCredential) Reflect.deleteProperty(process.env, 'DEEPSEEK_API_KEY')
+  if (maskFirstPartyCredential) Reflect.deleteProperty(process.env, 'NINE_ROUTER_API_KEY')
 
   // The include patch set — the same layer stack the profile boot composes
   // (bundle patches in dsh.profile.bundles order), applied over the SAME empty root (a
@@ -443,7 +460,7 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
       config: { host: '127.0.0.1', port: 0 },
     },
     // The bundle's web-runtime row resolves the same built dist under test
-    // (apps/web IS @deepseek-ai/dsh-web-frontend); only the URL line is silenced.
+    // (apps/web IS @truly-private/omdsh-web-frontend); only the URL line is silenced.
     // Preserve the composed surface-context choice because a patch replaces
     // the row's complete config.
     { id: 'web-runtime', config: { printUrl: false, surfaceContext } },
@@ -460,8 +477,8 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
     // disable+insert pair.
     { id: 'directory-picker', disabled: true },
     { insert: [
-      { id: 'directory-picker-browse', name: '@deepseek-ai/dsh-host-directory-picker-browse' },
-      { id: 'ui-directory-picker-browse', name: '@deepseek-ai/dsh-client-ui-directory-picker-browse' },
+      { id: 'directory-picker-browse', name: '@truly-private/omdsh-host-directory-picker-browse' },
+      { id: 'ui-directory-picker-browse', name: '@truly-private/omdsh-client-ui-directory-picker-browse' },
     ] },
     ...options.agentPresets === undefined
       ? []
@@ -473,7 +490,7 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
     // scenario adds only the model-facing tools that exercise those services.
     ...options.cordisTools === true
       ? [{ insert: [
-        { id: 'tool-cordis', name: '@deepseek-ai/dsh-tool-cordis' },
+        { id: 'tool-cordis', name: '@truly-private/omdsh-tool-cordis' },
       ] }]
       : [],
     ...options.deepSeekSearch === undefined
@@ -485,9 +502,11 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
           baseURL: options.deepSeekSearch.baseURL,
         },
       }],
-    ...mode === 'record' || options.deepSeekMissingCredential === true
+    ...mode === 'record'
       ? []
-      : [{ id: 'llm-deepseek', disabled: true }],
+      : options.firstPartyMissingCredential === true
+        ? [{ id: 'llm-deepseek', disabled: true }]
+        : [{ id: 'llm-deepseek', disabled: true }, { id: 'llm-pi-ai', disabled: true }],
   ]
 
   // Sessions inherit the gateway's process.cwd() default; run the boot from
@@ -532,6 +551,11 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
     })
     await ctx.loader.await()
     assertEntriesLoaded(ctx, 'web e2e scaffold')
+    if (options.localePreference !== undefined) {
+      await ctx.settings.mutate(settingsNamespace(LOCALE_SETTINGS_NAMESPACE), [{
+        op: 'set', path: [LOCALE_PREFERENCE_FIELD], value: options.localePreference,
+      }])
+    }
     if (options.welcomeNoticePending !== true) {
       await ctx.settings.mutate(settingsNamespace(WELCOME_NOTICE_SETTINGS_NAMESPACE), [{
         op: 'set', path: [WELCOME_NOTICE_ACK_FIELD], value: WELCOME_NOTICE_VERSION,
@@ -544,8 +568,8 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
     port = boundPort
 
     // Fill the open llm seam on the settled root ctx. Ordinary keyless modes
-    // disable llm-deepseek; the first-run lane keeps it mounted but has no
-    // replay fixture and never streams. The direct install, unlike the plugin
+    // disable the shipped adapters; the first-run lane keeps 9Router mounted
+    // but has no replay fixture and never streams. The direct install, unlike the plugin
     // row, returns the ReplayHandle for the teardown consumption check.
     if (mode !== 'record' && options.replayFixture !== undefined) {
       replayHandle = installLlmReplay(ctx, {
@@ -555,7 +579,7 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
         ...(options.replayChildFixtures === undefined ? {} : { childFiles: options.replayChildFixtures }),
         ...(options.paceMs === undefined ? {} : { paceMs: options.paceMs }),
       })
-    } else if (mode !== 'record' && options.deepSeekMissingCredential !== true) {
+    } else if (mode !== 'record' && options.firstPartyMissingCredential !== true) {
       // No fixture and no shipped adapter would leave the tree with ZERO
       // provider routes — a state no product composition has, and one the
       // composer refuses to type into. Register the same routes

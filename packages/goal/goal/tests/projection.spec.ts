@@ -10,15 +10,15 @@
 
 import { describe, expect, it, vi } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
-import AgentRegistry, { Inbox } from '@deepseek-ai/dsh-agent'
-import type { Agent, AgentStatus } from '@deepseek-ai/dsh-agent'
-import { createUserMessage } from '@deepseek-ai/dsh-llm'
-import type { UserMessage } from '@deepseek-ai/dsh-session'
-import SessionStore from '@deepseek-ai/dsh-session'
-import type { Session } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import GoalService, { applyGoalProjection, foldGoal } from '@deepseek-ai/dsh-goal'
-import type { GoalRef } from '@deepseek-ai/dsh-goal'
+import AgentRegistry, { Inbox } from '@truly-private/omdsh-agent'
+import type { Agent, AgentStatus } from '@truly-private/omdsh-agent'
+import { createUserMessage } from '@truly-private/omdsh-llm'
+import type { UserMessage } from '@truly-private/omdsh-session'
+import SessionStore from '@truly-private/omdsh-session'
+import type { Session } from '@truly-private/omdsh-session'
+import SessionProjectionRegistry from '@truly-private/omdsh-session-projection'
+import GoalService, { applyGoalProjection, foldGoal } from '@truly-private/omdsh-goal'
+import type { GoalRef } from '@truly-private/omdsh-goal'
 
 interface Bench {
   ctx: Context

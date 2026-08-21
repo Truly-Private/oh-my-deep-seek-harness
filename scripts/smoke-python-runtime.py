@@ -71,9 +71,9 @@ SNAPSHOT_DIRECTORY = (
 SNAPSHOT_FILENAMES = ("result.json", "session.jsonl", "session.1.jsonl", "session.2.jsonl")
 CUSTOM_CORDIS = """\
 - id: sdk-jsonrpc-server
-  name: '@deepseek-ai/dsh-sdk-jsonrpc-server'
+  name: '@truly-private/omdsh-sdk-jsonrpc-server'
 - id: agent-core
-  name: '@deepseek-ai/dsh-agent-spine-demo'
+  name: '@truly-private/omdsh-agent-spine-demo'
   config:
     workspaceContext: false
     skills:
@@ -82,32 +82,32 @@ CUSTOM_CORDIS = """\
     tools:
       mode: both
 - id: sessions
-  name: '@deepseek-ai/dsh-session-persistence-jsonl'
+  name: '@truly-private/omdsh-session-persistence-jsonl'
   config:
     root: !!js process.env.DSH_SESSION_ROOT
     compression: 'none'
 - id: code-runtime
-  name: '@deepseek-ai/dsh-code-runtime-worker-thread'
+  name: '@truly-private/omdsh-code-runtime-worker-thread'
 - id: subagents
-  name: '@deepseek-ai/dsh-subagent'
+  name: '@truly-private/omdsh-subagent'
 - id: subagent-spawn-in-process
-  name: '@deepseek-ai/dsh-subagent-spawn-in-process'
+  name: '@truly-private/omdsh-subagent-spawn-in-process'
   config:
     providerName: spawn
 - id: subagent-tool
-  name: '@deepseek-ai/dsh-tool-subagent'
+  name: '@truly-private/omdsh-tool-subagent'
   config:
     provider: spawn
 - id: workflow-engine
-  name: '@deepseek-ai/dsh-workflow-worker-thread'
+  name: '@truly-private/omdsh-workflow-worker-thread'
   config:
     provider: spawn
 - id: workflow-tool
-  name: '@deepseek-ai/dsh-tool-workflow'
+  name: '@truly-private/omdsh-tool-workflow'
 - id: cordis-host-runner
-  name: '@deepseek-ai/dsh-cordis-host-runner'
+  name: '@truly-private/omdsh-cordis-host-runner'
 - id: cordis-tool
-  name: '@deepseek-ai/dsh-tool-cordis'
+  name: '@truly-private/omdsh-tool-cordis'
 """
 class MockModelHandler(BaseHTTPRequestHandler):
     """Return deterministic text, worker, and orchestration completions."""

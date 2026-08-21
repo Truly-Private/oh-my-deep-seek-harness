@@ -9,7 +9,7 @@ import type {
   SubprocessTerminalForeground,
   SubprocessTerminalHandle,
   SubprocessTerminalSignal,
-} from '@deepseek-ai/dsh-subprocess'
+} from '@truly-private/omdsh-subprocess'
 import type { ProcessIdentity, ProcessInspector } from './process-inspector.ts'
 
 function delay(ms: number): Promise<void> {

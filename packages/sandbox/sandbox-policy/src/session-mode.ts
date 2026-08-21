@@ -18,10 +18,10 @@
  * @module dsh-sandbox-policy/session-mode
  */
 
-import type { Session, SessionEvent } from '@deepseek-ai/dsh-session'
-import type { SandboxMode } from '@deepseek-ai/dsh-sandbox'
+import type { Session, SessionEvent } from '@truly-private/omdsh-session'
+import type { SandboxMode } from '@truly-private/omdsh-sandbox'
 
-declare module '@deepseek-ai/dsh-session/types' {
+declare module '@truly-private/omdsh-session/types' {
   interface SessionEventMap {
     /**
      * The session's sandbox mode was switched — log-only (like `approval/*`;

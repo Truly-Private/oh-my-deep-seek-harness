@@ -4,13 +4,13 @@
  * product methods, current thread/turn association, unattended approval
  * responses, and terminal-answer selection.
  *
- * @module @deepseek-ai/dsh-subagent-codex/wire
+ * @module @truly-private/omdsh-subagent-codex/wire
  */
 
 import type { Readable, Writable } from 'node:stream'
-import type { ContentBlock } from '@deepseek-ai/dsh-llm'
-import type { SubagentResult } from '@deepseek-ai/dsh-subagent'
-import { JsonRpcLineTransport } from '@deepseek-ai/dsh-sdk-protocol'
+import type { ContentBlock } from '@truly-private/omdsh-llm'
+import type { SubagentResult } from '@truly-private/omdsh-subagent'
+import { JsonRpcLineTransport } from '@truly-private/omdsh-sdk-protocol'
 
 type JsonObject = Record<string, unknown>
 

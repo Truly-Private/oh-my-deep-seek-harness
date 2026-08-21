@@ -1,8 +1,12 @@
-# oh-my-deepseek-harness
+# oh-my-deep-seek-harness
 
 [English](README.md) | 中文
 
-`oh-my-deepseek-harness` 是优先安全审查的 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 下游发行版，主要面向英语用户与集成维护者。安全审查需要更多时间时，本发行版会有意落后于上游。
+<p align="center">
+  <img src="assets/omdsh-readme-hero.jpg" alt="oh-my-deep-seek-harness 骑鲸者徽章" width="1000">
+</p>
+
+`oh-my-deep-seek-harness` 是优先安全审查的 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 下游发行版，主要面向英语用户与集成维护者。安全审查需要更多时间时，本发行版会有意落后于上游。
 
 本发行版优先关注 Pi 与 Oh My Pi（OMP）、Hermes Agent、OpenClaw 和 9Router 的互操作性。[当前集成状态](docs/fork/integrations.md)会明确区分可用路径与兼容性目标。
 
@@ -22,43 +26,83 @@ DeepSeek Harness 目前处于 _开发者预览_ 阶段，正在快速迭代。**
 
 ## 快速上手
 
-### 与 coding agent 对话
+> [!NOTE]
+>
+> 已评审的下游包是 `@truly-private/omdsh`。npm 包名必须小写，因此即使 GitHub 组织名是 `Truly-Private`，也要使用此拼写。如需锁定首次发布的准确版本，请使用 `@0.0.1`。
 
-安装 `Node.js`，然后运行：
+### 通过 9Router 使用 DeepSeek Harness
+
+此路径通过 [9Router](https://github.com/decolua/9router) 发送模型请求。DeepSeek Harness 不需要 `DEEPSEEK_API_KEY`；9Router 持有你所连接上游提供方与账号的凭据。
+
+#### 1. 安装前置条件
+
+安装 Node.js `^22.19.0` 或 `>=24.0.0`，然后确认 npm 能解析此发行版：
 
 ```sh
-npx @deepseek-ai/dsh web
+node --version
+npm view @truly-private/omdsh@0.0.1 version
 ```
 
-该命令会启动 Web UI，默认地址为 `http://127.0.0.1:3080`。详见 [Web UI 指南](docs/user/guide/index.md)。
-
-### 连接 9Router
-
-在另一个终端中安装并启动 [9Router](https://github.com/decolua/9router)，然后在其管理页面中连接上游提供方或账号、创建 9Router 端点密钥，并记下要使用的准确模型或 combo ID：
+安装 9Router：
 
 ```sh
 npm install -g 9router
+```
+
+#### 2. 启动 9Router
+
+运行 9Router，并保持该终端打开：
+
+```sh
 9router
 ```
 
-在 DeepSeek Harness Web UI 中打开 **Settings → Models → Add a custom provider**，并填写：
+9Router 会打开其管理页面，并在 `http://127.0.0.1:20128/v1` 提供 OpenAI 兼容 API。
+
+#### 3. 在 9Router 中配置模型
+
+在 9Router 管理页面中连接 **Kiro AI**，即可使用随发行版提供的入门模型 `kr/claude-sonnet-4.5`。也可以改为连接其他提供方或创建 combo；此时请复制准确的模型或 combo ID。然后从管理页面复制 9Router 端点密钥。
+
+#### 4. 在项目中启动 DeepSeek Harness
+
+在允许 coding agent（编程智能体）修改的目录中打开第二个终端：
+
+```sh
+cd /path/to/project
+npx --yes @truly-private/omdsh@0.0.1 web
+```
+
+打开命令输出的 URL；默认地址为 `http://127.0.0.1:3080`。
+
+#### 5. 连接第一方 9Router 提供方
+
+首次启动时，Web UI 会打开 **连接 9Router 开始使用**。粘贴 9Router 端点密钥，然后选择**保存并继续**。发行版已经提供以下设置：
 
 | 字段 | 值 |
 | --- | --- |
-| Provider ID | `9router` |
 | Base URL | `http://127.0.0.1:20128/v1` |
 | API protocol | `openai-completions` |
-| API key | 9Router 管理页面中的端点密钥 |
-| Model | 准确的 9Router 模型或 combo ID |
+| Credential reference | `NINE_ROUTER_API_KEY` |
+| Starter model | `kr/claude-sonnet-4.5` |
 
-保存提供方、创建会话，并选择一次该提供方的模型。Harness 会将凭据存入 `$DSH_HOME`，并把该选择作为新 Web UI 会话和 headless 运行的默认值。如需使用文件配置，请参阅 [`settings.yaml` 示例](integrations/9router/settings.yaml.example)与 [9Router 集成指南](docs/fork/integrations.md#configure-9router)。
+现在 9Router 会作为第一方条目显示在 **Settings → Models** 中，而不是位于 **Add a custom provider** 下。如需使用其他模型或 combo，请选择 **Edit → Customized settings → Fetch available models**，选中第 3 步取得的准确 ID并应用更改。自定义提供方表单仍可用于其他 OpenAI 兼容网关。
+
+#### 6. 选择模型并运行任务
+
+选择项目目录作为工作区，创建新会话，打开模型选择器，然后选择 **9Router** 下的模型。接着发送类似任务：
+
+> Inspect this repository, explain its main packages, and identify one useful improvement.
+
+收到成功回复即表示请求已通过 9Router。DeepSeek Harness 会在 `$DSH_HOME` 下使用 `NINE_ROUTER_API_KEY` 引用存储端点密钥。随发行版提供的 9Router 模型是初始默认值；选择其他模型后，它会成为新 Web UI 会话和 headless 运行的默认值。
+
+如需使用文件配置，请参阅 [`settings.yaml` 示例](integrations/9router/settings.yaml.example)与 [9Router 集成指南](docs/fork/integrations.md#configure-9router)。
 
 ### 运行单个编程任务
 
-按上述步骤选择 9Router 模型后，在允许 agent 修改的目录中运行 headless profile：
+完成上述 9Router 步骤后，在允许 agent 修改的目录中运行 headless profile：
 
 ```sh
-npx @deepseek-ai/dsh --profile headless \
+npx --yes @truly-private/omdsh@0.0.1 --profile headless \
   "Inspect this repository, fix the failing tests, and verify the result."
 ```
 
@@ -69,23 +113,22 @@ npx @deepseek-ai/dsh --profile headless \
 如需让多个 agent 在代码中协调调用带类型的工具，请启用 Code Mode 并明确要求使用工作流：
 
 ```sh
-DSH_TOOLS_MODE=code npx @deepseek-ai/dsh --profile headless \
+DSH_TOOLS_MODE=code npx --yes @truly-private/omdsh@0.0.1 --profile headless \
   "From a run_code program, use the workflow tool to ask independent agents to review security, tests, and architecture. Return one evidence-backed report."
 ```
 
 工作流会运行由模型编写的 JavaScript 程序，其 `agent()` 调用会将任务分发到子会话；Code Mode 则允许父 agent 用 TypeScript 组合带类型的工具调用。根会话与子会话持久化到 `~/.dsh/sessions` 或 `$DSH_HOME/sessions`。每个事件均携带单调递增的序号和 epoch 毫秒时间戳；日志包含模型可见输入、工具调用与结果、Code Mode 子分发和工作流生命周期。会话头保留父子血缘。使用同一 harness home 启动 Web UI 即可检查保存的运行记录。
 
-运行 `npx @deepseek-ai/dsh --profile headless --dump-config` 可在不启动 profile 的情况下检查生效的插件树。[插件配置目录](https://deepseek-harness.github.io/deepseek-harness/reference/config-catalog)列出了所有可配置插件，[持久化目录](docs/persistence-catalog.md)则定义了记录的事件类型。
+运行 `npx --yes @truly-private/omdsh@0.0.1 --profile headless --dump-config` 可在不启动 profile 的情况下检查生效的插件树。[插件配置目录](https://deepseek-harness.github.io/deepseek-harness/reference/config-catalog)列出了所有可配置插件，[持久化目录](docs/persistence-catalog.md)则定义了记录的事件类型。
 
 ### 从源码运行
 
-如需从仓库源码运行：
+当 harness 仓库本身就是工作区时，使用源码启动器：
 
 ```sh
 git clone https://github.com/Truly-Private/oh-my-deepseek-harness.git
 cd oh-my-deepseek-harness
 pnpm install
-pnpm run build
 pnpm dsh web
 ```
 

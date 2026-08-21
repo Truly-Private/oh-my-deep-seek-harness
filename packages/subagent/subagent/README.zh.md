@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-subagent
+# @truly-private/omdsh-subagent
 
 [English](README.md) | 中文
 

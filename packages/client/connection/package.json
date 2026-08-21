@@ -1,13 +1,13 @@
 {
-  "name": "@deepseek-ai/dsh-client-connection",
+  "name": "@truly-private/omdsh-client-connection",
   "description": "Wire consumer layer: HTTP-up/WebSocket-down client, ConnectionController dual streams with reconnect, and fixture api",
-  "version": "0.1.0-rc.5",
+  "version": "0.0.1",
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
+    "url": "git+https://github.com/Truly-Private/oh-my-deepseek-harness.git",
     "directory": "packages/client/connection"
   },
   "type": "module",
@@ -38,12 +38,12 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@deepseek-ai/dsh-attachment": "workspace:^",
-    "@deepseek-ai/dsh-host-apiproxy": "workspace:^",
-    "@deepseek-ai/dsh-commands": "workspace:^",
-    "@deepseek-ai/dsh-llm": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-tools": "workspace:^",
+    "@truly-private/omdsh-attachment": "workspace:^",
+    "@truly-private/omdsh-host-apiproxy": "workspace:^",
+    "@truly-private/omdsh-commands": "workspace:^",
+    "@truly-private/omdsh-llm": "workspace:^",
+    "@truly-private/omdsh-session": "workspace:^",
+    "@truly-private/omdsh-tools": "workspace:^",
     "@deepseek-ai/schemastery": "workspace:^",
     "ws": "^8.21.0"
   },
@@ -54,13 +54,13 @@
     "lib/types/**/*.d.ts"
   ],
   "peerDependencies": {
-    "@deepseek-ai/dsh-host-webserver": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
+    "@truly-private/omdsh-host-webserver": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-host-webserver": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
+    "@truly-private/omdsh-host-webserver": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
     "@types/ws": "^8.18.1",
     "@deepseek-ai/cordis": "workspace:^"
   }

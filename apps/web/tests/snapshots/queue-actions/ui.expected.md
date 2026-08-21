@@ -12,10 +12,10 @@
 - text: Reply with a one-sentence description of event sourcing, then stop. {{clock}}
 - button "Copy":
   - img
-- button "Context injection @deepseek-ai/dsh-system-prompt":
+- button "Context injection @truly-private/omdsh-system-prompt":
   - img
   - img
-  - text: Context injection @deepseek-ai/dsh-system-prompt
+  - text: Context injection @truly-private/omdsh-system-prompt
 - paragraph: partial
 - status: Deep diving...
 - list:
@@ -32,7 +32,7 @@
 - button "Commands":
   - img
 - 'button "Access mode, current: Workspace Write"': Workspace Write
-- button "Select model, current DeepSeek-V4-Flash":
-  - text: DeepSeek-V4-Flash
+- button "Select model, current Claude Sonnet 4.5 (Kiro)":
+  - text: Claude Sonnet 4.5 (Kiro)
   - img
 - button "Stop generating"

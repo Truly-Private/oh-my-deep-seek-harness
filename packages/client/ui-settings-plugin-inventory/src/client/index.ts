@@ -1,15 +1,15 @@
 /** Read-only Host plugin inventory registered into Web Settings. */
 
-import type {} from '@deepseek-ai/dsh-client-locale/client'
-import type { ClientContext } from '@deepseek-ai/dsh-client-runtime/client'
-import type {} from '@deepseek-ai/dsh-client-ui-settings/client'
+import type {} from '@truly-private/omdsh-client-locale/client'
+import type { ClientContext } from '@truly-private/omdsh-client-runtime/client'
+import type {} from '@truly-private/omdsh-client-ui-settings/client'
 import { PluginInventorySettingsTab, type PluginInventorySettingsTabInjected } from './PluginInventorySettingsTab.tsx'
 import { en, zh, type PluginInventoryLocaleKey } from './locales.ts'
 
 export type { PluginInventorySettingsTabInjected, PluginInventorySettingsTabProps } from './PluginInventorySettingsTab.tsx'
 export type { PluginInventoryLocaleKey } from './locales.ts'
 
-declare module '@deepseek-ai/dsh-client-ui-slots' {
+declare module '@truly-private/omdsh-client-ui-slots' {
   interface LocaleNamespaceMap {
     /** Read-only Host plugin inventory copy. */
     'settings.pluginInventory': PluginInventoryLocaleKey

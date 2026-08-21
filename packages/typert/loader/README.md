@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-typert-loader
+# @truly-private/omdsh-typert-loader
 
 English | [中文](README.zh.md)
 

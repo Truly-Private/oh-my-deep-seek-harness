@@ -3,19 +3,15 @@
  * projection into the row store, and HMR collapse recovery. */
 import { Context } from '@deepseek-ai/cordis'
 import { describe, expect, it, vi } from 'vitest'
-import { SlotRegistry } from '@deepseek-ai/dsh-client-runtime/client'
-import { LocaleRuntime } from '@deepseek-ai/dsh-client-locale/client'
-import { TestRemote, usePinnedBrowserLanguages } from '@deepseek-ai/dsh-client-test-runtime'
-import { SettingsScopeBinder } from '@deepseek-ai/dsh-client-ui-settings/client'
-import { apply, inject, SETTINGS_NS } from '@deepseek-ai/dsh-client-ui-theme/client'
-import type { AppearanceRowInjected, ThemeRuntime } from '@deepseek-ai/dsh-client-ui-theme/client'
+import { SlotRegistry } from '@truly-private/omdsh-client-runtime/client'
+import { LocaleRuntime } from '@truly-private/omdsh-client-locale/client'
+import { TestRemote } from '@truly-private/omdsh-client-test-runtime'
+import { SettingsScopeBinder } from '@truly-private/omdsh-client-ui-settings/client'
+import { apply, inject, SETTINGS_NS } from '@truly-private/omdsh-client-ui-theme/client'
+import type { AppearanceRowInjected, ThemeRuntime } from '@truly-private/omdsh-client-ui-theme/client'
 import { THEME_SETTINGS_NAMESPACE, ThemeSettingsSchema } from '../src/theme-settings.ts'
 import { AppearanceRow } from '../src/client/AppearanceRow.tsx'
 import type { createAppearanceRowStore } from '../src/client/settings-store.ts'
-
-// The service reads its initial locale from the browser; these specs assert
-// the shipped Chinese copy, so they state the browser they assume.
-usePinnedBrowserLanguages('zh-CN')
 
 const SLOT = 'settings.general.item'
 
@@ -90,9 +86,9 @@ describe('ui-theme apply', () => {
     const before = await bench()
     declareItems(before.slots)
     await before.ctx.plugin({ inject: [...inject], apply }).await()
-    expect(before.locale.bind(SETTINGS_NS)('appearance.title')).toBe('外观')
-    before.locale.setLocale('en')
     expect(before.locale.bind(SETTINGS_NS)('appearance.title')).toBe('Appearance')
+    before.locale.setLocale('zh')
+    expect(before.locale.bind(SETTINGS_NS)('appearance.title')).toBe('外观')
     const entry = before.slots.entries(SLOT).find(e => e.component === AppearanceRow)!
     expect(entry.options).toMatchObject({ id: 'appearance', order: 10 })
 

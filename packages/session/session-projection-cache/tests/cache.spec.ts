@@ -9,22 +9,22 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
 import { z } from 'zod'
-import Storage from '@deepseek-ai/dsh-storage'
-import { DomainFacility } from '@deepseek-ai/dsh-storage-domain'
-import SessionStore, { SessionId } from '@deepseek-ai/dsh-session'
-import type { Session, SessionEvent } from '@deepseek-ai/dsh-session'
-import SessionProjectionRegistry from '@deepseek-ai/dsh-session-projection'
-import type { ProjectionDefinition } from '@deepseek-ai/dsh-session-projection'
+import Storage from '@truly-private/omdsh-storage'
+import { DomainFacility } from '@truly-private/omdsh-storage-domain'
+import SessionStore, { SessionId } from '@truly-private/omdsh-session'
+import type { Session, SessionEvent } from '@truly-private/omdsh-session'
+import SessionProjectionRegistry from '@truly-private/omdsh-session-projection'
+import type { ProjectionDefinition } from '@truly-private/omdsh-session-projection'
 import { MemoryMediaPool, MemoryStorageBackend } from '../../../storage/storage-domain/tests/helpers/memory-backend.ts'
 import SessionProjectionCache from '../src/index.ts'
 
-declare module '@deepseek-ai/dsh-session-projection/types' {
+declare module '@truly-private/omdsh-session-projection/types' {
   interface SessionProjectionMap {
     'cache-test/marks': { marks: string[] }
   }
 }
 
-declare module '@deepseek-ai/dsh-session/types' {
+declare module '@truly-private/omdsh-session/types' {
   interface SessionEventMap {
     'cache-test/mark': { marks: string[] }
   }
