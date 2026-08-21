@@ -74,7 +74,7 @@
 - Error: preserve VitePress not-found behavior
 - Success: English guide content is visible after visiting the site root
 - Disabled: not applicable
-- Offline/slow network, if applicable: keep the logo embedded in generated HTML so it does not require another request
+- Offline/slow network, if applicable: serve the logo as a cacheable static asset from the same origin
 
 ## Content voice
 

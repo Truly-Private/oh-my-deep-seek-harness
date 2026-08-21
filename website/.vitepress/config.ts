@@ -1,6 +1,5 @@
 /** VitePress configuration for the locally projected documentation site. */
 
-import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import type { DefaultTheme, PageData } from 'vitepress'
 import type { ViteDevServer } from 'vite'
@@ -163,15 +162,11 @@ const sharedTheme: Pick<DefaultTheme.Config, 'search' | 'socialLinks' | 'editLin
 /** Site base path, carrying the leading and trailing slashes VitePress requires. */
 const base = process.env.DOCS_BASE ?? '/'
 
-/** Owned product artwork embedded into the static page chrome. */
-const logoDataUri = `data:image/jpeg;base64,${readFileSync(
-  resolve(import.meta.dirname, '../../apps/web/public/omdsh-logo.jpg'),
-).toString('base64')}`
+/** Owned product artwork served from the Web application's canonical public directory. */
+const logoPath = `${base}omdsh-logo.jpg`
 
-/** Square derivative of the owned artwork embedded as the browser icon. */
-const iconDataUri = `data:image/jpeg;base64,${readFileSync(
-  resolve(import.meta.dirname, '../../apps/web/public/omdsh-icon.jpg'),
-).toString('base64')}`
+/** Square derivative of the owned artwork served as the browser icon. */
+const iconPath = `${base}omdsh-icon.jpg`
 
 /**
  * Styles the default theme does not provide, carried inline because the site
@@ -242,7 +237,7 @@ const scrollbarScript = `
  * @returns Markup placed beside the navigation-bar home link.
  */
 function siteTitle(): string {
-  return `<span class="omdsh-lockup"><img class="omdsh-logo" src="${logoDataUri}" alt="" aria-hidden="true"><span class="omdsh-name">Oh My DeepSeek Harness</span></span>`
+  return `<span class="omdsh-lockup"><img class="omdsh-logo" src="${logoPath}" alt="" aria-hidden="true"><span class="omdsh-name">Oh My DeepSeek Harness</span></span>`
 }
 
 export default withMermaid({
@@ -250,7 +245,7 @@ export default withMermaid({
   description: 'A security-review-first DeepSeek Harness distribution for English-speaking operators and integrators.',
   base,
   head: [
-    ['link', { rel: 'icon', type: 'image/jpeg', href: iconDataUri }],
+    ['link', { rel: 'icon', type: 'image/jpeg', href: iconPath }],
     ['style', {}, siteStyle],
     ['script', {}, scrollbarScript],
   ],
@@ -314,9 +309,9 @@ export default withMermaid({
     },
   },
   vite: {
-    // `srcDir` puts the Vite root inside the disposable generated tree, whose
-    // own `public/` no tracked asset can live in.
-    publicDir: resolve(import.meta.dirname, '../public'),
+    // `srcDir` puts the Vite root inside the disposable generated tree. Reuse
+    // the Web application's public directory so product artwork has one owner.
+    publicDir: resolve(import.meta.dirname, '../../apps/web/public'),
     plugins: [
       {
         name: 'deepseek-harness-doc-projector',
