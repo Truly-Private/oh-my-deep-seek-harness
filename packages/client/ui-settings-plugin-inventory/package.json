@@ -60,7 +60,6 @@
     "@truly-private/omdsh-api-remotes": "workspace:^",
     "@truly-private/omdsh-client-locale": "workspace:^",
     "@truly-private/omdsh-client-runtime": "workspace:^",
-    "@truly-private/omdsh-client-test-runtime": "workspace:^",
     "@truly-private/omdsh-client-ui-primitives": "workspace:^",
     "@truly-private/omdsh-client-ui-settings": "workspace:^",
     "@truly-private/omdsh-client-ui-slots": "workspace:^",

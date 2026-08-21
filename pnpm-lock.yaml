@@ -1983,9 +1983,6 @@ importers:
       '@truly-private/omdsh-client-runtime':
         specifier: workspace:^
         version: link:../runtime
-      '@truly-private/omdsh-client-test-runtime':
-        specifier: workspace:^
-        version: link:../../test-support/client-runtime
       '@truly-private/omdsh-client-ui-primitives':
         specifier: workspace:^
         version: link:../ui-primitives
@@ -2516,9 +2513,6 @@ importers:
       '@truly-private/omdsh-client-runtime':
         specifier: workspace:^
         version: link:../runtime
-      '@truly-private/omdsh-client-test-runtime':
-        specifier: workspace:^
-        version: link:../../test-support/client-runtime
       '@truly-private/omdsh-client-ui-primitives':
         specifier: workspace:^
         version: link:../ui-primitives
@@ -2606,9 +2600,6 @@ importers:
       '@truly-private/omdsh-client-runtime':
         specifier: workspace:^
         version: link:../runtime
-      '@truly-private/omdsh-client-test-runtime':
-        specifier: workspace:^
-        version: link:../../test-support/client-runtime
       '@truly-private/omdsh-client-ui-primitives':
         specifier: workspace:^
         version: link:../ui-primitives
