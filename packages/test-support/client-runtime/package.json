@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-client-test-runtime",
-  "description": "jsdom slot test runtime: real Cordis Context + SlotRegistry + web-react renderer with test-owned session/workspace doubles for feature specs",
-  "version": "0.0.2",
+  "description": "jsdom slot test runtime: real Cordis Context + SlotRegistry + UI renderer with test-owned session/workspace doubles for feature specs",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -34,7 +34,7 @@
   "peerDependencies": {
     "@truly-private/omdsh-client-runtime": "workspace:^",
     "@truly-private/omdsh-client-ui-slots": "workspace:^",
-    "@truly-private/omdsh-client-web-react": "workspace:^",
+    "@truly-private/omdsh-client-ui-renderer": "workspace:^",
     "@truly-private/omdsh-host-apiproxy": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^",
@@ -44,7 +44,7 @@
   "devDependencies": {
     "@truly-private/omdsh-client-runtime": "workspace:^",
     "@truly-private/omdsh-client-ui-slots": "workspace:^",
-    "@truly-private/omdsh-client-web-react": "workspace:^",
+    "@truly-private/omdsh-client-ui-renderer": "workspace:^",
     "@truly-private/omdsh-host-apiproxy": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@types/react": "~18.3.1",

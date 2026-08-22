@@ -12,7 +12,8 @@ import type { TerminalBackend, TerminalBackendSpawnSpec } from '@truly-private/o
 import type { SubprocessTerminalHandle, SubprocessTerminalSpawnSpec } from '@truly-private/omdsh-subprocess'
 import type { SandboxExecutionPolicy } from '@truly-private/omdsh-sandbox'
 import { effectiveSandboxMode } from '@truly-private/omdsh-sandbox-policy'
-import { type Config, type ResolvedConfig, validateConfig } from './config.ts'
+import { ENCODING_PREAMBLE } from '@truly-private/omdsh-pwsh-local'
+import { type Config, type ResolvedConfig, resolveConfig, type ShellDialect, validateConfig } from './config.ts'
 import { LocalPtySession } from './session.ts'
 import { CONTROLLED_PROMPT } from './sanitize.ts'
 
@@ -52,20 +53,46 @@ function ensureSandboxModeFence(ctx: Context, owner: Agent): void {
   }, { global: true })
 }
 
-function childEnvironment(spec: TerminalBackendSpawnSpec): Record<string, string> {
+function childEnvironment(spec: TerminalBackendSpawnSpec, dialect: ShellDialect): Record<string, string> {
   // The subprocess provider supplies its own scrubbed ambient base; these are
   // deliberate terminal-specific overrides layered after it.
-  return {
+  const common = {
     TERM: 'dumb',
     PAGER: 'cat',
     GIT_PAGER: 'cat',
-    PS1: CONTROLLED_PROMPT,
-    PROMPT_COMMAND: 'printf "\\033]133;D;%s\\007" "$?"',
-    BASH_SILENCE_DEPRECATION_WARNING: '1',
     DSH_SHELL: '1',
     DSH_SESSION_ID: spec.owner.id,
     DSH_PTY_SESSION_ID: spec.sessionId,
   }
+  if (dialect === 'pwsh') {
+    // pwsh ignores PS1/PROMPT_COMMAND; its prompt is installed by the startup
+    // bootstrap instead, and NO_COLOR keeps the renderer quiet.
+    return { ...common, NO_COLOR: '1' }
+  }
+  return {
+    ...common,
+    PS1: CONTROLLED_PROMPT,
+    // Re-asserting PS1 after the marker keeps prompt readiness working when a
+    // command overwrote the shell variable: bash runs PROMPT_COMMAND before
+    // rendering each prompt, so an override never survives to the next prompt.
+    PROMPT_COMMAND: `printf "\\033]133;D;%s\\007" "$?"; PS1='${CONTROLLED_PROMPT}'`,
+    BASH_SILENCE_DEPRECATION_WARNING: '1',
+  }
+}
+
+/**
+ * The pwsh prompt function that emits the shared OSC `133;D;` + BEL marker
+ * before every prompt, mirroring bash's PROMPT_COMMAND. `[char]27`/`[char]7`
+ * build the control bytes at runtime because raw ESC characters in submitted
+ * input are unreliable under PSReadLine.
+ */
+export const PWSH_PROMPT_SETUP =
+  "function prompt { [Console]::Write([char]27 + ']133;D;' + [int]$LASTEXITCODE + [char]7); '" + CONTROLLED_PROMPT + "' }"
+
+function hasControlledPromptSuffix(text: string): boolean {
+  return text.endsWith(CONTROLLED_PROMPT)
+    || text.endsWith(`${CONTROLLED_PROMPT}\r\n`)
+    || text.endsWith(`${CONTROLLED_PROMPT}\n`)
 }
 
 function spawnArgv(ctx: Context, config: ResolvedConfig, policy: SandboxExecutionPolicy): string[] {
@@ -82,9 +109,45 @@ function spawnArgv(ctx: Context, config: ResolvedConfig, policy: SandboxExecutio
 // TODO(pty-initialize-race-home): Fold this outer abort race into
 // LocalPtySession.initialize when the send-state consolidation lands; the
 // session already owns the send lifecycle the race protects.
-async function initializeSession(session: LocalPtySession, signal?: AbortSignal): Promise<void> {
-  if (signal === undefined) {
+async function startupSession(
+  session: LocalPtySession,
+  dialect: ShellDialect,
+  signal?: AbortSignal,
+): Promise<void> {
+  const start = async (): Promise<void> => {
+    if (dialect === 'bash') {
+      await session.initialize(signal)
+      return
+    }
+    // pwsh cannot install its prompt from the environment. Wait for its native
+    // prompt first: the local PTY provider answers the cursor-position query
+    // that PSReadLine issues before rendering that prompt, and the send cannot
+    // settle on silence until printable prompt output exists. Then install the
+    // marker prompt and pin UTF-8 output with the shared pwsh-local preamble.
+    // Submit exactly once, then use empty follow-up sends until the controlled
+    // prompt is the output suffix; the echoed setup source contains that prompt
+    // literal and is not readiness evidence by itself.
     await session.initialize(signal)
+    let first = true
+    let viewport = ''
+    for (;;) {
+      const operation = session.startSend({
+        text: first ? ENCODING_PREAMBLE + PWSH_PROMPT_SETUP : '',
+        submit: first,
+        ...signal !== undefined ? { signal } : {},
+      })
+      first = false
+      const result = await operation.done
+      if (result.waitReason === 'session_exit') throw new Error('PTY shell exited during startup')
+      if (result.waitReason === 'timeout') throw new Error('PTY shell did not reach readiness before startup timeout')
+      viewport = result.viewport
+      const scrollback = session.read({ offset: 0, count: 20 }).text
+      if (hasControlledPromptSuffix(viewport) || hasControlledPromptSuffix(scrollback)) break
+    }
+    session.motd = viewport
+  }
+  if (signal === undefined) {
+    await start()
     return
   }
   const aborted = Promise.withResolvers<never>()
@@ -92,7 +155,7 @@ async function initializeSession(session: LocalPtySession, signal?: AbortSignal)
   signal.addEventListener('abort', onAbort, { once: true })
   try {
     signal.throwIfAborted()
-    await Promise.race([session.initialize(signal), aborted.promise])
+    await Promise.race([start(), aborted.promise])
   } finally {
     signal.removeEventListener('abort', onAbort)
   }
@@ -125,7 +188,7 @@ export class BashTerminalBackend implements TerminalBackend {
     const terminal = await this.spawnTerminal({
       argv,
       cwd: spec.cwd ?? policy.workspaceRoot,
-      env: childEnvironment(spec),
+      env: childEnvironment(spec, this.config.shellDialect),
       rows: this.config.rows,
       cols: this.config.cols,
       graceMs: this.config.disposeGraceMs,
@@ -133,7 +196,7 @@ export class BashTerminalBackend implements TerminalBackend {
     })
     const session = this.createSession(terminal, this.config)
     try {
-      await initializeSession(session, spec.signal)
+      await startupSession(session, this.config.shellDialect, spec.signal)
       return session
     } catch (error) {
       try {
@@ -148,6 +211,7 @@ export class BashTerminalBackend implements TerminalBackend {
 
 /** Register the local PTY backend. */
 export function apply(ctx: Context, config: Config): void {
-  validateConfig(config)
-  ctx.terminals.registerBackend(new BashTerminalBackend(ctx, config))
+  const resolved = resolveConfig(config)
+  validateConfig(resolved)
+  ctx.terminals.registerBackend(new BashTerminalBackend(ctx, resolved))
 }

@@ -4,11 +4,13 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import Schema from '@deepseek-ai/schemastery'
 import type { RpcResponse, SettingsNamespaceView } from '@truly-private/omdsh-api-remotes/client'
-import { bindSnapshotSelector } from '@truly-private/omdsh-client-web-react'
+import { bindSnapshotSelector } from '@truly-private/omdsh-client-test-runtime'
+import { SettingsDescribeMirror } from '@truly-private/omdsh-client-ui-settings/src/client/settings-mirror.ts'
 import { ProviderOnboardingDialog } from '../src/client/DeepSeekOnboardingDialog.tsx'
 import type { ProviderOnboardingDialogProps } from '../src/client/DeepSeekOnboardingDialog.tsx'
 import { ModelsSettingsStore } from '../src/client/store.ts'
 import { en } from '../src/client/locales.ts'
+import { settingsSchema } from './settings-schema.client.ts'
 
 afterEach(() => {
   cleanup()
@@ -131,7 +133,7 @@ function harness(options: {
       set,
     },
   }
-  const controller = new ModelsSettingsStore(face as never)
+  const controller = new ModelsSettingsStore(face as never, settingsSchema, new SettingsDescribeMirror(face as never))
   const openSection = vi.fn()
   const complete = vi.fn()
   const unusedHook = (() => { throw new Error('unused standard hook') }) as never
@@ -144,6 +146,7 @@ function harness(options: {
     controller,
     useModels: bindSnapshotSelector(controller.store),
     api: face as never,
+    schema: settingsSchema,
     t: key => en[key],
   }
   return {

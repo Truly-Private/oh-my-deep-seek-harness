@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-08-06-bundled-dsh-badge-skill.md
 2026-08-06-bundled-dsh-badge-skill.md: 526826520d92757b3dff53e1c962cd5737a6e38c
-2026-08-06-bundled-dsh-badge-skill.zh.md: a3d9f87cee5cb7b76d81236d9f1ab59ee1ffd564
+2026-08-06-bundled-dsh-badge-skill.zh.md: ace053128dbb61fe395e9654e0b5c151b6eb6b1b

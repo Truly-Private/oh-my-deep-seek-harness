@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write packages/skill/skill-filesystem/README.md
 README.md: 4f75f8a0f8d42f573061ca803d9f95e03774cff3
-README.zh.md: dbd7707073cb66eb160ed98ea58bb72c277690c6
+README.zh.md: baae38784f10e56607d1be9728983edee9c311a2

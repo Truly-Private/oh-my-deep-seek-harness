@@ -16,6 +16,9 @@ function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+const CURSOR_POSITION_QUERY = '\x1b[6n'
+const CURSOR_POSITION_RESPONSE = '\x1b[1;1R'
+
 function signalName(number: number | undefined): NodeJS.Signals | null {
   if (number === undefined || number === 0) return null
   for (const [name, value] of Object.entries(constants.signals)) {
@@ -43,6 +46,7 @@ export class LocalTerminalHandle implements SubprocessTerminalHandle {
   private cleanup: Promise<void> | undefined
   private exited = false
   private trackedDescendants: ProcessIdentity[] = []
+  private terminalQueryTail = ''
   /** The spawned shell's start identity; scans stop adopting members once the root pid no longer carries it. */
   private readonly rootIdentity: ProcessIdentity | undefined
 
@@ -50,16 +54,18 @@ export class LocalTerminalHandle implements SubprocessTerminalHandle {
    * @param terminal - allocated node-pty process.
    * @param inspector - platform process/session operations.
    * @param graceMs - TERM-to-KILL and exit-wait grace.
+   * @param platform - host platform; defaults to the running platform, injectable for deterministic tests.
    */
   constructor(
     private readonly terminal: IPty,
     private readonly inspector: ProcessInspector,
     private readonly graceMs: number,
+    private readonly platform: NodeJS.Platform = process.platform,
   ) {
     this.pid = terminal.pid
     this.rootIdentity = inspector.processTree(this.pid).find(member => member.pid === this.pid)
     this.done = this.outcome.promise
-    this.dataDisposable = terminal.onData((data) => { this.output.write(Buffer.from(data, 'utf8')) })
+    this.dataDisposable = terminal.onData(this.onData)
     this.exitDisposable = terminal.onExit(({ exitCode, signal: exitSignal }) => {
       if (this.exited) return
       this.exited = true
@@ -69,6 +75,19 @@ export class LocalTerminalHandle implements SubprocessTerminalHandle {
         signal: signalName(exitSignal),
       })
     })
+  }
+
+  private readonly onData = (data: string): void => {
+    this.output.write(Buffer.from(data, 'utf8'))
+    const candidate = this.terminalQueryTail + data
+    let offset = 0
+    while (true) {
+      const query = candidate.indexOf(CURSOR_POSITION_QUERY, offset)
+      if (query < 0) break
+      this.terminal.write(CURSOR_POSITION_RESPONSE)
+      offset = query + CURSOR_POSITION_QUERY.length
+    }
+    this.terminalQueryTail = candidate.slice(-(CURSOR_POSITION_QUERY.length - 1))
   }
 
   // node-pty writes synchronously; the seam returns a promise for remote transports.
@@ -97,6 +116,19 @@ export class LocalTerminalHandle implements SubprocessTerminalHandle {
     }
     if (signal === 'SIGKILL' && foreground.processGroupId === this.pid) {
       throw new Error('refusing to SIGKILL the terminal shell; terminate the terminal session instead')
+    }
+    if (this.platform === 'win32') {
+      if (signal === 'SIGINT') {
+        // Windows has no process-group signalling: a `\x03` input write is the
+        // Ctrl-C delivery path conhost turns into a console-wide CTRL_C event
+        // for attached processes. node-pty's signal kills throw on Windows, so
+        // no signal ever reaches the inspector.
+        this.terminal.write('\x03')
+        return foreground.processGroupId
+      }
+      if (signal === 'SIGTSTP' || signal === 'SIGHUP') {
+        throw new Error(`signal ${signal} is unsupported on Windows; only SIGINT, SIGTERM, and SIGKILL are available`)
+      }
     }
     this.inspector.signalGroup(foreground.processGroupId, signal)
     return foreground.processGroupId
@@ -214,6 +246,10 @@ export class LocalTerminalHandle implements SubprocessTerminalHandle {
   }
 
   private async stopShell(): Promise<void> {
+    if (this.platform === 'win32') {
+      await this.stopShellWindows()
+      return
+    }
     if (!this.exited) {
       try {
         this.terminal.kill('SIGTERM')
@@ -233,6 +269,44 @@ export class LocalTerminalHandle implements SubprocessTerminalHandle {
     if (!this.exited) throw new Error(`terminal cleanup failed; surviving pid: ${this.pid}`)
   }
 
+  private async stopShellWindows(): Promise<void> {
+    // node-pty's Windows kill(signal) throws ("Signals not supported on
+    // windows"), and its bare kill() delegates to a console-list agent that
+    // fails when the parent has no console. taskkill tree escalation is the
+    // teardown path, fenced on the shell's start identity like every
+    // descendant; a root identity miss falls back to the bare kill. taskkill
+    // termination also does not reliably fire node-pty's exit notification
+    // (the same console-list agent), so the tiers verify the shell's absence
+    // through the inspector instead of waiting on `done` alone.
+    const shellGone = (): boolean =>
+      this.exited || (this.rootIdentity !== undefined && !this.inspector.isAlive(this.rootIdentity))
+    if (!shellGone() && this.rootIdentity !== undefined) {
+      this.inspector.signalProcess(this.rootIdentity, 'SIGTERM')
+      await this.waitForWindowsShellExit()
+    }
+    if (!shellGone() && this.rootIdentity === undefined) {
+      try {
+        this.terminal.kill()
+      } catch (_topLevelAlreadyExitedDuringKill) {
+        // The exit callback is authoritative.
+      }
+      await Promise.race([this.done.then(() => undefined), delay(this.graceMs)])
+    }
+    if (!shellGone() && this.rootIdentity !== undefined) {
+      this.inspector.signalProcess(this.rootIdentity, 'SIGKILL')
+      await this.waitForWindowsShellExit()
+    }
+    if (!shellGone()) throw new Error(`terminal cleanup failed; surviving pid: ${this.pid}`)
+  }
+
+  private async waitForWindowsShellExit(): Promise<void> {
+    const until = Date.now() + this.graceMs
+    while (!this.exited && Date.now() < until) {
+      if (this.rootIdentity !== undefined && !this.inspector.isAlive(this.rootIdentity)) return
+      await delay(Math.min(25, Math.max(1, until - Date.now())))
+    }
+  }
+
   private async closeOnce(): Promise<void> {
     let survivors = await this.stopDescendants()
     if (survivors.length > 0) {
@@ -243,7 +317,24 @@ export class LocalTerminalHandle implements SubprocessTerminalHandle {
     if (survivors.length > 0) {
       throw new Error(`terminal cleanup failed; surviving pids: ${survivors.map(member => member.pid).join(', ')}`)
     }
+    this.settleExitIfGone()
     this.dataDisposable.dispose()
     this.exitDisposable.dispose()
+  }
+
+  private settleExitIfGone(): void {
+    // An externally taskkilled Windows shell may never fire node-pty's exit
+    // notification (its console-list agent fails without a parent console),
+    // which would leave `done` — and every consumer awaiting it — unsettled
+    // forever. Teardown has just verified the shell's absence through the
+    // inspector, so a missing exit event is itself the outcome.
+    if (this.platform !== 'win32') return
+    if (this.exited) return
+    /* v8 ignore next -- stopShellWindows() verified the shell is gone or threw;
+       the identity re-check is a defensive fence for a future caller. */
+    if (this.rootIdentity !== undefined && this.inspector.isAlive(this.rootIdentity)) return
+    this.exited = true
+    this.output.end()
+    this.outcome.resolve({ exitCode: null, signal: null })
   }
 }

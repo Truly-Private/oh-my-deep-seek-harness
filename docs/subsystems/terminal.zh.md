@@ -2,7 +2,7 @@
 
 [English](terminal.md) | 中文
 
-PTY 后端、`ctx.terminals` 与面向模型的消费方共享的类型。[持久 PTY Agent Note](../../.agents/notes/implemented/feature/2026-07-16-persistent-pty-sessions.md) 负责记录决策依据；本页记录来自 [`packages/terminal/terminal/src/types.ts`](../../packages/terminal/terminal/src/types.ts) 的跨包词汇。
+PTY 后端、`ctx.terminals` 与面向模型的消费方共享的类型。[持久 PTY Agent Note](../../.agents/notes/implemented/feature/2026-07-16-persistent-pty-sessions.zh.md) 负责记录决策依据；本页记录来自 [`packages/terminal/terminal/src/types.ts`](../../packages/terminal/terminal/src/types.ts) 的跨包词汇。
 
 ## 标识与就绪
 
@@ -58,7 +58,21 @@ interface TerminalBackendSession {
 
 ## 发送与保留输出
 
-一个活跃会话同时只接受一个活动发送。该操作向通用后台任务提供读取后即推进的输出游标，并向前台调用方提供最终结果。`TerminalReadResult` 则为有界的会话 scrollback 单独分页。
+一个活跃会话同时只接受一个活动发送。安装自有提示符的消费方通过 `expectedPromptText` 声明确切的可打印值；省略时使用后端默认值。后端只有在输出顺序能把带标记提示符归属于当前 send 时才会接受它。该操作向通用后台任务提供读取后即推进的输出游标，并向前台调用方提供最终结果。`TerminalReadResult` 则为有界的会话 scrollback 单独分页。
+
+```ts type-equiv
+/** Input for one line-oriented terminal interaction. */
+interface TerminalSendRequest {
+  /** UTF-8 text to write. */
+  text: string
+  /** Whether to write the backend's Enter sequence after {@link text}. */
+  submit: boolean
+  /** Exact printable prompt expected after this send's owned prompt marker. */
+  expectedPromptText?: string
+  /** Cancellation for the wait; backends also interrupt the foreground command. */
+  signal?: AbortSignal
+}
+```
 
 ```ts type-equiv
 /** Live backend-owned send; exactly one may be active per PTY session. */
@@ -96,7 +110,7 @@ interface TerminalSendResult {
 
 ## Cordis API
 
-Generated from source by `scripts/gen-cordis-catalog.ts` (verified fresh by `pnpm run verify-cordis-catalog` in doc-sync; regenerate with `pnpm run gen-cordis-catalog`) — this section is byte-identical in both language sides of the page. Signature blocks use a `ts cordis-catalog` fence and keep the original source JSDoc; dispatch modes are defined in the [primer](../cordis-primer.md#dispatch-modes), and the framework-inherited `ctx` API lives in [cordis-api/inherited.md](../cordis-api/inherited.md).
+Generated from source by `scripts/gen-cordis-catalog.ts` (verified fresh by `pnpm run verify-cordis-catalog` in doc-sync; regenerate with `pnpm run gen-cordis-catalog`) — the language sides differ only in locale-specific paired document paths. Signature blocks use a `ts cordis-catalog` fence and keep the original source JSDoc; dispatch modes are defined in the [primer](../cordis-primer.zh.md#dispatch-modes), and the framework-inherited `ctx` API lives in [cordis-api/inherited.md](../cordis-api/inherited.md).
 
 <a id="ctxterminals--terminalsessionservice"></a>
 
@@ -178,7 +192,7 @@ async kill(owner: Agent, id: TerminalSessionId, reason: string = 'model request'
 list(owner: Agent): TerminalSessionSnapshot[]
 ```
 
-Types: [Agent](core.md)
+Types: [Agent](core.zh.md)
 
-Source: [`packages/terminal/terminal/src/index.ts:105`](../../packages/terminal/terminal/src/index.ts)
+Source: [`packages/terminal/terminal/src/index.ts`](../../packages/terminal/terminal/src/index.ts)
 <!-- END GENERATED cordis-surface -->

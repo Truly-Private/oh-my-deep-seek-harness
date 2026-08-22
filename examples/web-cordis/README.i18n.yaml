@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write examples/web-cordis/README.md
 README.md: bb721973286ea49598d68c08ac308f299a179c2d
-README.zh.md: c36c1e2686f727e86bcdb4b24c834aef6a567815
+README.zh.md: 2368c0512b8e6cdd26d39f34c76c4903bda787d2

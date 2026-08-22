@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-pwsh-local",
   "description": "Local PowerShell implementation of the DeepSeek Harness bash executor seam",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },

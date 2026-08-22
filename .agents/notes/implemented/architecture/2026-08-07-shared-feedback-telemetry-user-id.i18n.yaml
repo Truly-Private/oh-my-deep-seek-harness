@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/architecture/2026-08-07-shared-feedback-telemetry-user-id.md
 2026-08-07-shared-feedback-telemetry-user-id.md: c46ef26d81d9ef04c618468ade71f7d9fc56c955
-2026-08-07-shared-feedback-telemetry-user-id.zh.md: b3d3c78ac3e75deb690ea3d21592a7f7b23629c5
+2026-08-07-shared-feedback-telemetry-user-id.zh.md: 4f8375279f4a3d778b90e8b62167edc9b1a190ad

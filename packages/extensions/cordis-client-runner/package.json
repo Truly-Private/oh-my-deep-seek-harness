@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-cordis-client-runner",
   "description": "Browser half of dynamic dual-half plugin packages: event subscription, closure evaluation, guard facade, and loader entries",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -51,11 +51,9 @@
     "@truly-private/omdsh-client-connection": "workspace:^",
     "@truly-private/omdsh-client-modules": "workspace:^",
     "@truly-private/omdsh-client-runtime": "workspace:^",
-    "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-client-ui-theme": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^",
-    "react": "^18.2.0"
+    "@deepseek-ai/cordis": "workspace:^"
   },
   "devDependencies": {
     "@deepseek-ai/cordis-plugin-loader": "workspace:^",
@@ -63,7 +61,6 @@
     "@truly-private/omdsh-client-connection": "workspace:^",
     "@truly-private/omdsh-client-modules": "workspace:^",
     "@truly-private/omdsh-client-runtime": "workspace:^",
-    "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-client-ui-theme": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@types/react": "~18.3.1",

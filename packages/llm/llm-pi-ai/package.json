@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-llm-pi-ai",
-  "description": "pi-ai-backed multi-provider adapter for the DeepSeek Harness LLM seam",
-  "version": "0.0.2",
+  "description": "pi-ai-backed DeepSeek adapter for the DeepSeek Harness LLM seam (design-verification twin of dsh-llm-deepseek)",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -33,6 +33,7 @@
   "license": "MIT",
   "peerDependencies": {
     "@truly-private/omdsh-attachment": "workspace:^",
+    "@truly-private/omdsh-authorization": "workspace:^",
     "@truly-private/omdsh-credentials": "workspace:^",
     "@truly-private/omdsh-launch-environment": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
@@ -47,6 +48,7 @@
   },
   "devDependencies": {
     "@truly-private/omdsh-attachment": "workspace:^",
+    "@truly-private/omdsh-authorization": "workspace:^",
     "@truly-private/omdsh-credentials": "workspace:^",
     "@truly-private/omdsh-launch-environment": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",

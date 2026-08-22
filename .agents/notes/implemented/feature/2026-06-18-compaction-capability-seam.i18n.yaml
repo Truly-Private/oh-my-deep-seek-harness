@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-06-18-compaction-capability-seam.md
 2026-06-18-compaction-capability-seam.md: ce0d37db3a56df28d88e8f385b652e40d6604f2b
-2026-06-18-compaction-capability-seam.zh.md: 94d26a3288b29673039a38d4061093453d726753
+2026-06-18-compaction-capability-seam.zh.md: e34c69405132a64042957661d9c93f4dc5cc39f9

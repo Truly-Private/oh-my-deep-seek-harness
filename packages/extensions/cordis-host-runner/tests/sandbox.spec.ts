@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { sandboxDefineTool } from '../src/guard.ts'
-import { syntaxErrorContext } from '../src/sandbox.ts'
+import { precheckCode, syntaxErrorContext } from '../src/sandbox.ts'
 import { AGENT_A, call, CONTENT_OUTPUT_CODE, mount, setup, text, running } from './helpers.ts'
 
 /**
@@ -162,6 +162,12 @@ describe('host-half failures leave nothing running', () => {
 })
 
 describe('parse failures teach the fix', () => {
+  it('prechecks valid source without executing it', () => {
+    delete (globalThis as Record<string, unknown>).__cordis_precheck_probe
+    precheckCode('globalThis.__cordis_precheck_probe = true', 'code.host')
+    expect((globalThis as Record<string, unknown>).__cordis_precheck_probe).toBeUndefined()
+  })
+
   it('answers TypeScript syntax in the plain-JS sandbox with the fix, at define time', async () => {
     const harness = await setup()
     // The precheck runs inside define, so unparseable code never reaches the registry.

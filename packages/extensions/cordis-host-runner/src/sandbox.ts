@@ -196,17 +196,18 @@ export function parseErrorMessage(half: 'code.host' | 'code.client', context: st
 /**
  * Parse one half's source without running it: the define-time precheck that
  * keeps unparseable code out of the registry, so a model fixes it and defines
- * again instead of discovering the failure at run time. Compiling through `vm`
- * rather than `new Function` is what makes the two agree — same wrapper, same
- * compiler, and the same source-line-and-caret prelude in the failure.
+ * again instead of discovering the failure at run time. `vm.Script` parses the
+ * same async-function wrapper the host evaluator later runs and provides the
+ * source-line-and-caret prelude used by the teaching text.
  * @param code - the model-written function body.
  * @param half - which define argument carried it, for the error text.
  * @throws when the body does not parse, with the offending line and a teaching hint.
  */
 export function precheckCode(code: string, half: 'code.host' | 'code.client'): void {
+  const wrapped = `(async () => {\n${code}\n})()`
   try {
-    // Compile-only: constructing the Script parses the source and runs nothing.
-    new Script(`(async () => {\n${code}\n})()`, { filename: `cordis-dyn-${half}.js` })
+    // Compile-only: constructing a Script parses the source and runs nothing.
+    new Script(wrapped, { filename: `cordis-dyn-${half}.js` })
   } catch (error) {
     if (!isSyntaxError(error)) throw error
     throw new Error(parseErrorMessage(half, syntaxErrorContext(error)))

@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-client-ui-layout",
   "description": "Shell plugin: three-column AppFrame with drag handles, ctx.layout viewing-state service (navigation + panels)",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -45,11 +45,9 @@
   "license": "MIT",
   "peerDependencies": {
     "@truly-private/omdsh-client-runtime": "workspace:^",
-    "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-client-ui-theme": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^",
-    "react": "^18.2.0"
+    "@deepseek-ai/cordis": "workspace:^"
   },
   "devDependencies": {
     "@truly-private/omdsh-client-locale": "workspace:^",

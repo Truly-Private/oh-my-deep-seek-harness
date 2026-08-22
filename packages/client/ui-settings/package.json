@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-client-ui-settings",
   "description": "Settings domain base plugin: the settings-namespace scope service and the canonical settings slot-type contract",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -44,28 +44,28 @@
     "watch": "tsdown --watch"
   },
   "license": "MIT",
+  "dependencies": {
+    "@deepseek-ai/schemastery": "workspace:^"
+  },
   "peerDependencies": {
     "@deepseek-ai/cordis": "workspace:^",
     "@truly-private/omdsh-api-remotes": "workspace:^",
     "@truly-private/omdsh-client-connection": "workspace:^",
     "@truly-private/omdsh-client-runtime": "workspace:^",
-    "@truly-private/omdsh-client-schema-form": "workspace:^",
-    "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
-    "@truly-private/omdsh-settings": "workspace:^",
-    "react": "^18.2.0"
+    "@truly-private/omdsh-settings": "workspace:^"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "workspace:^",
     "@truly-private/omdsh-api-remotes": "workspace:^",
     "@truly-private/omdsh-client-runtime": "workspace:^",
-    "@truly-private/omdsh-client-schema-form": "workspace:^",
     "@truly-private/omdsh-client-test-runtime": "workspace:^",
     "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@truly-private/omdsh-settings": "workspace:^",
     "@types/react": "~18.3.1",
-    "react": "^18.2.0"
+    "react": "^18.2.0",
+    "@truly-private/omdsh-client-connection": "workspace:^"
   },
   "files": [
     "lib/index.js",

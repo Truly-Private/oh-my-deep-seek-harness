@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write packages/hooks/hooks-claude-code/README.md
 README.md: beb8169e90c7d035b1a94dc5940800fa07badbd4
-README.zh.md: 488ecc970711d7307496cb0d800993aac2fafca3
+README.zh.md: f0cc0e73909030d5e9dc1e368cdd86142ed2f969

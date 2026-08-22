@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/bug-fix/2026-08-11-preset-authoring-agent-validates-its-own-composition.md
 2026-08-11-preset-authoring-agent-validates-its-own-composition.md: f4aaeff38b1c5098f1130aed3e4490a01408337d
-2026-08-11-preset-authoring-agent-validates-its-own-composition.zh.md: 23e846bfff75ccefbce0c45c496276c8dcfd0340
+2026-08-11-preset-authoring-agent-validates-its-own-composition.zh.md: 603c36b441661cfe54307cd63a22b5fd0bff633c

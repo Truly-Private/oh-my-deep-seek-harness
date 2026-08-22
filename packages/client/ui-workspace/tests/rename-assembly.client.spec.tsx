@@ -27,6 +27,9 @@ beforeEach(() => { localStorage.clear() })
 /** Runtime with the locale face installed and Chinese selected for these copy assertions. */
 async function createRuntime(): Promise<SlotTestRuntime> {
   const runtime = await SlotTestRuntime.create()
+  runtime.provide('connection', {
+    hostDescription: { getSnapshot: () => undefined, subscribe: () => () => {} },
+  })
   const locale = new LocaleRuntime(runtime.ctx)
   locale.setLocale('zh')
   runtime.provide('locale', locale)

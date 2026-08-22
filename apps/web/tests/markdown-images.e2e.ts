@@ -199,6 +199,7 @@ describe('web e2e: remote Markdown image rendering', () => {
     expect(await page.getByRole('img', { name: LOCAL_ALT }).count()).toBe(0)
     expect(await page.getByText(LOCAL_ALT, { exact: true }).count()).toBe(1)
     expect(imageOrigin.requests).toEqual([{ path: '/image.png', referer: undefined }])
+    await page.getByRole('button', { name: /current Trifecta/ }).waitFor({ timeout: 15_000 })
 
     const snapshot = (await captureStableAria(page, '[class*="centerCol"]', scaffold.workspaceCwd))
       .split(SEED_ID).join('{{seededId}}')

@@ -27,9 +27,13 @@ const SETTLED_EXPECTED = join(SNAPSHOT_DIR, 'settled.expected.md')
 const MODE = webSnapshotMode()
 // The question composer replaces the textarea, so fill → Queue row → Steer
 // must finish inside the first replay chunk window. At 15 ms that window is
-// shorter than Playwright's round trips; 100 ms supplies test-only headroom,
+// shorter than Playwright's round trips; 50 ms supplies test-only headroom,
 // while larger values lengthen all three replay scenarios linearly.
-const REPLAY_PACE_MS = 100
+const REPLAY_PACE_MS = 50
+// The two-queue scenario performs three browser round trips before the first
+// question composer replaces the textarea. Give that one fixture enough
+// streaming time under the six-worker CI pool without slowing the other cases.
+const STEER_ALL_REPLAY_PACE_MS = 500
 
 const PROMPT = 'Use the ask_user_question tool to ask me exactly one question with id "checkpoint", question "Ready to continue?", header "Checkpoint", and options labeled "Yes" and "No". After I answer, reply with one short sentence acknowledging my answer and stop.'
 const STEER = 'Interjection: include the word BANANA in your final reply.'
@@ -106,9 +110,8 @@ describe('web e2e: mid-turn steering lands durably and visibly', () => {
     // this exact occurrence into the current turn's steering outbox.
     await input.fill(STEER)
     await input.press('Enter')
-    const queued = page.getByText(STEER, { exact: true })
-    await queued.waitFor({ timeout: 10_000 })
     const queuedRow = page.getByRole('listitem').filter({ hasText: STEER })
+    await queuedRow.waitFor({ timeout: 10_000 })
     const steerButton = queuedRow.getByRole('button', { name: 'Steer queued message' })
     await expect.poll(() => steerButton.isEnabled(), { timeout: 10_000 }).toBe(true)
     await steerButton.click({ timeout: 10_000 })
@@ -305,7 +308,7 @@ describe('web e2e: empty-draft Cmd+Enter steers the whole queue', () => {
     scaffold = await launchWebScaffold({
       replayFixture: STEER_ALL_FIXTURE,
       replayOverride: STEER_ALL_OVERRIDE,
-      paceMs: REPLAY_PACE_MS,
+      paceMs: STEER_ALL_REPLAY_PACE_MS,
     })
     scaffold.ctx.on('session/event', (_session, event) => { sessionEvents.push(event) })
     browser = await chromium.launch()

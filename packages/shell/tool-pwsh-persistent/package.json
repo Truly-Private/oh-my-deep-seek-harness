@@ -1,0 +1,62 @@
+{
+  "name": "@truly-private/omdsh-tool-pwsh-persistent",
+  "description": "Model-facing owner-scoped persistent PowerShell tool backed by the Harness PTY service",
+  "version": "0.0.3",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Truly-Private/oh-my-deepseek-harness.git",
+    "directory": "packages/shell/tool-pwsh-persistent"
+  },
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./invariant": {
+      "types": "./lib/types/invariant.d.ts",
+      "default": "./lib/invariant.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/invariant.js",
+    "lib/types/**/*.d.ts"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "@truly-private/omdsh-agent": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-terminal": "workspace:^",
+    "@truly-private/omdsh-timeout": "workspace:^",
+    "@truly-private/omdsh-tools": "workspace:^",
+    "@deepseek-ai/cordis": "workspace:^"
+  },
+  "dependencies": {
+    "@deepseek-ai/schemastery": "workspace:^"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis-plugin-include": "workspace:^",
+    "@deepseek-ai/cordis-plugin-loader": "workspace:^",
+    "@truly-private/omdsh-agent": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-llm": "workspace:^",
+    "@truly-private/omdsh-terminal": "workspace:^",
+    "@truly-private/omdsh-terminal-bash": "workspace:^",
+    "@truly-private/omdsh-pwsh-local": "workspace:^",
+    "@truly-private/omdsh-sandbox": "workspace:^",
+    "@truly-private/omdsh-sandbox-policy": "workspace:^",
+    "@truly-private/omdsh-session": "workspace:^",
+    "@truly-private/omdsh-subprocess-local": "workspace:^",
+    "@truly-private/omdsh-system-prompt": "workspace:^",
+    "@truly-private/omdsh-timeout": "workspace:^",
+    "@truly-private/omdsh-tools": "workspace:^",
+    "@deepseek-ai/cordis": "workspace:^"
+  }
+}

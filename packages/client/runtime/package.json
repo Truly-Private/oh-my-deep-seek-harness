@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-client-runtime",
   "description": "Client core services: SlotRegistry, SessionRuntime (scope tree + object layer)",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -42,20 +42,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@truly-private/omdsh-agent": "workspace:^",
-    "@truly-private/omdsh-attachment": "workspace:^",
-    "@truly-private/omdsh-client-connection": "workspace:^",
-    "@truly-private/omdsh-commands": "workspace:^",
-    "@truly-private/omdsh-client-ui-slots": "workspace:^",
-    "@truly-private/omdsh-host-apiproxy": "workspace:^",
-    "@truly-private/omdsh-llm": "workspace:^",
-    "@truly-private/omdsh-llm-retry": "workspace:^",
-    "@truly-private/omdsh-session": "workspace:^",
-    "@truly-private/omdsh-session-projection": "workspace:^",
-    "@truly-private/omdsh-session-title": "workspace:^",
-    "@truly-private/omdsh-tools": "workspace:^",
     "immer": "^10.1.1",
-    "react": "^18.2.0",
     "zustand": "~4.4.7"
   },
   "peerDependencies": {
@@ -63,7 +50,18 @@
     "@truly-private/omdsh-api-remotes": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@truly-private/omdsh-typert-protocol": "workspace:^",
-    "@truly-private/omdsh-typert-registry": "workspace:^"
+    "@truly-private/omdsh-typert-registry": "workspace:^",
+    "@truly-private/omdsh-agent": "workspace:^",
+    "@truly-private/omdsh-attachment": "workspace:^",
+    "@truly-private/omdsh-client-connection": "workspace:^",
+    "@truly-private/omdsh-commands": "workspace:^",
+    "@truly-private/omdsh-host-apiproxy": "workspace:^",
+    "@truly-private/omdsh-llm": "workspace:^",
+    "@truly-private/omdsh-llm-retry": "workspace:^",
+    "@truly-private/omdsh-session": "workspace:^",
+    "@truly-private/omdsh-session-projection": "workspace:^",
+    "@truly-private/omdsh-session-title": "workspace:^",
+    "@truly-private/omdsh-tools": "workspace:^"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "workspace:^",
@@ -72,7 +70,20 @@
     "@truly-private/omdsh-timeout": "workspace:^",
     "@truly-private/omdsh-typert-protocol": "workspace:^",
     "@truly-private/omdsh-typert-registry": "workspace:^",
-    "@types/react": "~18.3.1"
+    "@types/react": "~18.3.1",
+    "@truly-private/omdsh-client-ui-slots": "workspace:^",
+    "react": "^18.2.0",
+    "@truly-private/omdsh-agent": "workspace:^",
+    "@truly-private/omdsh-attachment": "workspace:^",
+    "@truly-private/omdsh-client-connection": "workspace:^",
+    "@truly-private/omdsh-commands": "workspace:^",
+    "@truly-private/omdsh-host-apiproxy": "workspace:^",
+    "@truly-private/omdsh-llm": "workspace:^",
+    "@truly-private/omdsh-llm-retry": "workspace:^",
+    "@truly-private/omdsh-session": "workspace:^",
+    "@truly-private/omdsh-session-projection": "workspace:^",
+    "@truly-private/omdsh-session-title": "workspace:^",
+    "@truly-private/omdsh-tools": "workspace:^"
   },
   "files": [
     "lib/index.js",

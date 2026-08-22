@@ -8,7 +8,7 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render } from '@testing-library/react'
-import { bindSnapshotSelector } from '@truly-private/omdsh-client-web-react'
+import { bindSnapshotSelector } from '@truly-private/omdsh-client-test-runtime'
 import {
   createSnapshotStore, EMPTY_CONVERSATION_VIEWS,
 } from '@truly-private/omdsh-client-runtime/client'

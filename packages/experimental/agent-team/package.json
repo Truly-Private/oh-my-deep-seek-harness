@@ -1,0 +1,62 @@
+{
+  "name": "@truly-private/omdsh-experimental-agent-team",
+  "description": "Implicit-root Agent Teams roster, durable peer mailbox, and shared task DAG",
+  "version": "0.0.3",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Truly-Private/oh-my-deepseek-harness.git",
+    "directory": "packages/experimental/agent-team"
+  },
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./invariant": {
+      "types": "./lib/types/invariant.d.ts",
+      "default": "./lib/invariant.js"
+    },
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/invariant.js",
+    "lib/types/**/*.d.ts"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@deepseek-ai/schemastery": "workspace:^",
+    "zod": "^4.4.3"
+  },
+  "peerDependencies": {
+    "@truly-private/omdsh-agent": "workspace:^",
+    "@truly-private/omdsh-brand": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-llm": "workspace:^",
+    "@truly-private/omdsh-session": "workspace:^",
+    "@truly-private/omdsh-session-persistence": "workspace:^",
+    "@truly-private/omdsh-subagent": "workspace:^",
+    "@deepseek-ai/cordis": "workspace:^"
+  },
+  "devDependencies": {
+    "@truly-private/omdsh-agent": "workspace:^",
+    "@truly-private/omdsh-agent-loop": "workspace:^",
+    "@truly-private/omdsh-agent-loop-testkit": "workspace:^",
+    "@truly-private/omdsh-brand": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-llm": "workspace:^",
+    "@truly-private/omdsh-session": "workspace:^",
+    "@truly-private/omdsh-session-persistence": "workspace:^",
+    "@truly-private/omdsh-session-persistence-jsonl": "workspace:^",
+    "@truly-private/omdsh-session-persistence-sqlite": "workspace:^",
+    "@truly-private/omdsh-subagent": "workspace:^",
+    "@truly-private/omdsh-subagent-fork-in-process": "workspace:^",
+    "@truly-private/omdsh-subagent-spawn-in-process": "workspace:^",
+    "@deepseek-ai/cordis": "workspace:^"
+  }
+}

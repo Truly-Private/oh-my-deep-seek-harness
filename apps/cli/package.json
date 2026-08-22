@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh",
   "description": "dsh CLI: profile boot, plugin management, and the browser UI alias",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -59,6 +59,7 @@
     "@truly-private/omdsh-tool-ask-user": "workspace:^",
     "@truly-private/omdsh-tool-bash": "workspace:^",
     "@truly-private/omdsh-tool-bash-persistent": "workspace:^",
+    "@truly-private/omdsh-tool-pwsh-persistent": "workspace:^",
     "@truly-private/omdsh-tool-cordis": "workspace:^",
     "@truly-private/omdsh-tool-fs": "workspace:^",
     "@truly-private/omdsh-tool-fs-search": "workspace:^",

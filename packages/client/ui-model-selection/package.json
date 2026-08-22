@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-client-ui-model-selection",
   "description": "Model selection: the /model popupSelect over session.models / session.selectModel",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -52,13 +52,9 @@
     "@truly-private/omdsh-client-runtime": "workspace:^",
     "@truly-private/omdsh-client-ui-commands": "workspace:^",
     "@truly-private/omdsh-client-ui-conversation": "workspace:^",
-    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
     "@truly-private/omdsh-client-ui-input-trigger": "workspace:^",
-    "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
-    "clsx": "^2.1.1",
-    "@deepseek-ai/cordis": "workspace:^",
-    "react": "^18.2.0"
+    "@deepseek-ai/cordis": "workspace:^"
   },
   "devDependencies": {
     "@truly-private/omdsh-api-remotes": "workspace:^",
@@ -68,12 +64,11 @@
     "@truly-private/omdsh-client-test-runtime": "workspace:^",
     "@truly-private/omdsh-client-ui-commands": "workspace:^",
     "@truly-private/omdsh-client-ui-conversation": "workspace:^",
-    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
     "@truly-private/omdsh-client-ui-input-trigger": "workspace:^",
+    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
     "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@types/react": "~18.3.1",
-    "clsx": "^2.1.1",
     "@deepseek-ai/cordis": "workspace:^",
     "react": "^18.2.0"
   },
@@ -82,5 +77,8 @@
     "lib/invariant.js",
     "lib/client.js",
     "lib/types/**/*.d.ts"
-  ]
+  ],
+  "dependencies": {
+    "clsx": "^2.1.1"
+  }
 }

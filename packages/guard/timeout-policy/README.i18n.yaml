@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write packages/guard/timeout-policy/README.md
 README.md: 9345c88cf2de7f7745e24538570fc6f816ec6629
-README.zh.md: 3868d15c021ae15aaa74c08d123575653219c32e
+README.zh.md: f1afce2715f4ea4fb0c5aa1883c2bbd02ef78511

@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-client-ui-goal",
   "description": "Session goal surface: GoalBar docked above the composer, read from the goal session projection",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -50,13 +50,12 @@
     "@truly-private/omdsh-api-remotes": "workspace:^",
     "@truly-private/omdsh-client-runtime": "workspace:^",
     "@truly-private/omdsh-client-ui-conversation": "workspace:^",
-    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
-    "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-commands": "workspace:^",
     "@truly-private/omdsh-goal": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^",
-    "react": "^18.2.0"
+    "@truly-private/omdsh-session": "workspace:^",
+    "@truly-private/omdsh-typert-protocol": "workspace:^"
   },
   "devDependencies": {
     "@truly-private/omdsh-client-locale": "workspace:^",
@@ -73,7 +72,9 @@
     "@types/react": "~18.3.1",
     "@deepseek-ai/cordis": "workspace:^",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "@truly-private/omdsh-session": "workspace:^",
+    "@truly-private/omdsh-typert-protocol": "workspace:^"
   },
   "files": [
     "lib/index.js",

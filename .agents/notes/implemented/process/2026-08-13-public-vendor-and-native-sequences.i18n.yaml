@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/process/2026-08-13-public-vendor-and-native-sequences.md
 2026-08-13-public-vendor-and-native-sequences.md: 60d02ed2159508913f75308fd8b5f72e0a212594
-2026-08-13-public-vendor-and-native-sequences.zh.md: fb3e5b792880f692b136f1e800d654e987305e14
+2026-08-13-public-vendor-and-native-sequences.zh.md: f97f463bc76f8d72933ee161f1ea59d0dba0c9a4

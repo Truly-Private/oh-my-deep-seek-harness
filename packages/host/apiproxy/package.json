@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-host-apiproxy",
   "description": "API gateway: the ApiProxy contract (api/), the fetch carrier pair (fetch/), and the host-side gateway plugin providing ctx.apiProxy",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -88,7 +88,6 @@
     "@truly-private/omdsh-storage": "workspace:^",
     "@truly-private/omdsh-storage-domain": "workspace:^",
     "@truly-private/omdsh-typert-protocol": "workspace:^",
-    "@truly-private/omdsh-typert-registry": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^"
+    "@truly-private/omdsh-typert-registry": "workspace:^"
   }
 }

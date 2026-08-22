@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-time-context",
   "description": "Opt-in durable per-step context with the current time and elapsed time",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },

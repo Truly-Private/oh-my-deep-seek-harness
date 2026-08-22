@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-client-ui-theme",
   "description": "Theme plugin: Host bootstrap for the pre-plugin palette; DOM-free ThemeRuntime for light/dark/system state; --dsw-* token styles and Appearance settings row",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -26,7 +26,6 @@
       "types": "./lib/types/client/index.d.ts",
       "default": "./lib/client.js"
     },
-    "./styles/*": "./lib/styles/*",
     "./src/*": "./src/*",
     "./package.json": "./package.json"
   },
@@ -50,16 +49,15 @@
     "@truly-private/omdsh-client-connection": "workspace:^",
     "@truly-private/omdsh-client-locale": "workspace:^",
     "@truly-private/omdsh-client-runtime": "workspace:^",
-    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
     "@truly-private/omdsh-client-ui-settings": "workspace:^",
-    "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-host-webserver": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
-    "react": "^18.2.0"
+    "@truly-private/omdsh-settings": "workspace:^"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "workspace:^",
     "@truly-private/omdsh-api-remotes": "workspace:^",
+    "@truly-private/omdsh-client-connection": "workspace:^",
     "@truly-private/omdsh-client-locale": "workspace:^",
     "@truly-private/omdsh-client-runtime": "workspace:^",
     "@truly-private/omdsh-client-test-runtime": "workspace:^",
@@ -68,6 +66,7 @@
     "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-host-webserver": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-settings": "workspace:^",
     "@types/react": "~18.3.1",
     "react": "^18.2.0"
   },
@@ -83,7 +82,6 @@
     "watch": "tsdown --watch"
   },
   "dependencies": {
-    "@truly-private/omdsh-settings": "workspace:^",
     "clsx": "^2.0.0",
     "@deepseek-ai/schemastery": "workspace:^"
   }

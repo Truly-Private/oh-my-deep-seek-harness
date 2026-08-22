@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-07-30-queued-manual-compaction.md
 2026-07-30-queued-manual-compaction.md: 33f8c44afd4e164199b0b4b73c75ae9c1c3ea622
-2026-07-30-queued-manual-compaction.zh.md: f5f0542d25ba73006bca03084ef2c2b95b115dc2
+2026-07-30-queued-manual-compaction.zh.md: 5d7afbb7f1dd59f5e81f659fdb735ed42d9f87b4

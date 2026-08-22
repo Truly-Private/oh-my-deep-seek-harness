@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/architecture/2026-07-29-dsh-source-launch-tsx-esm.md
 2026-07-29-dsh-source-launch-tsx-esm.md: 07ce6f07bb354d884c83517a14ad0ab73f0cbeb8
-2026-07-29-dsh-source-launch-tsx-esm.zh.md: 5f6856bb2d59f4f2ed68a66e16f5746dde2cc4f1
+2026-07-29-dsh-source-launch-tsx-esm.zh.md: 256fd7bbd562faafad57a586603418ce6aa8e68e

@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/architecture/2026-07-31-code-runtime-portable-identifier-seam.md
 2026-07-31-code-runtime-portable-identifier-seam.md: e7d34f1c3c3aa2fc2819e65189c14712e9eec4d9
-2026-07-31-code-runtime-portable-identifier-seam.zh.md: e00716d44acc3a75540c91afb8e54d6da8c07053
+2026-07-31-code-runtime-portable-identifier-seam.zh.md: 7493ad2372d4b880fcc2e352d861b23dba683dae

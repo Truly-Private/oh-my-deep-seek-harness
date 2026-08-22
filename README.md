@@ -39,87 +39,10 @@ This path sends model requests through [9Router](https://github.com/decolua/9rou
 Install Node.js `^22.19.0` or `>=24.0.0`, then verify npm can resolve this distribution:
 
 ```sh
-node --version
-npm view @truly-private/omdsh@0.0.1 version
+npx @truly-private/omdsh web
 ```
 
-Install 9Router:
-
-```sh
-npm install -g 9router
-```
-
-#### 2. Start 9Router
-
-Run 9Router and leave this terminal open:
-
-```sh
-9router
-```
-
-9Router opens its dashboard and serves its OpenAI-compatible API at `http://127.0.0.1:20128/v1`.
-
-#### 3. Configure a model in 9Router
-
-In the 9Router dashboard, connect **Kiro AI** for the shipped `kr/claude-sonnet-4.5` starter model. You may instead connect another provider or create a combo; in that case, copy its exact model or combo ID. Copy the 9Router endpoint key from the dashboard.
-
-#### 4. Start DeepSeek Harness in your project
-
-Open a second terminal in the directory the coding agent may edit:
-
-```sh
-cd /path/to/project
-npx --yes @truly-private/omdsh@0.0.1 web
-```
-
-Open the printed URL; the default is `http://127.0.0.1:3080`.
-
-#### 5. Connect the first-party 9Router provider
-
-On first launch, the Web UI opens **Connect 9Router to get started**. Paste the 9Router endpoint key and choose **Save and continue**. The shipped setup already supplies:
-
-| Field | Value |
-| --- | --- |
-| Base URL | `http://127.0.0.1:20128/v1` |
-| API protocol | `openai-completions` |
-| Credential reference | `NINE_ROUTER_API_KEY` |
-| Starter model | `kr/claude-sonnet-4.5` |
-
-9Router now appears as a first-party row under **Settings → Models**, not under **Add a custom provider**. To use another model or combo, choose **Edit → Customized settings → Fetch available models**, select the exact ID from step 3, and apply the change. The custom-provider form remains available for other OpenAI-compatible gateways.
-
-#### 6. Select the model and run a task
-
-Choose the project directory as the workspace, start a new session, open the model picker, and select the model under **9Router**. Then send a task such as:
-
-> Inspect this repository, explain its main packages, and identify one useful improvement.
-
-A successful response confirms that requests are passing through 9Router. The harness stores the endpoint key under `$DSH_HOME` using the `NINE_ROUTER_API_KEY` reference. The shipped 9Router model is the initial default; selecting another model makes it the default for new Web UI sessions and headless runs.
-
-For file-based setup, use the [`settings.yaml` example](integrations/9router/settings.yaml.example) and the [9Router integration guide](docs/fork/integrations.md#configure-9router).
-
-### Run one coding task
-
-After completing the 9Router steps above, run the headless profile from the directory the agent may edit:
-
-```sh
-npx --yes @truly-private/omdsh@0.0.1 --profile headless \
-  "Inspect this repository, fix the failing tests, and verify the result."
-```
-
-The command creates and persists a fresh session, prints the final response, and exits. See the [headless profile reference](apps/cli/README.md#entry-modes) and the [Python SDK guide](docs/user/guide/python-sdk.md) for embedding the same runtime in an application.
-
-### Run auditable multi-agent orchestration
-
-Enable Code Mode and explicitly request a workflow when agents should coordinate typed tool calls in code:
-
-```sh
-DSH_TOOLS_MODE=code npx --yes @truly-private/omdsh@0.0.1 --profile headless \
-  "From a run_code program, use the workflow tool to ask independent agents to review security, tests, and architecture. Return one evidence-backed report."
-```
-
-The workflow runs a model-written JavaScript program whose `agent()` calls fan out child sessions, while Code Mode lets the parent compose typed tool calls in TypeScript. The root and child sessions persist under `~/.dsh/sessions` or `$DSH_HOME/sessions`. Each event carries a monotonic sequence number and epoch-millisecond timestamp; the logs cover model-visible inputs, tool calls and results, Code Mode sub-dispatches, and workflow lifecycle. Session headers preserve parent-child lineage. Start the Web UI with the same harness home to inspect the saved run.
-
-Use `npx --yes @truly-private/omdsh@0.0.1 --profile headless --dump-config` to inspect the effective plugin tree without booting it. The [plugin configuration catalog](https://deepseek-harness.github.io/deepseek-harness/reference/config-catalog) lists every configurable plugin, and the [persistence catalog](docs/persistence-catalog.md) defines the recorded event types.
+The command starts the Web UI at `http://127.0.0.1:3080` by default and opens it in the default browser for a local launch. An SSH launch only prints the host URL because the SSH client or editor owns the local forwarded address. Pass `--no-open` to run the server without opening a browser. See [Web UI guide](docs/user/guide/index.md).
 
 ### Run from source
 
@@ -131,6 +54,8 @@ cd oh-my-deepseek-harness
 pnpm install
 pnpm dsh web
 ```
+
+`pnpm run build` prepares the repository artifacts. `pnpm dsh web` uses those built artifacts without rebuilding.
 
 ## Community and support
 

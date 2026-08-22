@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-mcp-client",
   "description": "MCP client bridge: connects to MCP servers and registers their tools on ctx.tools",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -32,6 +32,7 @@
   ],
   "license": "MIT",
   "peerDependencies": {
+    "@truly-private/omdsh-attachment": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@truly-private/omdsh-llm": "workspace:^",
     "@truly-private/omdsh-subprocess": "workspace:^",
@@ -45,6 +46,8 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@truly-private/omdsh-attachment": "workspace:^",
+    "@truly-private/omdsh-attachment-local": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@truly-private/omdsh-llm": "workspace:^",
     "@truly-private/omdsh-subprocess": "workspace:^",

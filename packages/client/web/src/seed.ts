@@ -12,10 +12,7 @@ import * as ReactDom from 'react-dom'
 import * as ReactDomClient from 'react-dom/client'
 import * as Cordis from '@deepseek-ai/cordis'
 import * as UiSlots from '@truly-private/omdsh-client-ui-slots'
-import * as WebReact from '@truly-private/omdsh-client-web-react'
 import * as UiPrimitives from '@truly-private/omdsh-client-ui-primitives'
-import * as UiAttachment from '@truly-private/omdsh-client-ui-attachment'
-import * as SchemaForm from '@truly-private/omdsh-client-schema-form'
 import type { PlatformModule } from './platform.ts'
 
 /**
@@ -33,9 +30,6 @@ export function getStaticModules(): Record<string, unknown> {
     'react-dom/client': ReactDomClient,
     '@deepseek-ai/cordis': Cordis,
     '@truly-private/omdsh-client-ui-slots': UiSlots,
-    '@truly-private/omdsh-client-web-react': WebReact,
     '@truly-private/omdsh-client-ui-primitives': UiPrimitives,
-    '@truly-private/omdsh-client-ui-attachment': UiAttachment,
-    '@truly-private/omdsh-client-schema-form': SchemaForm,
   } satisfies Record<PlatformModule, unknown>
 }

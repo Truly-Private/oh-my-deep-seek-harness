@@ -1,0 +1,42 @@
+# Minimal live counterpart for the persistent-pwsh-tool-turn snapshot composition.
+- id: llm-deepseek
+  name: '@truly-private/omdsh-llm-deepseek'
+  config:
+    models:
+      - id: deepseek-v4-pro
+
+- id: sandbox-policy
+  name: '@truly-private/omdsh-sandbox-policy'
+  config:
+    mode: danger-full-access
+    workspaceRoot: !!js process.cwd()
+
+- id: subprocess
+  name: '@truly-private/omdsh-subprocess-local'
+
+- id: terminal
+  name: '@truly-private/omdsh-terminal'
+
+- id: terminal-pwsh
+  name: '@truly-private/omdsh-terminal-bash'
+  config:
+    shellDialect: pwsh
+    timeoutMs: 30000
+
+- id: acp-agent
+  name: '@truly-private/omdsh-acp-demo'
+  config:
+    provider: deepseek-official
+    model: deepseek-v4-pro
+    persistenceRoot: !!js process.env.DSH_SNAPSHOT_SESSIONS_ROOT ?? './.sessions'
+    persistenceCompression: !!js "process.env.DSH_SNAPSHOT === undefined ? 'zstd' : 'none'"
+    workspaceContext: false
+    skills:
+      enabled: false
+    toolBash: false
+    toolJobs: false
+    goals: false
+    persona: You are a concise snapshot agent working in {{cwd}}.
+
+- id: tool-pwsh-persistent
+  name: '@truly-private/omdsh-tool-pwsh-persistent'

@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-subagent-codex",
   "description": "One-shot Codex subagent provider over the official app-server protocol",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -28,13 +28,18 @@
   "files": [
     "lib/index.js",
     "lib/invariant.js",
+    "cordis.patch.yml",
     "lib/types/**/*.d.ts"
   ],
   "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
   "peerDependencies": {
     "@truly-private/omdsh-invariants": "workspace:^",
     "@truly-private/omdsh-llm": "workspace:^",
-    "@truly-private/omdsh-sdk-protocol": "workspace:^",
     "@truly-private/omdsh-session": "workspace:^",
     "@truly-private/omdsh-subagent": "workspace:^",
     "@truly-private/omdsh-subprocess": "workspace:^",
@@ -42,7 +47,9 @@
     "@deepseek-ai/cordis": "workspace:^"
   },
   "dependencies": {
-    "@deepseek-ai/schemastery": "workspace:^"
+    "@truly-private/omdsh-sdk-protocol": "workspace:^",
+    "@deepseek-ai/schemastery": "workspace:^",
+    "@openai/codex": "0.147.0"
   },
   "devDependencies": {
     "@deepseek-ai/cordis-plugin-loader": "workspace:^",
@@ -50,13 +57,11 @@
     "@truly-private/omdsh-invariants": "workspace:^",
     "@truly-private/omdsh-llm": "workspace:^",
     "@truly-private/omdsh-loader-smoke": "workspace:^",
-    "@truly-private/omdsh-sdk-protocol": "workspace:^",
     "@truly-private/omdsh-session": "workspace:^",
     "@truly-private/omdsh-subagent": "workspace:^",
     "@truly-private/omdsh-subprocess": "workspace:^",
     "@truly-private/omdsh-subprocess-local": "workspace:^",
     "@truly-private/omdsh-timeout": "workspace:^",
-    "@openai/codex": "0.147.0",
     "@deepseek-ai/cordis": "workspace:^"
   }
 }

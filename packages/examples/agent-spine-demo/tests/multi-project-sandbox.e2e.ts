@@ -10,7 +10,7 @@ import * as FsPolicy from '@truly-private/omdsh-fs-observation-policy'
 import SandboxedFileSystem from '@truly-private/omdsh-fs-sandbox'
 import { CallId } from '@truly-private/omdsh-llm'
 import { LocalSandboxProvider } from '@truly-private/omdsh-sandbox-local'
-import { seatbeltProfileArgs } from '@truly-private/omdsh-sandbox-local/src/profiles.ts'
+import { bwrapProfileArgs, seatbeltProfileArgs } from '@truly-private/omdsh-sandbox-local/src/profiles.ts'
 import SandboxPolicyService from '@truly-private/omdsh-sandbox-policy'
 import { SessionId } from '@truly-private/omdsh-session'
 import * as ToolFs from '@truly-private/omdsh-tool-fs'
@@ -18,9 +18,7 @@ import type { ToolResult } from '@truly-private/omdsh-tools'
 import { launcherPath } from '@deepseek-ai/node-addon-landlock-run'
 import * as agentSpine from '../src/index.ts'
 
-const bwrapUsable = spawnSync('bwrap', [
-  '--ro-bind', '/', '/', '--dev', '/dev', '--proc', '/proc', '--die-with-parent', '--', 'true',
-], { timeout: 5_000, stdio: 'ignore' }).status === 0
+const bwrapUsable = spawnSync('bwrap', [...bwrapProfileArgs({ mode: 'read-only', workspaceRoot: '/' }), '--', 'true'], { timeout: 5_000, stdio: 'ignore' }).status === 0
 const landlockUsable = spawnSync(launcherPath(), ['--probe'], { timeout: 5_000, stdio: 'ignore' }).status === 0
 const seatbeltUsable = process.platform === 'darwin'
   && spawnSync('sandbox-exec', [...seatbeltProfileArgs({ mode: 'workspace-write', workspaceRoot: homedir() }), '--', 'true'], { timeout: 5_000, stdio: 'ignore' }).status === 0

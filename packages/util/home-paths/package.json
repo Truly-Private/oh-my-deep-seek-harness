@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-home-paths",
   "description": "Shared filesystem path helpers for the DeepSeek Harness",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },

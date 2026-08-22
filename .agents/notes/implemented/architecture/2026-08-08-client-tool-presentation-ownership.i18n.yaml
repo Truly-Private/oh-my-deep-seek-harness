@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/architecture/2026-08-08-client-tool-presentation-ownership.md
 2026-08-08-client-tool-presentation-ownership.md: c2293690aff8382e1cc89ad26da210a3816e1a69
-2026-08-08-client-tool-presentation-ownership.zh.md: 288f04f1c33a0ecf1be773037190950e91db1956
+2026-08-08-client-tool-presentation-ownership.zh.md: c55dd6500d2885c79bcfdd556cd507972ddfbbc6

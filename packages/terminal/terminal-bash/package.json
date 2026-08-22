@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-terminal-bash",
   "description": "Persistent shell PTY backend over the DeepSeek Harness subprocess terminal primitive",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -42,6 +42,7 @@
     "@deepseek-ai/cordis": "workspace:^"
   },
   "dependencies": {
+    "@truly-private/omdsh-pwsh-local": "workspace:^",
     "@deepseek-ai/schemastery": "workspace:^"
   },
   "devDependencies": {

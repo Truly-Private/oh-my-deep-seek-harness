@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/process/2026-08-16-codeql-alert-dispositions.md
 2026-08-16-codeql-alert-dispositions.md: 0229a3a2ba047cf3f8a51ca9be1178c0a0b94963
-2026-08-16-codeql-alert-dispositions.zh.md: da4865dedb9436b92b913f23eb7a0b35067ad03e
+2026-08-16-codeql-alert-dispositions.zh.md: 04c597a2454f6c43a050164ef5a6897dca7bcdb5

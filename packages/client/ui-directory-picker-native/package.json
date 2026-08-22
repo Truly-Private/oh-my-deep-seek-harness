@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-client-ui-directory-picker-native",
   "description": "Native directory-picker surface: the renderless workspace directory-flow occupant driving the host's OS chooser",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -45,15 +45,12 @@
   "license": "MIT",
   "peerDependencies": {
     "@truly-private/omdsh-client-runtime": "workspace:^",
-    "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-client-ui-workspace": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^",
-    "react": "^18.2.0"
+    "@deepseek-ai/cordis": "workspace:^"
   },
   "devDependencies": {
     "@truly-private/omdsh-client-runtime": "workspace:^",
-    "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-client-ui-workspace": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@testing-library/react": "^16.1.0",

@@ -101,9 +101,31 @@ const LOCALES: readonly LocaleDefinition[] = Object.freeze([
 ])
 
 /**
+ * `<html lang>` tag per shipped locale. The locale id is the app's own
+ * vocabulary (primary subtag); the document attribute wants a BCP 47 tag,
+ * which assistive technology and browser features (pronunciation rules,
+ * translation offers, font fallback, spell check) read to pick their own
+ * behavior. `zh` alone leaves the script ambiguous, so the shipped Chinese
+ * copy names the variant it actually is.
+ */
+const DOCUMENT_LANGUAGE: Record<LocaleId, string> = { zh: 'zh-CN', en: 'en' }
+
+/**
+ * Point `<html lang>` at the active locale. Called on every locale change,
+ * so the attribute tracks the UI instead of standing at whatever the served
+ * markup happened to declare.
+ * @param active - the active locale id.
+ */
+function syncDocumentLanguage(active: LocaleId): void {
+  // Non-browser runs (node boots of the client tree) have no document.
+  if (typeof document === 'undefined') return
+  document.documentElement.lang = DOCUMENT_LANGUAGE[active]
+}
+
+/**
  * Dictionary registry plus locale preference. Lookup chain per key: the
- * entry's namespace in the active locale -> that namespace's English fallback ->
- * the shared common namespace (active, then English) -> the key itself (missing
+ * entry's namespace in the active locale -> that namespace's en fallback ->
+ * the shared common namespace (active, then en) -> the key itself (missing
  * text stays visible, fail loud in the UI rather than blank). Reads go
  * through {@link getLocale}; writes only through {@link setLocale};
  * continuous sync through the `locale/change` event, or through the
@@ -333,6 +355,7 @@ export function apply(ctx: ClientContext): void {
   const store = createLanguageRowStore()
   let bound: BoundActions<typeof store> | undefined
   const sync = (snapshot: LocaleSnapshot): void => {
+    syncDocumentLanguage(snapshot.active)
     bound?.sync(
       snapshot.active,
       snapshot.locales.map(l => ({ id: l.id, label: l.label })),
@@ -340,6 +363,10 @@ export function apply(ctx: ClientContext): void {
     )
   }
   ctx.on('locale/change', sync)
+  // The served markup declares one language; the resolved locale may differ
+  // (browser detection, or a stored preference adopted after activation), so
+  // state it once at activation rather than waiting for the first change.
+  syncDocumentLanguage(locale.getLocale().active)
   const injected = (actions: BoundActions<typeof store>): LanguageRowInjected => {
     bound = actions
     // Re-sync from the getter so no event is lost between registration and

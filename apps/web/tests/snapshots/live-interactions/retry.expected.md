@@ -17,7 +17,7 @@
   - img
   - text: Context injection @truly-private/omdsh-system-prompt
 - group:
-  - status: Retried model request (1/2) · {{duration}}
+  - status: Retried model request (1/5) · {{duration}}
 - button "Think The user is asking for a one-sentence description of event sourcing. This is a straightforward knowledge question that doesn't require any skill loading or tool calls.":
   - img
   - img
@@ -36,8 +36,8 @@
 - button "Commands":
   - img
 - 'button "Access mode, current: Workspace Write"': Workspace Write
-- button "Select model, current Claude Sonnet 4.5 (Kiro)":
-  - text: Claude Sonnet 4.5 (Kiro)
+- button "Select model, current Trifecta":
+  - text: Trifecta
   - img
 - button "6% of context used"
 - button "Send message" [disabled]

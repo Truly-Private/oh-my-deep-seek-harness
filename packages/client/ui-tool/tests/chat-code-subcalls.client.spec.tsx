@@ -20,7 +20,7 @@ import type {
   ConversationSnapshot, RunningToolCall, SessionId, SessionListState,
   ToolCallBlock, ToolResultNode, WorkspaceListState,
 } from '@truly-private/omdsh-client-runtime/client'
-import { createSlotRenderer } from '@truly-private/omdsh-client-web-react'
+import { createSlotRenderer } from '@truly-private/omdsh-client-test-runtime'
 import { LocaleRuntime } from '@truly-private/omdsh-client-locale/client'
 import type { PropsRenderSlots } from '@truly-private/omdsh-client-ui-slots'
 import { apply as applyConversation, inject as injectConversation } from '@truly-private/omdsh-client-ui-conversation/client'
@@ -158,7 +158,11 @@ async function bench(snapshot: ConversationSnapshot) {
   }
   ctx.provide('workspaces', workspaces)
   ctx.provide('layout', layout)
-  ctx.provide('connection', { api: { settings: {} }, isLoopback: false } as never)
+  ctx.provide('connection', {
+    api: { settings: {} },
+    isLoopback: false,
+    hostDescription: { getSnapshot: () => undefined, subscribe: () => () => {} },
+  } as never)
   // ui-theme's Appearance row binds a durable scope through these two.
   ctx.provide('remote', { $on: () => () => {} } as never)
   ctx.provide('settingsScope', { bind: () => stubSettingsScope().scope } as never)

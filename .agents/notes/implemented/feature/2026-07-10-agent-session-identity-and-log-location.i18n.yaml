@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-07-10-agent-session-identity-and-log-location.md
 2026-07-10-agent-session-identity-and-log-location.md: 308c6e2679dcf8067804b040d071a26b2a5c60d1
-2026-07-10-agent-session-identity-and-log-location.zh.md: 01bcc8d5ba5152291aaa98abfa266d61f88f3f03
+2026-07-10-agent-session-identity-and-log-location.zh.md: 240b3e09cc0bbce2cbf1f171dfa03e84b4eeb606

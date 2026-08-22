@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
-import { bindSnapshotSelector } from '@truly-private/omdsh-client-web-react'
+import { bindSnapshotSelector } from '@truly-private/omdsh-client-test-runtime'
 import { createSnapshotStore, type SessionListState, type WorkspaceListState } from '@truly-private/omdsh-client-runtime/client'
 import { makeTranslate } from '@truly-private/omdsh-client-test-runtime'
 import { EnterBehaviorRow } from '../src/client/settings/EnterBehaviorRow.tsx'

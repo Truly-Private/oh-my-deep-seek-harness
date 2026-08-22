@@ -8,6 +8,7 @@ import SessionProjectionRegistry from '@truly-private/omdsh-session-projection'
 import TokenMeter from '@truly-private/omdsh-token-meter'
 import type { ContextPressureProjection, TokenUsageProjection } from '@truly-private/omdsh-token-meter/client'
 import { CompactionId } from '@truly-private/omdsh-compaction'
+import type {} from '../src/usage-projection.ts'
 
 const ZERO: TokenUsageProjection = {
   uncachedInputTokens: 0,

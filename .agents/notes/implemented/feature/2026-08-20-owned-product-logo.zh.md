@@ -10,7 +10,7 @@ Web 侧边栏、空状态主视觉、favicon 和安装 manifest 使用上游 Dee
 
 ## 决策
 
-Web 应用将用户提供的牛仔骑鲸图案作为 `apps/web/public/omdsh-logo.jpg` 提供。居中的机械裁剪会去除未使用的纸张边缘，但不会重绘图案。`@truly-private/omdsh-client-ui-primitives` 中的 `BrandLogo` 会在展开与折叠的侧边栏以及空状态主视觉中渲染该资源。位于 `apps/web/public/omdsh-icon.jpg` 的方形填充衍生图用于 favicon 和安装 manifest 图标。
+Web 应用将用户提供的牛仔骑鲸图案作为 `apps/web/public/omdsh-logo.jpg` 提供。居中的机械裁剪会去除未使用的纸张边缘，但不会重绘图案。`@truly-private/omdsh-client-ui-primitives` 中的 `BrandLogo` 负责渲染该资源。`@truly-private/omdsh-client-ui-brand-official` 会用该 Logo 和 oh-my-deepseek-harness 名称填充通用侧边栏与空状态主视觉 slot。位于 `apps/web/public/omdsh-icon.jpg` 的方形填充衍生图用于 favicon 和安装 manifest 图标。
 
 该图像在带标签的控件中以及主视觉标题旁均为装饰，因此使用空替代文本和 `aria-hidden`。可见图像与浏览器图标均源自同一份用户提供的图案。
 

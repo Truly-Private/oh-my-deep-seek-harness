@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/architecture/2026-07-24-single-harness-home-resolver.md
 2026-07-24-single-harness-home-resolver.md: d73d8d60991ff3127caccc90addf04d907c0d287
-2026-07-24-single-harness-home-resolver.zh.md: 6731e6af31fe51185dc06b225982892086ea2122
+2026-07-24-single-harness-home-resolver.zh.md: 34bbe17a637260fc7aba1775a4b47dc7d57341c9

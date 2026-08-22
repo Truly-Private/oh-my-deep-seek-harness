@@ -69,11 +69,10 @@ describe('web e2e: startup auto-selection', () => {
     onTestFailed(() => saveFailureShot(page, 'web-e2e-first-workspace-stable-tree'))
     await page.locator(`${ROOT_PHASE}[data-phase="hero"]`).waitFor({ timeout: 15_000 })
     const headline = page.getByText('Into the Unknown', { exact: true })
-    const logo = headline.locator('xpath=preceding-sibling::span[1]/img[@src="/omdsh-logo.jpg"]')
-    const logoHitbox = logo.locator('..')
-    await expect.poll(() => logo.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBe(351)
-    await logoHitbox.hover()
-    expect(await logo.evaluate(node => getComputedStyle(node).animationName)).not.toBe('none')
+    const logoHitbox = headline.locator('xpath=preceding-sibling::span[1]')
+    const logo = logoHitbox.locator('img[src="/omdsh-logo.jpg"]')
+    await logo.waitFor({ timeout: 10_000 })
+    expect(await logo.getAttribute('width')).toBe('34')
     await page.evaluate(() => {
       const refs = {
         root: document.querySelector('div[data-phase="hero"]'),

@@ -18,7 +18,7 @@ import type { ModelSelection } from '@truly-private/omdsh-api-remotes/client'
 import type { CommandContribution, SelectOption } from '@truly-private/omdsh-client-ui-commands/client'
 import type { ModelSelectInjected } from '../src/client/slots.ts'
 import { apply, inject } from '../src/client/index.ts'
-import { en } from '../src/client/locales.ts'
+import { zh } from '../src/client/locales.ts'
 
 const sid = (k: string): SessionId => k as SessionId
 
@@ -104,7 +104,12 @@ async function bench() {
       return () => { seats.delete(options.name) }
     },
   })
-  ctx.provide('locale', new LocaleRuntime(ctx))
+  const localeRuntime = new LocaleRuntime(ctx)
+  // This spec asserts the shipped Chinese copy. There is no jsdom `window` in
+  // this lane, so browser-language detection never runs and the locale comes
+  // from FALLBACK_LOCALE (en): state the asserted locale explicitly.
+  localeRuntime.setLocale('zh')
+  ctx.provide('locale', localeRuntime)
   const scopes = new Map<SessionId, Context>()
   const addressed = new Set<SessionId>()
   ctx.provide('sessions', {
@@ -250,7 +255,7 @@ describe('ui-model-selection dual entry', () => {
     b.ctx.remote.$dispatch('llm/adapters-updated', [])
     await Promise.resolve()
     await Promise.resolve()
-    expect(b.blockOf('s1')?.reason).toBe(en['blocked.composer'])
+    expect(b.blockOf('s1')?.reason).toBe(zh['blocked.composer'])
 
     // Recovering clears it without a reload of the surface.
     b.setRoutable(true)

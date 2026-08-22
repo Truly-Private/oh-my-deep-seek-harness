@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-workflow",
   "description": "Workflow capability seam: ctx.workflowEngine service, run vocabulary, and workflow/* events",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },

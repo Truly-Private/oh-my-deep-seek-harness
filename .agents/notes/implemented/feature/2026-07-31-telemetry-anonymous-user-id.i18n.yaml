@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-07-31-telemetry-anonymous-user-id.md
 2026-07-31-telemetry-anonymous-user-id.md: ab427ff610f62077da1d29fccd5fc23f474b7c3e
-2026-07-31-telemetry-anonymous-user-id.zh.md: 87d40b9731b6ba7bb7df03340550f45c543578af
+2026-07-31-telemetry-anonymous-user-id.zh.md: b8b31a61c9d4b4aeb888d9b14c287b202a7937f9

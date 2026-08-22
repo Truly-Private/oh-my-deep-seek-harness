@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/architecture/2026-08-09-headless-direct-core-entry-point.md
 2026-08-09-headless-direct-core-entry-point.md: 8e8682cfe640e483678b8d29bbd30ca6a8c03a0f
-2026-08-09-headless-direct-core-entry-point.zh.md: 111df60e1d08d6731ec8b88986c2d561f423121c
+2026-08-09-headless-direct-core-entry-point.zh.md: 5499e4a1c4d8412c9890ba827f5a76a994ee896b

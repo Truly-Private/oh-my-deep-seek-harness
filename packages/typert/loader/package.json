@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-typert-loader",
   "description": "Loader integration for generated Typert package contributions",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },

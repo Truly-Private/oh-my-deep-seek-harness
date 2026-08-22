@@ -227,7 +227,7 @@ describe.skipIf(MODE === 'record')('web e2e: first-run 9Router credential setup'
     expect(document).toContain('name: Private Preview')
     expect(document).toContain('contextWindow: 131072')
     expect(document).toContain('maxTokens: 64000')
-    expect(document).not.toContain('id: kr/claude-sonnet-4.5')
+    expect(document).not.toMatch(/^\s*- id: trifecta$/m)
 
     await page.keyboard.press('Escape')
     // A connected Workspace is what puts a live composer — and its model
@@ -238,7 +238,7 @@ describe.skipIf(MODE === 'record')('web e2e: first-run 9Router credential setup'
     await modelTrigger.waitFor({ timeout: 10_000 })
     await modelTrigger.click()
     await page.getByRole('menuitem', { name: /模型/ }).click()
-    expect(await page.getByText('kr/claude-sonnet-4.5', { exact: true }).count()).toBe(0)
+    expect(await page.getByText('trifecta', { exact: true }).count()).toBe(0)
     await page.getByRole('menuitemradio', { name: 'Private Preview' }).waitFor({ timeout: 10_000 })
     expect(tripwire.warnings).toEqual([])
     expect(tripwire.pageErrors).toEqual([])

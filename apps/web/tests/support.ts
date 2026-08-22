@@ -82,9 +82,10 @@ export async function connectFreshWorkspace(page: Page, root: string, name = 'wo
 }
 
 /**
- * {@link connectFreshWorkspace} over an explicitly selected Chinese locale.
- * The English helper's anchors assume the product default, so a scenario that
- * deliberately persists zh needs the localized picker copy.
+ * {@link connectFreshWorkspace} over a page that advertises
+ * {@link ZH_BROWSER_LOCALE}: the English helper's anchors assume the locale
+ * most other scenarios boot, so a scenario that deliberately keeps zh needs
+ * the localized picker copy.
  * @param page - the browser page under test.
  * @param root - workspace parent directory.
  * @param name - directory created under `root` and connected.

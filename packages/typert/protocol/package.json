@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-typert-protocol",
   "description": "Compiler-independent Remote metadata and Typert provider protocols",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },

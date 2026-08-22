@@ -22,7 +22,7 @@ Start 9Router locally, connect Kiro AI or another upstream provider, and copy th
 | Base URL | `http://127.0.0.1:20128/v1` |
 | API protocol | `openai-completions` |
 | Credential reference | `NINE_ROUTER_API_KEY` |
-| Starter model | `kr/claude-sonnet-4.5` |
+| Starter model | `trifecta` |
 
 The route appears as **9Router** in the Models page without using the custom-provider form. Choose **Edit**, then **Fetch available models**, to replace the starter model with any exact model or combo ID returned by the installation. For file-based overrides, copy [`integrations/9router/settings.yaml.example`](../../integrations/9router/settings.yaml.example) into the `llm-pi-ai` section of `$DSH_HOME/settings.yaml`, replace the placeholder model ID, and export the referenced key. Keep the loopback address unless the gateway is intentionally secured for remote access.
 

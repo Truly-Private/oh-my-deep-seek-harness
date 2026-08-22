@@ -58,7 +58,21 @@ interface TerminalBackendSession {
 
 ## Send and retained output
 
-One live session accepts one active send. Its operation exposes a consuming output cursor for generic background jobs and one terminal result for a foreground caller. `TerminalReadResult` separately pages the bounded session scrollback.
+One live session accepts one active send. A consumer that installs its own prompt declares the exact printable value through `expectedPromptText`; omitting it selects the backend default. The backend accepts a marked prompt only when output ordering attributes it to the active send. Its operation exposes a consuming output cursor for generic background jobs and one terminal result for a foreground caller. `TerminalReadResult` separately pages the bounded session scrollback.
+
+```ts type-equiv
+/** Input for one line-oriented terminal interaction. */
+interface TerminalSendRequest {
+  /** UTF-8 text to write. */
+  text: string
+  /** Whether to write the backend's Enter sequence after {@link text}. */
+  submit: boolean
+  /** Exact printable prompt expected after this send's owned prompt marker. */
+  expectedPromptText?: string
+  /** Cancellation for the wait; backends also interrupt the foreground command. */
+  signal?: AbortSignal
+}
+```
 
 ```ts type-equiv
 /** Live backend-owned send; exactly one may be active per PTY session. */
@@ -96,7 +110,7 @@ interface TerminalSendResult {
 
 ## Cordis API
 
-Generated from source by `scripts/gen-cordis-catalog.ts` (verified fresh by `pnpm run verify-cordis-catalog` in doc-sync; regenerate with `pnpm run gen-cordis-catalog`) — this section is byte-identical in both language sides of the page. Signature blocks use a `ts cordis-catalog` fence and keep the original source JSDoc; dispatch modes are defined in the [primer](../cordis-primer.md#dispatch-modes), and the framework-inherited `ctx` API lives in [cordis-api/inherited.md](../cordis-api/inherited.md).
+Generated from source by `scripts/gen-cordis-catalog.ts` (verified fresh by `pnpm run verify-cordis-catalog` in doc-sync; regenerate with `pnpm run gen-cordis-catalog`) — the language sides differ only in locale-specific paired document paths. Signature blocks use a `ts cordis-catalog` fence and keep the original source JSDoc; dispatch modes are defined in the [primer](../cordis-primer.md#dispatch-modes), and the framework-inherited `ctx` API lives in [cordis-api/inherited.md](../cordis-api/inherited.md).
 
 <a id="ctxterminals--terminalsessionservice"></a>
 
@@ -180,5 +194,5 @@ list(owner: Agent): TerminalSessionSnapshot[]
 
 Types: [Agent](core.md)
 
-Source: [`packages/terminal/terminal/src/index.ts:105`](../../packages/terminal/terminal/src/index.ts)
+Source: [`packages/terminal/terminal/src/index.ts`](../../packages/terminal/terminal/src/index.ts)
 <!-- END GENERATED cordis-surface -->

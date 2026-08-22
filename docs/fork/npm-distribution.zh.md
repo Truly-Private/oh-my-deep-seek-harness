@@ -41,7 +41,7 @@ npm view @truly-private/omdsh@0.0.1 version
 npx --yes @truly-private/omdsh@0.0.1 --profile headless --dump-config
 ```
 
-[下游 npm scope Agent Note](../../.agents/notes/implemented/process/2026-08-20-downstream-npm-scope.md)记录了完整发布族一起迁移以及 vendored 包保留既有名称的原因。
+[下游 npm scope Agent Note](../../.agents/notes/implemented/process/2026-08-20-downstream-npm-scope.zh.md)记录了完整发布族一起迁移以及 vendored 包保留既有名称的原因。
 
 ## 发布停止条件
 

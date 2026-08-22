@@ -39,6 +39,10 @@ async function bench(): Promise<{ ctx: Context; fiber: ReturnType<Context['plugi
   ctx.provide('remote', { $on: () => () => {} } as never)
   ctx.provide('settingsScope', { bind: () => stubSettingsScope().scope } as never)
   await ctx.plugin({ inject: localeInject, apply: applyLocale }).await()
+  // These specs assert the shipped Chinese copy. There is no jsdom `window` in
+  // this lane, so browser-language detection never runs and the locale comes
+  // from FALLBACK_LOCALE (en): state the asserted locale explicitly.
+  ctx.locale.setLocale('zh')
   const fiber = ctx.plugin({ inject: [...inject], apply })
   await fiber.await()
   return { ctx, fiber }
@@ -59,13 +63,13 @@ describe('ui-job browser half', () => {
   it('registers both dictionaries under its own namespace and releases them with the fiber', async () => {
     const { ctx, fiber } = await bench()
     const translate = ctx.locale.bind(NS)
-    expect(translate('list.aria')).toBe(en['list.aria'])
-    ctx.locale.setLocale('zh')
     expect(translate('list.aria')).toBe(zh['list.aria'])
+    ctx.locale.setLocale('en')
+    expect(translate('list.aria')).toBe(en['list.aria'])
 
     // Withdrawn dictionaries leave the key unresolved rather than translated.
     await fiber.dispose()
-    expect(translate('list.aria')).not.toBe(zh['list.aria'])
+    expect(translate('list.aria')).not.toBe(en['list.aria'])
   })
 
   it('keeps the English dictionary key-identical to the Chinese source of truth', () => {

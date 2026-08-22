@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-llm-deepseek",
   "description": "DeepSeek chat-completions adapter for the DeepSeek Harness LLM seam",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -32,10 +32,14 @@
   ],
   "license": "MIT",
   "peerDependencies": {
+    "@truly-private/omdsh-attachment": "workspace:^",
+    "@truly-private/omdsh-atomic-write": "workspace:^",
+    "@truly-private/omdsh-brand": "workspace:^",
     "@truly-private/omdsh-credentials": "workspace:^",
     "@truly-private/omdsh-launch-environment": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@truly-private/omdsh-llm": "workspace:^",
+    "@truly-private/omdsh-home-paths": "workspace:^",
     "@truly-private/omdsh-settings": "workspace:^",
     "@truly-private/omdsh-timeout": "workspace:^",
     "@truly-private/omdsh-anonymous-user-id": "workspace:^",
@@ -46,10 +50,14 @@
     "@deepseek-ai/schemastery": "workspace:^"
   },
   "devDependencies": {
+    "@truly-private/omdsh-attachment": "workspace:^",
+    "@truly-private/omdsh-atomic-write": "workspace:^",
+    "@truly-private/omdsh-brand": "workspace:^",
     "@truly-private/omdsh-credentials": "workspace:^",
     "@truly-private/omdsh-launch-environment": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@truly-private/omdsh-llm": "workspace:^",
+    "@truly-private/omdsh-home-paths": "workspace:^",
     "@truly-private/omdsh-settings": "workspace:^",
     "@truly-private/omdsh-timeout": "workspace:^",
     "@truly-private/omdsh-anonymous-user-id": "workspace:^",

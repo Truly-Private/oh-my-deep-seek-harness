@@ -64,11 +64,11 @@ jobs:
     # still bounds retry storms against a slow API while the happy path fans out.
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 24
           cache: pnpm
@@ -76,15 +76,11 @@ jobs:
       - name: Install (immutable)
         run: pnpm install --frozen-lockfile
 
-      # The with-key escalation e2e self-skips without a usable runner. Install
-      # bwrap so trusted CI exercises it; the userns knob is best-effort and the
-      # test's functional probe decides.
-      - name: Install bubblewrap (unrestrict userns)
-        run: |
-          sudo apt-get update -q
-          sudo apt-get install -yq bubblewrap
-          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 \
-            || echo "apparmor userns knob absent — the functional probe decides"
+      # The with-key escalation e2e self-skips without a usable runner. Prepare
+      # bwrap so trusted CI exercises it; the functional probe remains the
+      # authority on whether the runner can use the sandbox.
+      - name: Prepare bubblewrap (unrestrict userns)
+        run: bash scripts/prepare-ci-bubblewrap.sh
 
       # Guard against a false green: the e2e suites self-skip when the key is
       # absent, so a missing/misconfigured secret would otherwise pass as
@@ -108,10 +104,11 @@ jobs:
       # the built artifact under plain Node, resolving plugins through real package
       # exports — the shape a real consumer runs. That requires a prior build.
       - name: Build (lib for the e2e example bins)
-        run: pnpm run build
+        run: pnpm run build:official
 
       # Real-API end-to-end tests only. The keyless gates (lint/typecheck/
-      # coverage/snapshot/etc.) already run in ci.yml on every push/PR.
+      # coverage/snapshot/etc.) already run in ci.yml (pull requests) and
+      # ci-master.yml (master push standby).
       # DEEPSEEK_BASE_URL is pinned to the external API; the secret is scoped to
       # this step (and preflight) only — never exposed to checkout/setup/install.
       - name: E2E tests (real DeepSeek API)

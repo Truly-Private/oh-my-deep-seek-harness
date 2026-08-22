@@ -12,7 +12,7 @@ Status: implemented
 
 安全工作流保留全历史 Gitleaks 扫描。[处置 manifest](../../../../security/gitleaks-dispositions.json)在不存储提取值的情况下对继承的发现进行分类。路径与检测匹配的合取条件只允许把普通 Markdown 基名与 40 字符小写 Git blob hash 配对的翻译记录，其余已审查 fixture 与标识符则使用精确指纹标识。
 
-[`verify-gitleaks-policy.mjs`](../../../../scripts/security/verify-gitleaks-policy.mjs)要求每个精确指纹提交都是 [`upstream-lock.json`](../../../../security/upstream-lock.json) 中主源提交的祖先，把每种分类限制在已审查路径内，并要求扫描器配置与指纹文件和 manifest 完全一致。因此，新出现的内容会失败，直到维护者记录新的处置。本政策扩展[经审查的下游接收决策](2026-08-15-reviewed-downstream-intake.md)，但不改变候选或已审查状态。
+[`verify-gitleaks-policy.mjs`](../../../../scripts/security/verify-gitleaks-policy.mjs)要求每个精确指纹提交都是 [`upstream-lock.json`](../../../../security/upstream-lock.json) 中主源提交的祖先，把每种分类限制在已审查路径内，并要求扫描器配置与指纹文件和 manifest 完全一致。因此，新出现的内容会失败，直到维护者记录新的处置。本政策扩展[经审查的下游接收决策](2026-08-15-reviewed-downstream-intake.zh.md)，但不改变候选或已审查状态。
 
 ## 曾考虑的替代方案
 

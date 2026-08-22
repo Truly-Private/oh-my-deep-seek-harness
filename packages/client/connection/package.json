@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-client-connection",
   "description": "Wire consumer layer: HTTP-up/WebSocket-down client, ConnectionController dual streams with reconnect, and fixture api",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -38,12 +38,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@truly-private/omdsh-attachment": "workspace:^",
-    "@truly-private/omdsh-host-apiproxy": "workspace:^",
-    "@truly-private/omdsh-commands": "workspace:^",
-    "@truly-private/omdsh-llm": "workspace:^",
-    "@truly-private/omdsh-session": "workspace:^",
-    "@truly-private/omdsh-tools": "workspace:^",
     "@deepseek-ai/schemastery": "workspace:^",
     "ws": "^8.21.0"
   },
@@ -56,12 +50,24 @@
   "peerDependencies": {
     "@truly-private/omdsh-host-webserver": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^"
+    "@deepseek-ai/cordis": "workspace:^",
+    "@truly-private/omdsh-attachment": "workspace:^",
+    "@truly-private/omdsh-host-apiproxy": "workspace:^",
+    "@truly-private/omdsh-commands": "workspace:^",
+    "@truly-private/omdsh-llm": "workspace:^",
+    "@truly-private/omdsh-session": "workspace:^",
+    "@truly-private/omdsh-tools": "workspace:^"
   },
   "devDependencies": {
     "@truly-private/omdsh-host-webserver": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@types/ws": "^8.18.1",
-    "@deepseek-ai/cordis": "workspace:^"
+    "@deepseek-ai/cordis": "workspace:^",
+    "@truly-private/omdsh-attachment": "workspace:^",
+    "@truly-private/omdsh-host-apiproxy": "workspace:^",
+    "@truly-private/omdsh-commands": "workspace:^",
+    "@truly-private/omdsh-llm": "workspace:^",
+    "@truly-private/omdsh-session": "workspace:^",
+    "@truly-private/omdsh-tools": "workspace:^"
   }
 }

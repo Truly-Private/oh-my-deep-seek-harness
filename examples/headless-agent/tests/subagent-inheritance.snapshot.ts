@@ -7,7 +7,7 @@ import { readFile, readdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { Context } from '@deepseek-ai/cordis'
-import { normalizeSessionLog, scrubRequestHeaders, type NormalizeContext } from '@truly-private/omdsh-acp-snapshot'
+import { normalizeSessionSnapshot, type NormalizeContext } from '@truly-private/omdsh-acp-snapshot'
 import { LOADER_SMOKE_TEST_TIMEOUT_MS, runLoaderSmoke } from '@truly-private/omdsh-loader-smoke'
 import { createUserMessage } from '@truly-private/omdsh-llm'
 import SessionStore, { SESSION_FORMAT_VERSION, SessionId, type SessionEvent, type SessionHeader } from '@truly-private/omdsh-session'
@@ -119,8 +119,8 @@ describe('parent-only override inheritance snapshot', () => {
         }
 
         const context: NormalizeContext = { sessionIds: [sessionId, String(headerOf(child).id)], cwd }
-        const normalizedParent = scrubRequestHeaders(normalizeSessionLog(parent, context))
-        const normalizedChild = scrubRequestHeaders(normalizeSessionLog(child, context))
+        const normalizedParent = normalizeSessionSnapshot(parent, context)
+        const normalizedChild = normalizeSessionSnapshot(child, context)
         if (refreshing) {
           await writeFile(parentExpected, normalizedParent)
           await writeFile(childExpected, normalizedChild)

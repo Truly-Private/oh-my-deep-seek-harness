@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-client-ui-directory-picker-browse",
   "description": "In-app directory browsing surface: the workspace directory-flow owner rendering the host's listing and creation primitives",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -50,18 +50,14 @@
   "peerDependencies": {
     "@truly-private/omdsh-client-locale": "workspace:^",
     "@truly-private/omdsh-client-runtime": "workspace:^",
-    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
-    "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-client-ui-workspace": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^",
-    "react": "^18.2.0"
+    "@deepseek-ai/cordis": "workspace:^"
   },
   "devDependencies": {
     "@truly-private/omdsh-client-locale": "workspace:^",
     "@truly-private/omdsh-client-runtime": "workspace:^",
     "@truly-private/omdsh-client-ui-primitives": "workspace:^",
-    "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-client-ui-workspace": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@testing-library/react": "^16.1.0",

@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-subprocess-local",
   "description": "Local-subprocess implementation of the DeepSeek Harness subprocess seam",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -42,7 +42,8 @@
     "@deepseek-ai/cordis": "workspace:^"
   },
   "dependencies": {
-    "node-pty": "^1.1.0"
+    "koffi": "^3.1.0",
+    "node-pty": "1.2.0-beta.15"
   },
   "devDependencies": {
     "@truly-private/omdsh-invariants": "workspace:^",

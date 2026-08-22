@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-client-ui-input-trigger",
   "description": "Input trigger pipeline: '/' and '@' detection, candidate menu, pick routing to registered sources",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
@@ -49,11 +49,9 @@
   "peerDependencies": {
     "@truly-private/omdsh-client-locale": "workspace:^",
     "@truly-private/omdsh-client-runtime": "workspace:^",
-    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
-    "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^",
-    "react": "^18.2.0"
+    "@truly-private/omdsh-file-reference": "workspace:^"
   },
   "devDependencies": {
     "@truly-private/omdsh-client-locale": "workspace:^",
@@ -64,7 +62,8 @@
     "@truly-private/omdsh-invariants": "workspace:^",
     "@types/react": "~18.3.1",
     "@deepseek-ai/cordis": "workspace:^",
-    "react": "^18.2.0"
+    "react": "^18.2.0",
+    "@truly-private/omdsh-file-reference": "workspace:^"
   },
   "files": [
     "lib/index.js",

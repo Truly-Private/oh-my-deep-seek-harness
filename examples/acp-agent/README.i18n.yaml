@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write examples/acp-agent/README.md
 README.md: 3194486b0ef12ebf9c32bab9f7351337debabda2
-README.zh.md: 9918a2fb42cc21a306e7d20f91cd0f3a3a203c60
+README.zh.md: f1edfdd09e2e5c11f33ab4ecd1ef87ca8247f679

@@ -17,7 +17,7 @@ import type {
   ConversationSnapshot, RunningToolCall, SessionId, SessionListState, ToolResultNode, WorkspaceListState,
 } from '@truly-private/omdsh-client-runtime/client'
 import type { ToolResultView } from '@truly-private/omdsh-api-remotes/client'
-import { bindSnapshotSelector } from '@truly-private/omdsh-client-web-react'
+import { bindSnapshotSelector } from '@truly-private/omdsh-client-test-runtime'
 import type { SelectionTarget } from '@truly-private/omdsh-client-ui-conversation/client'
 import type { ToolCallOwnerProps } from '@truly-private/omdsh-client-ui-tool/client'
 import { IconGlobeOutline14 } from '@truly-private/omdsh-client-ui-primitives'
