@@ -348,17 +348,19 @@ describe('BashTerminalBackend startup rollback', () => {
     await ctx.plugin(SandboxPolicyService, { mode: 'danger-full-access', workspaceRoot: '/workspace' })
     let spawned: SubprocessTerminalSpawnSpec | undefined
     const sends: TerminalSendRequest[] = []
+    let initialized = false
     const session = {
       motd: '',
+      initialize: async () => {
+        initialized = true
+        session.motd = 'PS /workspace> '
+      },
       startSend: (request: TerminalSendRequest) => {
         sends.push(request)
-        const startupReady = sends.length === 1
-        const promptReady = sends.length > 2
+        const promptReady = sends.length > 1
         return {
           done: Promise.resolve({
-            viewport: startupReady
-              ? 'PS /workspace> '
-              : promptReady ? 'dsh> ' : ENCODING_PREAMBLE + PWSH_PROMPT_SETUP,
+            viewport: promptReady ? 'dsh> ' : ENCODING_PREAMBLE + PWSH_PROMPT_SETUP,
             waitReason: promptReady ? 'stdin_read' as const : 'inferred_idle' as const,
             sessionStatus: { kind: 'running' as const }, truncated: false,
           }),
@@ -375,10 +377,10 @@ describe('BashTerminalBackend startup rollback', () => {
       () => session,
     )
     expect(await backend.spawn(spec(agent(ctx)))).toBe(session)
-    expect(sends).toHaveLength(3)
-    expect(sends[0]).toMatchObject({ text: '', submit: false })
-    expect(sends[1]).toMatchObject({ text: ENCODING_PREAMBLE + PWSH_PROMPT_SETUP, submit: true })
-    expect(sends[2]).toMatchObject({ text: '', submit: false })
+    expect(initialized).toBe(true)
+    expect(sends).toHaveLength(2)
+    expect(sends[0]).toMatchObject({ text: ENCODING_PREAMBLE + PWSH_PROMPT_SETUP, submit: true })
+    expect(sends[1]).toMatchObject({ text: '', submit: false })
     expect(session.motd).toBe('dsh> ')
     expect(spawned?.env).toMatchObject({
       TERM: 'dumb', NO_COLOR: '1', DSH_SHELL: '1', DSH_SESSION_ID: 'agent', DSH_PTY_SESSION_ID: 'pty-1',
@@ -394,13 +396,13 @@ describe('BashTerminalBackend startup rollback', () => {
     const sends: TerminalSendRequest[] = []
     const session = {
       motd: '',
+      initialize: async () => { session.motd = 'PS /workspace> ' },
       startSend: (request: TerminalSendRequest) => {
         sends.push(request)
-        const startup = sends.length === 1
-        const prompt = sends.length > 2
+        const prompt = sends.length > 1
         return {
           done: Promise.resolve({
-            viewport: startup ? 'PS /workspace> ' : prompt ? 'dsh> ' : 'PowerShell 7.6.4\n',
+            viewport: prompt ? 'dsh> ' : 'PowerShell 7.6.4\n',
             waitReason: prompt ? 'stdin_read' as const : 'inferred_idle' as const,
             sessionStatus: { kind: 'running' as const }, truncated: false,
           }),
@@ -417,8 +419,8 @@ describe('BashTerminalBackend startup rollback', () => {
       () => session,
     )
     await backend.spawn(spec(agent(ctx)))
-    expect(sends).toHaveLength(3)
-    expect(sends[2]).toMatchObject({ text: '', submit: false })
+    expect(sends).toHaveLength(2)
+    expect(sends[1]).toMatchObject({ text: '', submit: false })
     expect(session.motd).toBe('dsh> ')
   })
 
@@ -429,11 +431,12 @@ describe('BashTerminalBackend startup rollback', () => {
     const sends: TerminalSendRequest[] = []
     const session = {
       motd: '',
+      initialize: async () => { session.motd = 'PS /workspace> ' },
       startSend: (request: TerminalSendRequest) => {
         sends.push(request)
         return {
           done: Promise.resolve({
-            viewport: sends.length === 1 ? 'PS /workspace> ' : 'PowerShell 7.6.4\n',
+            viewport: 'PowerShell 7.6.4\n',
             waitReason: 'inferred_idle' as const,
             sessionStatus: { kind: 'running' as const }, truncated: false,
           }),
@@ -451,7 +454,7 @@ describe('BashTerminalBackend startup rollback', () => {
     )
 
     await backend.spawn(spec(agent(ctx)))
-    expect(sends).toHaveLength(2)
+    expect(sends).toHaveLength(1)
     expect(session.motd).toBe('PowerShell 7.6.4\n')
   })
 
@@ -459,7 +462,11 @@ describe('BashTerminalBackend startup rollback', () => {
     const ctx = new Context()
     await ctx.plugin(EmptySandbox)
     await ctx.plugin(SandboxPolicyService, { mode: 'danger-full-access', workspaceRoot: '/workspace' })
-    const sessionFor = (waitReason: TerminalWaitReason): LocalPtySession => ({
+    const sessionFor = (waitReason: TerminalWaitReason, initializeError?: Error): LocalPtySession => ({
+      motd: '',
+      initialize: async () => {
+        if (initializeError !== undefined) throw initializeError
+      },
       startSend: () => ({
         done: Promise.resolve({
           viewport: 'no-prompt', waitReason,
@@ -471,17 +478,26 @@ describe('BashTerminalBackend startup rollback', () => {
       read: () => ({ text: '', totalLines: 0, lineBegin: 0, lineEnd: 0, truncated: false }),
       close: () => Promise.resolve(),
     }) as unknown as LocalPtySession
-    const exited = new BashTerminalBackend(ctx, { ...config(), shellDialect: 'pwsh' }, async () => terminalHandle(), () => sessionFor('session_exit'))
+    const exited = new BashTerminalBackend(
+      ctx,
+      { ...config(), shellDialect: 'pwsh' },
+      async () => terminalHandle(),
+      () => sessionFor('session_exit', new Error('PTY shell exited during startup')),
+    )
     await expect(exited.spawn(spec(agent(ctx)))).rejects.toThrow('PTY shell exited during startup')
-    const timedOut = new BashTerminalBackend(ctx, { ...config(), shellDialect: 'pwsh' }, async () => terminalHandle(), () => sessionFor('timeout'))
+    const timedOut = new BashTerminalBackend(
+      ctx,
+      { ...config(), shellDialect: 'pwsh' },
+      async () => terminalHandle(),
+      () => sessionFor('timeout', new Error('PTY shell did not reach readiness before startup timeout')),
+    )
     await expect(timedOut.spawn(spec(agent(ctx)))).rejects.toThrow('did not reach readiness before startup timeout')
 
-    let sends = 0
     const setupTimedOut = sessionFor('timeout')
     setupTimedOut.startSend = () => ({
       done: Promise.resolve({
-        viewport: ++sends === 1 ? 'PS /workspace> ' : 'no-prompt',
-        waitReason: sends === 1 ? 'inferred_idle' : 'timeout',
+        viewport: 'no-prompt',
+        waitReason: 'timeout',
         sessionStatus: { kind: 'running' as const }, truncated: false,
       }),
       readOutput: () => ({ delta: '', truncated: false }),
@@ -503,14 +519,19 @@ describe('BashTerminalBackend startup rollback', () => {
     await ctx.plugin(EmptySandbox)
     await ctx.plugin(SandboxPolicyService, { mode: 'danger-full-access', workspaceRoot: '/workspace' })
     const sends: TerminalSendRequest[] = []
+    let initializationSignal: AbortSignal | undefined
     const session = {
       motd: '',
+      initialize: async (signal?: AbortSignal) => {
+        initializationSignal = signal
+        session.motd = 'PS /workspace> '
+      },
       startSend: (request: TerminalSendRequest) => {
         sends.push(request)
         return {
           done: Promise.resolve({
-            viewport: sends.length === 1 ? 'PS /workspace> ' : 'dsh> ',
-            waitReason: sends.length === 1 ? 'inferred_idle' as const : 'stdin_read' as const,
+            viewport: 'dsh> ',
+            waitReason: 'stdin_read' as const,
             sessionStatus: { kind: 'running' as const }, truncated: false,
           }),
           readOutput: () => ({ delta: '', truncated: false }),
@@ -528,7 +549,8 @@ describe('BashTerminalBackend startup rollback', () => {
     const signal = new AbortController().signal
     const spawned = await backend.spawn({ ...spec(agent(ctx)), signal })
     expect(spawned.motd).toBe('dsh> ')
-    expect(sends).toHaveLength(2)
+    expect(initializationSignal).toBe(signal)
+    expect(sends).toHaveLength(1)
     expect(sends.every(send => send.signal === signal)).toBe(true)
   })
 })

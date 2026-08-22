@@ -127,14 +127,7 @@ async function startupSession(
     // Submit exactly once, then use empty follow-up sends until the controlled
     // prompt is the output suffix; the echoed setup source contains that prompt
     // literal and is not readiness evidence by itself.
-    const nativePrompt = session.startSend({
-      text: '',
-      submit: false,
-      ...signal !== undefined ? { signal } : {},
-    })
-    const nativeResult = await nativePrompt.done
-    if (nativeResult.waitReason === 'session_exit') throw new Error('PTY shell exited during startup')
-    if (nativeResult.waitReason === 'timeout') throw new Error('PTY shell did not reach readiness before startup timeout')
+    await session.initialize(signal)
     let first = true
     let viewport = ''
     for (;;) {
