@@ -16,13 +16,26 @@ export const processBoundTests = [
 ] as const
 
 /** Real PowerShell and PTY suites that each require a fresh instrumented process. */
-export const processIsolatedCoverageTests = [
+const processIsolatedCoverageCandidates = [
   'packages/shell/pwsh-local/tests/executor.spec.ts',
   'packages/shell/tool-pwsh-persistent/tests/loader-composition.spec.ts',
   'packages/terminal/terminal-bash/tests/local.spec.ts',
 ] as const
 
+// The terminal package's POSIX suite is unsupported on Windows and the current
+// Vitest project excludes the complete file there. Do not launch a one-file
+// coverage process that can only report "No test files found".
+const processCoverageTests = processBoundTests.filter(test =>
+  process.platform !== 'win32'
+  || test !== 'packages/terminal/terminal-bash/tests/local.spec.ts')
+
+/** Platform-runnable real PowerShell and PTY suites that need fresh coverage processes. */
+export const processIsolatedCoverageTests = processIsolatedCoverageCandidates.filter(test =>
+  processCoverageTests.includes(test))
+
+const processIsolatedCoverageTestSet: ReadonlySet<string> = new Set(processIsolatedCoverageTests)
+
 /** Process-bound suites safe to share one serial instrumented process. */
-export const processBoundCoreCoverageTests = processBoundTests.filter(
-  test => !processIsolatedCoverageTests.includes(test as typeof processIsolatedCoverageTests[number]),
+export const processBoundCoreCoverageTests = processCoverageTests.filter(
+  test => !processIsolatedCoverageTestSet.has(test),
 )

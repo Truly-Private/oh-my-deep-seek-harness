@@ -212,9 +212,12 @@ for (const backend of backends) {
         delivery: 'wakeup',
         signal: SIGNAL,
       })
-      expect(receipt.status).toBe('accepted')
       await vi.waitFor(() => { expect(second.ctx.agents.get(childId)).toBeUndefined() }, { timeout: 5_000 })
       await vi.waitFor(() => { expect(durable(activeHandle.agent).pendingMessages).toEqual([]) })
+      const resumedChild = await second.ctx.sessionPersistence.inspect(childId)
+      expect(resumedChild.events.some(event => event.type === 'user/message'
+        && event.data.source.kind === 'team-message'
+        && event.data.source.messageId === receipt.messageId)).toBe(true)
 
       await activeHandle.dispose()
       await failedHandle.dispose()

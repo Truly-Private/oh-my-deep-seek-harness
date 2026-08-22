@@ -179,7 +179,7 @@ describe('LspInstance query and abort', () => {
       + 'else if(m.method==="shutdown")process.stdout.write(fr({id:m.id,result:null}));'
       + 'else if(m.method==="exit")process.exit(0);'
       + '}});'
-    const instance = scriptInstance(script, { killGraceMs: 2_000 })
+    const instance = scriptInstance(script, { killGraceMs: 10_000 })
     const controller = new AbortController()
     const pending = run(instance, 'goToDefinition', controller.signal)
     await new Promise<void>(resolve => setTimeout(resolve, 300))

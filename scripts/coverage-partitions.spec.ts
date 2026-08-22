@@ -130,7 +130,7 @@ describe('coverage partition coordinator', () => {
       })
     }
     const processBoundCommands = commands.slice(3, -1)
-    expect(processBoundCommands).toHaveLength(4)
+    expect(processBoundCommands).toHaveLength(processCoverageLabels.length)
     for (const command of processBoundCommands) {
       expect(command.args).toEqual(expect.arrayContaining([
         '--coverage',
@@ -177,7 +177,7 @@ describe('coverage partition coordinator', () => {
     })
 
     await expect(coordinator.run()).resolves.toBe(0)
-    expect(commands).toHaveLength(7)
+    expect(commands).toHaveLength(2 + processCoverageLabels.length + 1)
     for (const command of commands) {
       expect(command.command).toBe('/tools/pnpm')
       expect(command.args[0]).toBe('exec')
@@ -242,7 +242,7 @@ describe('coverage partition coordinator', () => {
     expect(reported).toHaveBeenCalledWith(
       'coverage-partitions: output tail for partition 2/2:\nspecific Vitest failure',
     )
-    expect(runCommand).toHaveBeenCalledTimes(7)
+    expect(runCommand).toHaveBeenCalledTimes(2 + processCoverageLabels.length + 1)
   })
 
   it('rejects a missing partition blob before merge', async () => {
@@ -304,7 +304,7 @@ describe('coverage partition coordinator', () => {
     await expect(coordinator.run()).resolves.toBe(1)
     expect(reported).toHaveBeenCalledWith('coverage-partitions: FAIL partition 1/2 (spawn unavailable)')
     expect(secondFinished).toBe(true)
-    expect(runCommand).toHaveBeenCalledTimes(7)
+    expect(runCommand).toHaveBeenCalledTimes(2 + processCoverageLabels.length + 1)
   })
 
   it('unlinks a link-shaped coverage path without touching its target', async () => {

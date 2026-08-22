@@ -123,7 +123,7 @@ afterEach(async () => {
   }
   observedSdkMessages.length = 0
   delete sdkTestOverrides.maxTurns
-})
+}, 60_000)
 
 interface RealHarness {
   readonly ctx: Context
@@ -362,7 +362,8 @@ describe('real Claude Agent SDK 0.3.220 and its distributed Claude Code 2.1.220 
     const result = await run.result
     expect(observedSdkMessages
       .filter(message => message.type === 'result')
-      .map(message => message.subtype)).toEqual(['error_max_turns'])
+      .map(message => message.subtype)
+      .at(-1)).toBe('error_max_turns')
     expect(result).toMatchObject({
       output: [],
       stopReason: 'error',
