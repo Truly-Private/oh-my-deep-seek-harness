@@ -191,7 +191,7 @@ describe('LocalPtySession readiness and output', () => {
     expect(terminal.writes).toEqual(['long-running-command\r'])
     expect(settled).toBe(false)
 
-    terminal.emitData('\x1b]133;D;0\x07dsh> ')
+    terminal.emitData('long-running-command\r\n\x1b]133;D;0\x07dsh> ')
     await vi.advanceTimersByTimeAsync(10)
     expect((await operation.done).waitReason).toBe('stdin_read')
   })
@@ -263,7 +263,7 @@ describe('LocalPtySession readiness and output', () => {
     expect((await operation.done).waitReason).toBe('stdin_read')
   })
 
-  it('does not infer idle before submitted input leaves the pre-write stdin wait', async () => {
+  it('rejects a delayed prompt until the submitted send produces post-write evidence', async () => {
     vi.useFakeTimers()
     const terminal = new FakeTerminal()
     const inspector = new FakeInspector()
@@ -277,12 +277,22 @@ describe('LocalPtySession readiness and output', () => {
     await vi.advanceTimersByTimeAsync(60)
     expect(settled).toBe(false)
 
+    terminal.emitData('\x1b]133;D;0\x07')
+    await vi.advanceTimersByTimeAsync(20)
+    expect(settled).toBe(false)
+    terminal.emitData('dsh> ')
+    await vi.advanceTimersByTimeAsync(20)
+    expect(settled).toBe(false)
+
+    terminal.emitData('fast command\r\n')
+    await vi.advanceTimersByTimeAsync(10)
+    expect(settled).toBe(false)
     terminal.emitData('\x1b]133;D;0\x07dsh> ')
     await vi.advanceTimersByTimeAsync(10)
     expect((await operation.done).waitReason).toBe('stdin_read')
   })
 
-  it('allows idle inference after a submitted command emits a non-backend prompt marker', async () => {
+  it('accepts the prompt text declared by the send after same-chunk command output', async () => {
     vi.useFakeTimers()
     const terminal = new FakeTerminal()
     const inspector = new FakeInspector()
@@ -290,13 +300,22 @@ describe('LocalPtySession readiness and output', () => {
     await initialize(session, terminal)
 
     inspector.waiting = true
-    const operation = session.startSend({ text: 'install custom prompt', submit: true })
+    const operation = session.startSend({
+      text: 'install custom prompt',
+      submit: true,
+      expectedPromptText: 'custom> ',
+    })
     await Promise.resolve()
     await Promise.resolve()
-    terminal.emitData('\x1b]133;D;0\x07custom> ')
-    await vi.advanceTimersByTimeAsync(80)
+    let settled = false
+    void operation.done.then(() => { settled = true })
+    terminal.emitData('\x1b]133;D;0\x07stale> ')
+    await vi.advanceTimersByTimeAsync(20)
+    expect(settled).toBe(false)
+    terminal.emitData('install custom prompt\r\n\x1b]133;D;0\x07custom> ')
+    await vi.advanceTimersByTimeAsync(10)
 
-    expect((await operation.done).waitReason).toBe('inferred_idle')
+    expect((await operation.done).waitReason).toBe('stdin_read')
   })
 
   it('distinguishes inferred idle, timeout, exit signal, and operation reads', async () => {

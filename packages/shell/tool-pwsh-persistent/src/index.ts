@@ -316,6 +316,7 @@ function persistentShells(ctx: Context, config: ResolvedConfig): PersistentShell
           const setup = ctx.terminals.startSend(owner, spawned.sessionId, {
             text: first ? PWSH_PROMPT_SETUP : '',
             submit: first,
+            expectedPromptText: SHELL_PROMPT,
             signal: combinedSignal,
           })
           first = false
@@ -379,6 +380,7 @@ async function executeCommand(
       operation = ctx.terminals.startSend(owner, id, {
         text: first ? wrapped : '',
         submit: first,
+        expectedPromptText: SHELL_PROMPT,
         signal: commandDeadline.signal,
       })
       first = false

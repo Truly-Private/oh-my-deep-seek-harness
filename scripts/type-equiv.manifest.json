@@ -1022,6 +1022,11 @@
     },
     {
       "doc": "docs/subsystems/terminal.md",
+      "symbol": "TerminalSendRequest",
+      "source": "packages/terminal/terminal/src/types.ts"
+    },
+    {
+      "doc": "docs/subsystems/terminal.md",
       "symbol": "TerminalSendOperation",
       "source": "packages/terminal/terminal/src/types.ts"
     },

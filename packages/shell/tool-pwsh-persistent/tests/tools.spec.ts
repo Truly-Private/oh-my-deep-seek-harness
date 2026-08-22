@@ -114,6 +114,7 @@ class StubTerminalSession implements TerminalBackendSession {
   closed: string[] = []
   mode: StubMode
   sends = 0
+  requests: TerminalSendRequest[] = []
   pendingText = ''
   historyTruncated = false
   throwOnSend = false
@@ -125,6 +126,7 @@ class StubTerminalSession implements TerminalBackendSession {
 
   startSend(request: TerminalSendRequest): TerminalSendOperation {
     this.sends += 1
+    this.requests.push(request)
     if (request.text.startsWith('function prompt')) {
       if (this.mode === 'init-exit') {
         this.statusValue = { kind: 'exited', exitCode: 1, signal: null }
@@ -356,6 +358,7 @@ describe('tool-pwsh-persistent', () => {
     expect(text(await call(ctx, owner, 'Write-Output two'))).toBe('hello from stub')
     expect(stub.sessions).toHaveLength(1)
     expect(stub.sessions[0]?.sends).toBe(3)
+    expect(stub.sessions[0]?.requests.every(request => request.expectedPromptText === stub.sessions[0]?.motd)).toBe(true)
 
     const ownerWithoutCwd = agent(ctx, undefined)
     expect(text(await call(ctx, ownerWithoutCwd, 'pwd'))).toBe('hello from stub')

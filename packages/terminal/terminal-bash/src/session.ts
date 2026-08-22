@@ -80,12 +80,14 @@ class LocalSendOperation implements TerminalSendOperation {
   private finished = false
   private cancellationRequested = false
   private submittedInput = false
+  private postWriteTextSeen = false
   private initialForegroundLeftWait: boolean
   private initialForegroundPgid: number | undefined
 
   constructor(
     maxBytes: number,
     readonly startedAt: number,
+    readonly expectedPromptText: string,
     private readonly onCancel: () => void,
   ) {
     this.output = new BoundedTextBuffer(maxBytes)
@@ -140,6 +142,17 @@ class LocalSendOperation implements TerminalSendOperation {
     this.submittedInput = true
   }
 
+  markPostWriteText(): void {
+    if (this.submittedInput) this.postWriteTextSeen = true
+  }
+
+  acceptsPrompt(hasTextBeforePrompt: boolean): boolean {
+    return !this.submittedInput
+      || this.initialForegroundLeftWait
+      || this.postWriteTextSeen
+      || hasTextBeforePrompt
+  }
+
   acceptsStdinWait(pgid: number, waiting: boolean): boolean {
     // The same group may still expose the wait that existed before terminal.write.
     // Observe every poll so a departure before the exact-settlement threshold
@@ -152,8 +165,8 @@ class LocalSendOperation implements TerminalSendOperation {
     return waiting && this.initialForegroundLeftWait
   }
 
-  allowsIdleInference(promptSeen: boolean): boolean {
-    return !this.submittedInput || this.initialForegroundLeftWait || promptSeen
+  allowsIdleInference(): boolean {
+    return !this.submittedInput || this.initialForegroundLeftWait
   }
 
   cancel(): boolean {
@@ -190,6 +203,7 @@ export class LocalPtySession implements TerminalBackendSession {
   private promptSeen = false
   private promptTextSeen = false
   private promptTail = ''
+  private rejectedPromptTail: string | undefined
   private shellPgid: number | undefined
   private initializing = false
   private lastOutputAt = Date.now()
@@ -250,6 +264,7 @@ export class LocalPtySession implements TerminalBackendSession {
     const operation = new LocalSendOperation(
       this.config.maxReadBytes,
       Date.now(),
+      request.expectedPromptText ?? CONTROLLED_PROMPT,
       () => { this.interrupt(operation) },
     )
     this.active = operation
@@ -325,6 +340,7 @@ export class LocalPtySession implements TerminalBackendSession {
     this.promptSeen = false
     this.promptTextSeen = false
     this.promptTail = ''
+    this.rejectedPromptTail = undefined
   }
 
   read(request: TerminalReadRequest): TerminalReadResult {
@@ -392,22 +408,41 @@ export class LocalPtySession implements TerminalBackendSession {
 
   private onData(data: string): void {
     const sanitized = this.sanitizer.push(data)
+    const operation = this.active
+    const expectedPromptText = operation?.expectedPromptText ?? CONTROLLED_PROMPT
+    const hasTextBeforePrompt = sanitized.prompt
+      && sanitized.promptTail !== undefined
+      && sanitized.text.length > sanitized.promptTail.length
+    const acceptedPrompt = sanitized.prompt
+      && operation !== undefined
+      && operation.acceptsPrompt(hasTextBeforePrompt)
     this.appendOutput(sanitized.text)
-    if (sanitized.prompt) {
-      // TODO(pty-delayed-signal-prompt): With a reproducer, define a marker-generation boundary
-      // before attributing a signal-delayed prompt to a later send.
-      // Bash can print PROMPT_COMMAND before the kernel publishes its return
-      // to the foreground process group. Retain the marker; polling below is
-      // the authority that accepts it only after bash owns the foreground.
+    if (acceptedPrompt) {
+      this.rejectedPromptTail = undefined
       this.promptSeen = true
       this.promptTail = ''
       this.lastOutputAt = Date.now()
+    } else if (sanitized.prompt) {
+      this.rejectedPromptTail = sanitized.promptTail
     }
-    if (this.promptSeen && sanitized.promptTail !== undefined) {
-      const remaining = Math.max(0, CONTROLLED_PROMPT.length + 1 - this.promptTail.length)
+    if (this.promptSeen && sanitized.promptTail !== undefined && (!sanitized.prompt || acceptedPrompt)) {
+      const remaining = Math.max(0, expectedPromptText.length + 1 - this.promptTail.length)
       this.promptTail += sanitized.promptTail.slice(0, remaining)
-      if (sanitized.promptTail.length > remaining) this.promptTail = `${CONTROLLED_PROMPT}\0`
-      this.promptTextSeen = this.promptTail === CONTROLLED_PROMPT
+      if (sanitized.promptTail.length > remaining) this.promptTail = `${expectedPromptText}\0`
+      this.promptTextSeen = this.promptTail === expectedPromptText
+    }
+    let postWriteTextSeen = sanitized.text.length > 0 && (!sanitized.prompt || acceptedPrompt || hasTextBeforePrompt)
+    if (!sanitized.prompt && sanitized.promptTail !== undefined && this.rejectedPromptTail !== undefined) {
+      this.rejectedPromptTail += sanitized.promptTail
+      if (expectedPromptText.startsWith(this.rejectedPromptTail)) {
+        postWriteTextSeen = false
+      } else {
+        postWriteTextSeen = this.rejectedPromptTail.startsWith(expectedPromptText)
+        this.rejectedPromptTail = undefined
+      }
+    }
+    if (postWriteTextSeen) {
+      operation?.markPostWriteText()
     }
   }
 
@@ -474,7 +509,7 @@ export class LocalPtySession implements TerminalBackendSession {
       // on waiting for shell ownership instead of letting a child marker suppress
       // readiness until the absolute timeout.
       const handoffGrace = this.promptSeen ? this.config.handoffGraceMs : 0
-      if (startupHasOutput && operation.allowsIdleInference(this.promptSeen)
+      if (startupHasOutput && operation.allowsIdleInference()
         && idleFor >= this.config.idleSilenceMs + handoffGrace) {
         this.settleActive('inferred_idle')
       }

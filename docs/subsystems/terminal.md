@@ -58,7 +58,21 @@ interface TerminalBackendSession {
 
 ## Send and retained output
 
-One live session accepts one active send. Its operation exposes a consuming output cursor for generic background jobs and one terminal result for a foreground caller. `TerminalReadResult` separately pages the bounded session scrollback.
+One live session accepts one active send. A consumer that installs its own prompt declares the exact printable value through `expectedPromptText`; omitting it selects the backend default. The backend accepts a marked prompt only when output ordering attributes it to the active send. Its operation exposes a consuming output cursor for generic background jobs and one terminal result for a foreground caller. `TerminalReadResult` separately pages the bounded session scrollback.
+
+```ts type-equiv
+/** Input for one line-oriented terminal interaction. */
+interface TerminalSendRequest {
+  /** UTF-8 text to write. */
+  text: string
+  /** Whether to write the backend's Enter sequence after {@link text}. */
+  submit: boolean
+  /** Exact printable prompt expected after this send's owned prompt marker. */
+  expectedPromptText?: string
+  /** Cancellation for the wait; backends also interrupt the foreground command. */
+  signal?: AbortSignal
+}
+```
 
 ```ts type-equiv
 /** Live backend-owned send; exactly one may be active per PTY session. */
