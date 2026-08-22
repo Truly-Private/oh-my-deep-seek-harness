@@ -81,7 +81,9 @@ class LocalSendOperation implements TerminalSendOperation {
   private cancellationRequested = false
   private submittedInput = false
   private postWriteTextSeen = false
-  private initialForegroundLeftWait: boolean
+  private initialForegroundKnown = false
+  private postWriteForegroundActivity = false
+  private initialForegroundInputWaiting: boolean | undefined
   private initialForegroundPgid: number | undefined
 
   constructor(
@@ -92,7 +94,6 @@ class LocalSendOperation implements TerminalSendOperation {
   ) {
     this.output = new BoundedTextBuffer(maxBytes)
     this.promise = Promise.withResolvers<TerminalSendResult>()
-    this.initialForegroundLeftWait = true
   }
 
   get done(): Promise<TerminalSendResult> {
@@ -134,8 +135,9 @@ class LocalSendOperation implements TerminalSendOperation {
   }
 
   setInitialForeground(foreground: SubprocessTerminalForeground | undefined): void {
+    this.initialForegroundKnown = foreground !== undefined
     this.initialForegroundPgid = foreground?.processGroupId
-    this.initialForegroundLeftWait = foreground?.inputWaiting !== true
+    this.initialForegroundInputWaiting = foreground?.inputWaiting
   }
 
   markInputSubmitted(): void {
@@ -146,9 +148,13 @@ class LocalSendOperation implements TerminalSendOperation {
     if (this.submittedInput) this.postWriteTextSeen = true
   }
 
+  markPostWriteForegroundActivity(): void {
+    if (this.submittedInput) this.postWriteForegroundActivity = true
+  }
+
   acceptsPrompt(hasTextBeforePrompt: boolean): boolean {
     return !this.submittedInput
-      || this.initialForegroundLeftWait
+      || this.postWriteForegroundActivity
       || this.postWriteTextSeen
       || hasTextBeforePrompt
   }
@@ -158,15 +164,18 @@ class LocalSendOperation implements TerminalSendOperation {
     // Observe every poll so a departure before the exact-settlement threshold
     // still makes a later return to that wait post-write evidence.
     if (pgid !== this.initialForegroundPgid) {
-      this.initialForegroundLeftWait = true
+      this.postWriteForegroundActivity = true
       return waiting
     }
-    if (!waiting) this.initialForegroundLeftWait = true
-    return waiting && this.initialForegroundLeftWait
+    if (this.initialForegroundInputWaiting === true && !waiting) {
+      this.postWriteForegroundActivity = true
+    }
+    const busyBeforeWriteThenProducedOutput = this.initialForegroundInputWaiting === false && this.postWriteTextSeen
+    return waiting && (this.postWriteForegroundActivity || busyBeforeWriteThenProducedOutput)
   }
 
   allowsIdleInference(): boolean {
-    return !this.submittedInput || this.initialForegroundLeftWait
+    return !this.submittedInput || !this.initialForegroundKnown || this.postWriteForegroundActivity
   }
 
   cancel(): boolean {
@@ -579,6 +588,7 @@ export class LocalPtySession implements TerminalBackendSession {
       const activeWrite = this.activeWrite
       if (activeWrite !== undefined && !await activeWrite) return
       await this.terminal.signalForeground('SIGINT')
+      operation.markPostWriteForegroundActivity()
     } catch (error: unknown) {
       if (this.active === operation && !this.closing) this.onTransportFailure(error)
       return

@@ -48,7 +48,7 @@
 - 工具需要拥有 Agent 与一个真实支持 pwsh 方言的 terminal backend（Windows ConPTY 或 POSIX 上的 pwsh）。
 - **输入回显不可避免**：PowerShell 的 PSReadLine 会把提交的输入渲染回终端流，且没有 `stty -echo` 的对应物。完整结果中 marker 锚定提取排除回显；包装器原文剥离覆盖回退路径，但跨越终端宽度的包装器折行可能在部分输出结果中残留片段回显，受 `maxOutputChars` 约束。
 - 模型命令中的裸 ESC 字符不受支持：PSReadLine 会在执行前吞掉它们。包装器转义它需要的控制字节（`[char]27` 构造的 OSC 标记、body 的反引号转义）。
-- 模型重定义 `prompt` 函数会移除自有 marker 就绪。无法证明前台 stdin 等待的提供方仍可使用静默；已经证明写入前等待的提供方则需要前台活动，如果快速命令在两次轮询之间完全结束，可能超时。
+- 模型重定义 `prompt` 函数会移除自有 marker 就绪。无法提供前台证据的提供方仍可使用静默；能够提供前台证据的提供方则需要写入后输出或前台变化，如果快速命令在两次轮询之间完全结束且没有输出，可能超时。
 - 命令执行期间没有交互 stdin：读取输入的前台命令会阻塞到就绪超时，随后重置 shell。
 - SIGTSTP/SIGHUP 在 Windows 不可用（backend 拒绝）；SIGINT 以控制台级 Ctrl-C 输入写入投递，在提示符处取消当前行而非向进程发信号。
 - 在 Windows ACL 沙箱的只读模式下，pwsh 以 ConstrainedLanguage 启动，可能拒绝引导代码通过 `[Console]::` 固定编码并写入 prompt marker。命令仍可通过可打印提示符和静默档结算，但非 ASCII 输出可能沿用宿主代码页。
