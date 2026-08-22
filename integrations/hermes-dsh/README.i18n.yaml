@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write integrations/hermes-dsh/README.md
 README.md: db65c8dd2233259e2187ed4d977eb8372b969991
-README.zh.md: bed24fd048f928405e561dca975c41b78863e177
+README.zh.md: 4a00c34a3b8b5854ef8b0be834aca448dca3a6ea

@@ -9,7 +9,7 @@
 
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { bindSnapshotSelector } from '@truly-private/omdsh-client-web-react'
+import { bindSnapshotSelector } from '@truly-private/omdsh-client-test-runtime'
 import { createSnapshotStore } from '@truly-private/omdsh-client-runtime/client'
 import { AgentPresetLabel } from '../src/client/AgentPresetLabel.tsx'
 import type { AgentPresetLabelProps } from '../src/client/AgentPresetLabel.tsx'

@@ -24,7 +24,7 @@ const DEFAULT_REGISTRY = 'https://registry.npm.harnessment.com'
 const DEFAULT_OUTPUT_DIRECTORY = '.artifacts/npm-baseline'
 const PACKAGE_PATTERNS = [
   'vendor/*/package.json',
-  'packages/*/*/package.json',
+  'packages/!(experimental)/*/package.json',
   'apps/*/package.json',
 ] as const
 const DEPENDENCY_SECTIONS = [
@@ -42,7 +42,7 @@ node, bin_path, cwd, timeout_seconds = sys.argv[1:]
 pid, fd = pty.fork()
 if pid == 0:
     os.chdir(cwd)
-    os.execvpe(node, [node, bin_path, "web", "--host", "127.0.0.1", "--port", "0"], os.environ.copy())
+    os.execvpe(node, [node, bin_path, "web", "--no-open", "--host", "127.0.0.1", "--port", "0"], os.environ.copy())
 
 output = bytearray()
 ready_seen = False
@@ -804,7 +804,7 @@ function parsePackedPackage(value: unknown, index: number): PackedPackage {
   if (origin !== 'harness' && origin !== 'vendor') {
     throw new Error(`invalid package origin in release manifest: ${JSON.stringify(origin)}`)
   }
-  if (origin === 'harness' && (!name.startsWith('@truly-private/') || name === '@truly-private/omdsh-root')) {
+  if (origin === 'harness' && (!name.startsWith('@deepseek-ai/') || name === '@truly-private/omdsh-root')) {
     throw new Error(`invalid package name in release manifest: ${name}`)
   }
   return {

@@ -55,14 +55,11 @@
     "@truly-private/omdsh-cordis-client-runner": "workspace:^",
     "@truly-private/omdsh-client-locale": "workspace:^",
     "@truly-private/omdsh-client-runtime": "workspace:^",
-    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
     "@truly-private/omdsh-client-ui-sidebar": "workspace:^",
     "@truly-private/omdsh-client-ui-input-trigger": "workspace:^",
-    "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-client-ui-tool": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^",
-    "react": "^18.2.0"
+    "@deepseek-ai/cordis": "workspace:^"
   },
   "devDependencies": {
     "@truly-private/omdsh-api-remotes": "workspace:^",

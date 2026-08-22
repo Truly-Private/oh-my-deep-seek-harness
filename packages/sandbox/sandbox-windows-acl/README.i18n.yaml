@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write packages/sandbox/sandbox-windows-acl/README.md
 README.md: e0f0059d0e976bd070d8a658f2c9fcc9dfa798aa
-README.zh.md: 25497a1405db72640f37610512ab6eb943291735
+README.zh.md: c8059edc65606bd2bf0e975b34d3c91b5ce282bd

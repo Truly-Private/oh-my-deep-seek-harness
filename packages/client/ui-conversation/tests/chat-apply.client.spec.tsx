@@ -6,11 +6,15 @@
 // entries. Tool composition belongs to ui-tool and its machinery spec.
 
 import { describe, expect, it, vi } from 'vitest'
-import { SlotTestRuntime, stubSettingsScope } from '@truly-private/omdsh-client-test-runtime'
+import { SlotTestRuntime, usePinnedBrowserLanguages, stubSettingsScope } from '@truly-private/omdsh-client-test-runtime'
 import { resolveSlotLabel } from '@truly-private/omdsh-client-ui-slots'
 import { LocaleRuntime } from '@truly-private/omdsh-client-locale/client'
 import type { SessionId } from '@truly-private/omdsh-client-runtime/client'
 import { apply, inject } from '@truly-private/omdsh-client-ui-conversation/client'
+
+// The service reads its initial locale from the browser; these specs assert
+// the shipped Chinese copy, so they state the browser they assume.
+usePinnedBrowserLanguages('zh-CN')
 
 const ROOT = 'root-1' as SessionId
 const CHILD = 'child-1' as SessionId
@@ -87,8 +91,11 @@ describe('apply wiring', () => {
     // The hero holes ride the conversation entry's children declaration (the
     // empty-state occupant is gone). Both are root-scoped: the new-session
     // screen precedes the session either would belong to.
+    expect(b.slots.spec('conversation.hero.brand.mark')).toEqual({ kind: 'single', scope: 'root' })
     expect(b.slots.spec('conversation.hero.workspace')).toEqual({ kind: 'single', scope: 'root' })
     expect(b.slots.spec('conversation.hero.agentPreset')).toEqual({ kind: 'single', scope: 'root' })
+    expect(b.slots.spec('conversation.session.header.lineage'))
+      .toEqual({ kind: 'single', scope: 'session' })
     expect(b.slots.entries('settings.general.item').map(entry => entry.options.id)).toEqual(['composer-enter'])
     await b.runtime.dispose()
   })

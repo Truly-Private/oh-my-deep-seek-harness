@@ -53,12 +53,10 @@
     "@truly-private/omdsh-client-locale": "workspace:^",
     "@truly-private/omdsh-client-runtime": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
-    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^",
     "@truly-private/omdsh-compaction": "workspace:^",
     "@truly-private/omdsh-tools": "workspace:^",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "@truly-private/omdsh-client-ui-conversation": "workspace:^"
   },
   "devDependencies": {
     "@truly-private/omdsh-agent": "workspace:^",

@@ -4,8 +4,8 @@
 
 本目录记录 `oh-my-deepseek-harness` 自有的政策与集成工作。对于未修改的运行时行为，上游 DeepSeek Harness 产品与贡献者文档仍是权威来源。
 
-- [集成状态与设置](integrations.md)
-- [下游 npm 发行设置](npm-distribution.md)
-- [经审查的上游接收流程](upstream-intake.md)
+- [集成状态与设置](integrations.zh.md)
+- [下游 npm 发行设置](npm-distribution.zh.md)
+- [经审查的上游接收流程](upstream-intake.zh.md)
 - [项目署名](../../CREDITS.md)
 - [安全政策](../../SECURITY.md)

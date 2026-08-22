@@ -1,6 +1,6 @@
 {
   "name": "@truly-private/omdsh-client-ui-attachment",
-  "description": "Pure React attachment atoms for the dsh web UI: draft-image rail, message image gallery, and original-image lightbox (zero cordis)",
+  "description": "Dynamic attachment presentation plugin for conversation input and message-image slots",
   "version": "0.0.2",
   "publishConfig": {
     "access": "public"
@@ -22,30 +22,53 @@
       "types": "./lib/types/invariant.d.ts",
       "default": "./lib/invariant.js"
     },
+    "./client": {
+      "types": "./lib/types/client/index.d.ts",
+      "default": "./lib/client.js"
+    },
     "./src/*": "./src/*",
     "./package.json": "./package.json"
   },
+  "dsh": {
+    "client": {
+      "inject": [
+        "@truly-private/omdsh-client-ui-conversation"
+      ],
+      "platform": "web"
+    }
+  },
+  "scripts": {
+    "bundle": "tsdown",
+    "watch": "tsdown --watch"
+  },
   "license": "MIT",
   "dependencies": {
-    "@truly-private/omdsh-attachment": "workspace:^",
-    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
-    "clsx": "^2.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "clsx": "^2.0.0"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@types/react": "~18.3.1",
-    "@types/react-dom": "~18.3.0"
+    "@types/react-dom": "~18.3.0",
+    "@truly-private/omdsh-client-runtime": "workspace:^",
+    "@truly-private/omdsh-client-ui-conversation": "workspace:^",
+    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
+    "@truly-private/omdsh-client-ui-slots": "workspace:^",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@truly-private/omdsh-attachment": "workspace:^"
   },
   "files": [
     "lib/index.js",
     "lib/invariant.js",
+    "lib/client.js",
     "lib/types/**/*.d.ts"
   ],
   "peerDependencies": {
     "@deepseek-ai/cordis": "workspace:^",
-    "@truly-private/omdsh-invariants": "workspace:^"
+    "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-client-runtime": "workspace:^",
+    "@truly-private/omdsh-client-ui-conversation": "workspace:^",
+    "@truly-private/omdsh-attachment": "workspace:^"
   }
 }

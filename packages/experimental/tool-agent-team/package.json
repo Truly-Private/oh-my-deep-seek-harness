@@ -1,0 +1,61 @@
+{
+  "name": "@truly-private/omdsh-experimental-tool-agent-team",
+  "description": "Scoped model-facing Agent Teams tools over ctx.agentTeams",
+  "version": "0.0.2",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Truly-Private/oh-my-deepseek-harness.git",
+    "directory": "packages/experimental/tool-agent-team"
+  },
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./invariant": {
+      "types": "./lib/types/invariant.d.ts",
+      "default": "./lib/invariant.js"
+    },
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/invariant.js",
+    "lib/types/**/*.d.ts"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@deepseek-ai/schemastery": "workspace:^"
+  },
+  "peerDependencies": {
+    "@truly-private/omdsh-agent": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-session": "workspace:^",
+    "@truly-private/omdsh-system-prompt": "workspace:^",
+    "@truly-private/omdsh-experimental-agent-team": "workspace:^",
+    "@truly-private/omdsh-tools": "workspace:^",
+    "@deepseek-ai/cordis": "workspace:^"
+  },
+  "devDependencies": {
+    "@truly-private/omdsh-agent": "workspace:^",
+    "@truly-private/omdsh-agent-loop": "workspace:^",
+    "@truly-private/omdsh-agent-loop-testkit": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-session": "workspace:^",
+    "@truly-private/omdsh-session-persistence-jsonl": "workspace:^",
+    "@truly-private/omdsh-scope": "workspace:^",
+    "@truly-private/omdsh-subagent": "workspace:^",
+    "@truly-private/omdsh-subagent-fork-in-process": "workspace:^",
+    "@truly-private/omdsh-subagent-spawn-in-process": "workspace:^",
+    "@truly-private/omdsh-tool-subagent-control": "workspace:^",
+    "@truly-private/omdsh-system-prompt": "workspace:^",
+    "@truly-private/omdsh-experimental-agent-team": "workspace:^",
+    "@truly-private/omdsh-tools": "workspace:^",
+    "@deepseek-ai/cordis": "workspace:^"
+  }
+}

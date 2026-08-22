@@ -48,7 +48,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@truly-private/omdsh-settings": "workspace:^",
     "clsx": "^2.0.0",
     "@deepseek-ai/schemastery": "workspace:^"
   },
@@ -61,11 +60,8 @@
     "@truly-private/omdsh-client-connection": "workspace:^",
     "@truly-private/omdsh-client-locale": "workspace:^",
     "@truly-private/omdsh-client-runtime": "workspace:^",
-    "@truly-private/omdsh-client-ui-attachment": "workspace:^",
-    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
     "@truly-private/omdsh-client-ui-settings": "workspace:^",
     "@truly-private/omdsh-client-ui-input-trigger": "workspace:^",
-    "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-commands": "workspace:^",
     "@truly-private/omdsh-compaction": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
@@ -73,7 +69,12 @@
     "@truly-private/omdsh-session-stats": "workspace:^",
     "@truly-private/omdsh-token-meter": "workspace:^",
     "@truly-private/omdsh-tools": "workspace:^",
-    "react": "^18.2.0"
+    "@truly-private/omdsh-settings": "workspace:^",
+    "@truly-private/omdsh-client-ui-layout": "workspace:^",
+    "@truly-private/omdsh-goal": "workspace:^",
+    "@truly-private/omdsh-permission-presets": "workspace:^",
+    "@truly-private/omdsh-plan-mode": "workspace:^",
+    "@truly-private/omdsh-tool-todo": "workspace:^"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "workspace:^",
@@ -86,7 +87,6 @@
     "@truly-private/omdsh-client-runtime": "workspace:^",
     "@truly-private/omdsh-client-test-runtime": "workspace:^",
     "@truly-private/omdsh-client-ui-layout": "workspace:^",
-    "@truly-private/omdsh-client-ui-attachment": "workspace:^",
     "@truly-private/omdsh-client-ui-primitives": "workspace:^",
     "@truly-private/omdsh-client-ui-settings": "workspace:^",
     "@truly-private/omdsh-client-ui-input-trigger": "workspace:^",
@@ -104,7 +104,8 @@
     "@truly-private/omdsh-tool-todo": "workspace:^",
     "@truly-private/omdsh-tools": "workspace:^",
     "@types/react": "~18.3.1",
-    "react": "^18.2.0"
+    "react": "^18.2.0",
+    "@truly-private/omdsh-settings": "workspace:^"
   },
   "files": [
     "lib/index.js",

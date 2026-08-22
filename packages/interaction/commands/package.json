@@ -54,8 +54,10 @@
   "license": "MIT",
   "peerDependencies": {
     "@truly-private/omdsh-agent": "workspace:^",
+    "@truly-private/omdsh-attachment": "workspace:^",
     "@truly-private/omdsh-brand": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-llm": "workspace:^",
     "@truly-private/omdsh-scope": "workspace:^",
     "@truly-private/omdsh-session": "workspace:^",
     "@truly-private/omdsh-typert-protocol": "workspace:^",
@@ -66,8 +68,10 @@
   },
   "devDependencies": {
     "@truly-private/omdsh-agent": "workspace:^",
+    "@truly-private/omdsh-attachment": "workspace:^",
     "@truly-private/omdsh-brand": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-llm": "workspace:^",
     "@truly-private/omdsh-scope": "workspace:^",
     "@truly-private/omdsh-session": "workspace:^",
     "@truly-private/omdsh-typert-protocol": "workspace:^",

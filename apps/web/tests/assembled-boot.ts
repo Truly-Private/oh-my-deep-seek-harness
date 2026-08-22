@@ -8,53 +8,122 @@
 // Keyless and deterministic: the fixture is the fake server, so nothing here
 // reaches a model or the network.
 import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { createRequire } from 'node:module'
+import { dirname, join, resolve } from 'node:path'
+import { pathToFileURL } from 'node:url'
 import { act, cleanup } from '@testing-library/react'
 import { afterEach, beforeEach, vi } from 'vitest'
-import type { WebBootEntry } from '@truly-private/omdsh-client-modules/client'
+import { bootInjections, orderByModuleGraph } from '@truly-private/omdsh-client-modules'
+import type { ClientModuleLoaderTarget, WebBootEntry } from '@truly-private/omdsh-client-modules/client'
 import { AppWebEntry } from '@truly-private/omdsh-client-web'
 
-/** Boot entries for the minimal assembled graph, each carrying the workspace bundle it loads. */
-const PLUGINS: readonly (WebBootEntry & { bundlePath: string })[] = [
-  { id: '@truly-private/omdsh-typert-registry', bundlePath: 'packages/typert/registry/lib/client.js', url: '/plugins/typert-registry.js', rev: 'fx', inject: [], immediately: true },
-  { id: '@truly-private/omdsh-client-connection', bundlePath: 'packages/client/connection/lib/client.js', url: '/plugins/connection.js', rev: 'fx', inject: [], immediately: true },
-  { id: '@truly-private/omdsh-api-gateway', bundlePath: 'packages/api/gateway/lib/client.js', url: '/plugins/api-gateway.js', rev: 'fx', inject: ['@truly-private/omdsh-typert-registry', '@truly-private/omdsh-client-connection'], immediately: true },
-  { id: '@truly-private/omdsh-api-remotes', bundlePath: 'packages/api/remotes/lib/client.js', url: '/plugins/api-remotes.js', rev: 'fx', inject: ['@truly-private/omdsh-api-gateway'], immediately: true },
-  // The settings domain base: the only provider of ctx.settingsScope, which the
-  // locale and ui-theme rows below inject for their preference rows. Without it
-  // both stay pending and ui-layout never activates, so nothing renders.
-  { id: '@truly-private/omdsh-client-ui-settings', bundlePath: 'packages/client/ui-settings/lib/client.js', url: '/plugins/ui-settings.js', rev: 'fx', inject: ['@truly-private/omdsh-client-connection', '@truly-private/omdsh-client-runtime', '@truly-private/omdsh-api-remotes'], immediately: true },
-  { id: '@truly-private/omdsh-client-runtime', bundlePath: 'packages/client/runtime/lib/client.js', url: '/plugins/runtime.js', rev: 'fx', inject: ['@truly-private/omdsh-client-connection', '@truly-private/omdsh-typert-registry', '@truly-private/omdsh-api-gateway'], immediately: true },
-  { id: '@truly-private/omdsh-client-ui-theme', bundlePath: 'packages/client/ui-theme/lib/client.js', url: '/plugins/ui-theme.js', rev: 'fx', inject: ['@truly-private/omdsh-client-connection', '@truly-private/omdsh-client-runtime', '@truly-private/omdsh-client-locale', '@truly-private/omdsh-client-ui-settings', '@truly-private/omdsh-api-remotes'], immediately: true },
-  { id: '@truly-private/omdsh-client-locale', bundlePath: 'packages/client/locale/lib/client.js', url: '/plugins/locale.js', rev: 'fx', inject: ['@truly-private/omdsh-client-connection', '@truly-private/omdsh-client-runtime', '@truly-private/omdsh-client-ui-settings', '@truly-private/omdsh-api-remotes'], immediately: true },
-  { id: '@truly-private/omdsh-client-ui-layout', bundlePath: 'packages/client/ui-layout/lib/client.js', url: '/plugins/ui-layout.js', rev: 'fx', inject: ['@truly-private/omdsh-client-runtime'] },
-  { id: '@truly-private/omdsh-client-ui-sidebar', bundlePath: 'packages/client/ui-sidebar/lib/client.js', url: '/plugins/ui-sidebar.js', rev: 'fx', inject: ['@truly-private/omdsh-client-ui-layout'] },
-  { id: '@truly-private/omdsh-client-ui-conversation', bundlePath: 'packages/client/ui-conversation/lib/client.js', url: '/plugins/ui-conversation.js', rev: 'fx', inject: ['@truly-private/omdsh-client-ui-layout'] },
-  { id: '@truly-private/omdsh-client-ui-tool', bundlePath: 'packages/client/ui-tool/lib/client.js', url: '/plugins/ui-tool.js', rev: 'fx', inject: ['@truly-private/omdsh-client-runtime', '@truly-private/omdsh-client-locale', '@truly-private/omdsh-client-ui-conversation'] },
-  { id: '@truly-private/omdsh-client-ui-workflow-run', bundlePath: 'packages/client/ui-workflow-run/lib/client.js', url: '/plugins/ui-workflow-run.js', rev: 'fx', inject: ['@truly-private/omdsh-client-locale', '@truly-private/omdsh-client-runtime', '@truly-private/omdsh-client-ui-conversation'] },
+interface AssembledPlugin extends WebBootEntry {
+  /** Absolute path to the built client artifact declared by this package. */
+  bundlePath: string
+}
+
+interface ClientPackageManifest {
+  name?: string
+  exports?: Record<string, string | { default?: string }>
+  dsh?: {
+    client?: {
+      platform?: string
+      inject?: string[]
+      external?: string[]
+      immediately?: boolean
+    }
+  }
+}
+
+interface ComposedEntry {
+  name?: unknown
+  disabled?: unknown
+}
+
+interface BootComposition {
+  loadOverlayPatches(binName: string, file: string): unknown[]
+  composeEntries(layers: readonly unknown[][]): ComposedEntry[]
+}
+
+const REPO_ROOT = process.cwd()
+const BUNDLE_LAYERS = [
   {
-    id: '@truly-private/omdsh-client-ui-workspace',
-    bundlePath: 'packages/client/ui-workspace/lib/client.js',
-    url: '/plugins/ui-workspace.js',
-    rev: 'fx',
-    inject: [
-      '@truly-private/omdsh-client-runtime',
-      '@truly-private/omdsh-client-ui-conversation',
-      '@truly-private/omdsh-client-ui-sidebar',
-    ],
+    manifest: join(REPO_ROOT, 'packages/bundle/base/package.json'),
+    patch: join(REPO_ROOT, 'packages/bundle/base/cordis.patch.yml'),
   },
-  { id: '@truly-private/omdsh-session-log-export', bundlePath: 'packages/session-query/session-log-export/lib/client.js', url: '/plugins/session-log-download.js', rev: 'fx', inject: ['@truly-private/omdsh-client-ui-commands', '@truly-private/omdsh-client-ui-conversation'] },
-  { id: '@truly-private/omdsh-client-ui-trajectory', bundlePath: 'packages/client/ui-trajectory/lib/client.js', url: '/plugins/ui-trajectory.js', rev: 'fx', inject: ['@truly-private/omdsh-client-ui-conversation'] },
-]
+  {
+    manifest: join(REPO_ROOT, 'packages/bundle/web-app/package.json'),
+    patch: join(REPO_ROOT, 'packages/bundle/web-app/cordis.patch.yml'),
+  },
+] as const
+const bundleResolvers = BUNDLE_LAYERS.map(layer => createRequire(layer.manifest))
+const webBundleResolver = bundleResolvers[1]
+if (webBundleResolver === undefined) throw new Error('assembled boot: web bundle resolver missing')
+const appBoot = await import(pathToFileURL(webBundleResolver.resolve('@truly-private/omdsh-app-boot')).href) as unknown as BootComposition
+
+function resolvePackageManifest(specifier: string): string | undefined {
+  for (const require of bundleResolvers) {
+    try {
+      return require.resolve(`${specifier}/package.json`)
+    } catch {
+      continue
+    }
+  }
+  return undefined
+}
+
+function resolveClientExport(packagePath: string, pkg: ClientPackageManifest): string {
+  const declared = pkg.exports?.['./client']
+  const relative = typeof declared === 'string' ? declared : declared?.default
+  if (relative === undefined) {
+    throw new Error(`assembled boot: ${pkg.name ?? packagePath} declares dsh.client without a ./client export`)
+  }
+  return resolve(dirname(packagePath), relative)
+}
+
+/** Derive the assembled browser graph from the same bundle patches and package declarations as `dsh web`. */
+function loadAssembledPlugins(): readonly AssembledPlugin[] {
+  const entries = appBoot.composeEntries(BUNDLE_LAYERS.map(layer =>
+    appBoot.loadOverlayPatches('assembled boot', layer.patch)))
+  const plugins = new Map<string, AssembledPlugin>()
+  for (const entry of entries) {
+    if (entry.disabled === true || typeof entry.name !== 'string') continue
+    const packagePath = resolvePackageManifest(entry.name)
+    if (packagePath === undefined) continue
+    const pkg = JSON.parse(readFileSync(packagePath, 'utf8')) as ClientPackageManifest
+    const declaration = pkg.dsh?.client
+    if (declaration?.platform !== 'web') continue
+    if (pkg.name !== entry.name) {
+      throw new Error(`assembled boot: ${entry.name} resolved package ${pkg.name ?? '<unnamed>'}`)
+    }
+    plugins.set(entry.name, {
+      id: entry.name,
+      bundlePath: resolveClientExport(packagePath, pkg),
+      url: `/plugins/${entry.name}/client.js?rev=fx`,
+      rev: 'fx',
+      ...(declaration.inject === undefined ? {} : { inject: declaration.inject }),
+      ...(declaration.external === undefined ? {} : { external: declaration.external }),
+      ...(declaration.immediately === true ? { immediately: true } : {}),
+    })
+  }
+  return orderByModuleGraph([...plugins.values()]).map(({ id }) => {
+    const plugin = plugins.get(id)
+    /* v8 ignore next -- orderByModuleGraph returns the input row identities */
+    if (plugin === undefined) throw new Error(`assembled boot: ordered unknown client package ${id}`)
+    return plugin
+  })
+}
+
+const PLUGINS = loadAssembledPlugins()
 
 const bundles = new Map(PLUGINS.map(plugin => [
   plugin.url,
-  readFileSync(join(process.cwd(), plugin.bundlePath), 'utf8'),
+  readFileSync(plugin.bundlePath, 'utf8'),
 ]))
 
 interface FixtureWindow extends Window {
   __DSH_BOOT__?: { rev: string; entries: WebBootEntry[] }
-  __ModuleLoader__?: unknown
+  __ModuleLoader__?: ClientModuleLoaderTarget
 }
 
 class ResizeObserverStub {
@@ -63,8 +132,13 @@ class ResizeObserverStub {
   unobserve(): void {}
 }
 
+class EventSourceStub {
+  addEventListener(): void {}
+  close(): void {}
+}
+
 const win = window as FixtureWindow
-let unmount: (() => void) | undefined
+let unmount: (() => Promise<void>) | undefined
 
 /**
  * Register the per-test jsdom setup and teardown the assembled boot needs:
@@ -77,13 +151,14 @@ export function installAssembledBootEnv(): void {
     localStorage.clear()
     document.title = 'DeepSeek Harness'
     vi.stubGlobal('ResizeObserver', ResizeObserverStub)
+    vi.stubGlobal('EventSource', EventSourceStub)
     vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) =>
       setTimeout(() => { callback(0) }, 0) as unknown as number)
     vi.stubGlobal('cancelAnimationFrame', (id: number) => { clearTimeout(id) })
   })
 
-  afterEach(() => {
-    act(() => { unmount?.() })
+  afterEach(async () => {
+    await act(async () => { await unmount?.() })
     unmount = undefined
     cleanup()
     delete win.__DSH_BOOT__
@@ -104,13 +179,25 @@ export function installAssembledBootEnv(): void {
 /**
  * Mount the assembled application on the fixture transport; the teardown
  * registered by installAssembledBootEnv disposes it.
+ * @param search - fixture query string used to select deterministic host behavior.
  */
-export function mountAssembledApp(): void {
-  history.replaceState(null, '', '/?fixture')
+export function mountAssembledApp(search = '?fixture'): void {
+  history.replaceState(null, '', `/${search}`)
   const root = document.createElement('div')
   root.id = 'root'
   document.body.appendChild(root)
   win.__DSH_BOOT__ = { rev: 'fx', entries: PLUGINS.map(({ bundlePath: _bundlePath, ...plugin }) => plugin) }
+  const [facadeRow] = bootInjections(win.__DSH_BOOT__)
+  if (facadeRow?.kind !== 'script') throw new Error('missing injected ModuleLoader facade row')
+  ;(0, eval)(facadeRow.text)
+  // Mirror the blocking Host-injected scripts before the Vite entry calls create().
+  for (const id of ['@truly-private/omdsh-client-modules', '@truly-private/omdsh-client-runtime']) {
+    const plugin = PLUGINS.find(candidate => candidate.id === id)
+    if (plugin === undefined) throw new Error(`missing parser-preloaded fixture row ${id}`)
+    const code = bundles.get(plugin.url)
+    if (code === undefined) throw new Error(`missing built bundle ${plugin.url}`)
+    ;(0, eval)(code)
+  }
   act(() => {
     const entry = new AppWebEntry(root, {
       loadBundle: async (url) => {
@@ -120,7 +207,7 @@ export function mountAssembledApp(): void {
       },
     })
     void entry.run()
-    unmount = () => { entry.dispose() }
+    unmount = () => entry.dispose()
   })
 }
 

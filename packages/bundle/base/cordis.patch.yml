@@ -92,16 +92,6 @@
     # page or `settings.yaml` supplies their provider profiles.
     - id: llm-pi-ai
       name: '@truly-private/omdsh-llm-pi-ai'
-      config:
-        providers:
-          9router:
-            displayName: 9Router
-            apiKeyEnv: NINE_ROUTER_API_KEY
-            api: openai-completions
-            baseURL: http://127.0.0.1:20128/v1
-            models:
-              - id: kr/claude-sonnet-4.5
-                name: Claude Sonnet 4.5 (Kiro)
 
     - id: session-persistence-jsonl
       name: '@truly-private/omdsh-session-persistence-jsonl'

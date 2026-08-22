@@ -16,7 +16,7 @@ Vendored Cordis 包与 Landlock 包继续使用 `@deepseek-ai`。它们是独立
 
 首次发布使用从一个 commit 构建并经 clean install 验证的 tarball；该 commit 的 pinned upstream intake 在 `security/upstream-lock.json` 中标记为 `reviewed`。registry 凭据保存在仓库之外。发布脚本按依赖顺序发布，并在跳过已有版本前比较 registry integrity，因此重试不会静默替换不同字节。
 
-本决策只取代[发布序列说明](2026-08-10-npm-release-sequences.md)与[公开依赖序列说明](2026-08-13-public-vendor-and-native-sequences.md)中的 npm scope 和 dsh access 陈述。三发布族拓扑、先 pack 后 publish 的流程以及由 manifest 持有 access 的机制仍然有效。
+本决策只取代[发布序列说明](2026-08-10-npm-release-sequences.zh.md)与[公开依赖序列说明](2026-08-13-public-vendor-and-native-sequences.zh.md)中的 npm scope 和 dsh access 陈述。三发布族拓扑、先 pack 后 publish 的流程以及由 manifest 持有 access 的机制仍然有效。
 
 ## Alternatives considered
 

@@ -4,16 +4,20 @@ import type { Context } from '@deepseek-ai/cordis'
 import commandsRemote from '@truly-private/omdsh-commands/remote'
 import goalsRemote from '@truly-private/omdsh-goal/remote'
 import dynamicRemote from '@truly-private/omdsh-cordis-host-runner/remote'
+import fileReferencesRemote from '@truly-private/omdsh-file-reference/remote'
 import pluginInventoryRemote from '@truly-private/omdsh-host-plugin-inventory/remote'
 import messageFeedbackRemote from '@truly-private/omdsh-message-feedback/remote'
+import sessionReferencesRemote from '@truly-private/omdsh-session-reference/remote'
 import type { TypertClientRemote } from '@truly-private/omdsh-typert-protocol'
 
 export type { TypertClientRemote as ClientRemote } from '@truly-private/omdsh-typert-protocol'
 export type { PluginInventorySnapshot } from '@truly-private/omdsh-host-plugin-inventory/types'
 export type {} from '@truly-private/omdsh-commands/remote'
+export type {} from '@truly-private/omdsh-file-reference/remote'
 export type {} from '@truly-private/omdsh-goal/remote'
 export type {} from '@truly-private/omdsh-host-plugin-inventory/remote'
 export type {} from '@truly-private/omdsh-message-feedback/remote'
+export type {} from '@truly-private/omdsh-session-reference/remote'
 // The forwarded-event allowlist's selection seat: without it in the consumer's
 // compilation face `TypertRemoteEvent` is `never` and every `$on` call fails.
 export type { ApiRemoteForwardedEvent } from '../types.ts'
@@ -86,6 +90,10 @@ export type {
 // reason: a Client contribution names what it sends without importing a Host
 // package, and this assembly is where both planes legitimately meet.
 export type { JsonValue } from '@truly-private/omdsh-session/types'
+// Reference-discovery result vocabulary for the fileReferences and
+// sessionReferenceResolver namespaces.
+export type { FileReferenceCandidate } from '@truly-private/omdsh-file-reference/types'
+export type { SessionReferenceMentionCandidate } from '@truly-private/omdsh-session-reference/types'
 
 declare module '@deepseek-ai/cordis' {
   interface Context {
@@ -106,7 +114,8 @@ export async function apply(ctx: Context): Promise<() => Promise<void>> {
   const disposers: Array<() => Promise<void>> = []
   try {
     for (const contribution of [
-      commandsRemote, goalsRemote, dynamicRemote, pluginInventoryRemote, messageFeedbackRemote,
+      commandsRemote, goalsRemote, dynamicRemote, fileReferencesRemote,
+      pluginInventoryRemote, messageFeedbackRemote, sessionReferencesRemote,
     ]) {
       disposers.push(await ctx.remote.$mount(contribution))
     }

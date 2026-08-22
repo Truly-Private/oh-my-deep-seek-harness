@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write docs/fork/npm-distribution.md
 npm-distribution.md: f962db468e82aebb6b93d5861b6501049d1b0f2e
-npm-distribution.zh.md: c5e0d8e4d57155e1229d676660018b1ba5ff54dc
+npm-distribution.zh.md: c5eae8ff25026f49f2ef6648324852d0a18b657b

@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write integrations/host-bridge/README.md
 README.md: 5113ac214a5ed51ec74b986f9df226450f303c01
-README.zh.md: 276c0c4755eb01b4144f36cb75e1084b10d96a69
+README.zh.md: 306f4f4ff01c19b71bc558e43ccfc2521bbae25e

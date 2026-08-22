@@ -3,6 +3,11 @@
  * promises to honor `exec.signal`; this wrapper arms that deadline and maps its
  * own expiry to `TOOL_TIMEOUT` without racing or abandoning the tool promise.
  *
+ * FIXME: settle the intended `@truly-private/omdsh-timeout-guard` rename before the
+ * first tagged release — suggestion only, aligning the name with its `guard/`
+ * home; decide at resolution time
+ * ([regrouping Agent Note](../../../../.agents/notes/implemented/architecture/2026-07-29-package-regrouping.md)).
+ *
  * @module @truly-private/omdsh-tool-call-timeout-policy
  */
 

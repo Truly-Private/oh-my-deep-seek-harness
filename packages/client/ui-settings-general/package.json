@@ -48,7 +48,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@truly-private/omdsh-settings": "workspace:^",
     "@deepseek-ai/schemastery": "workspace:^",
     "clsx": "^2.0.0"
   },
@@ -57,29 +56,27 @@
     "@truly-private/omdsh-client-connection": "workspace:^",
     "@truly-private/omdsh-client-locale": "workspace:^",
     "@truly-private/omdsh-client-runtime": "workspace:^",
-    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
     "@truly-private/omdsh-client-ui-settings": "workspace:^",
     "@truly-private/omdsh-client-ui-sidebar": "workspace:^",
-    "@truly-private/omdsh-client-ui-slots": "workspace:^",
-    "@truly-private/omdsh-client-web-react": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^",
-    "react": "^18.2.0"
+    "@truly-private/omdsh-settings": "workspace:^"
   },
   "devDependencies": {
     "@truly-private/omdsh-api-remotes": "workspace:^",
     "@truly-private/omdsh-client-connection": "workspace:^",
     "@truly-private/omdsh-client-locale": "workspace:^",
     "@truly-private/omdsh-client-runtime": "workspace:^",
+    "@truly-private/omdsh-client-test-runtime": "workspace:^",
     "@truly-private/omdsh-client-ui-primitives": "workspace:^",
     "@truly-private/omdsh-client-ui-settings": "workspace:^",
     "@truly-private/omdsh-client-ui-sidebar": "workspace:^",
     "@truly-private/omdsh-client-ui-slots": "workspace:^",
-    "@truly-private/omdsh-client-web-react": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^",
     "@types/react": "~18.3.1",
-    "react": "^18.2.0"
+    "react": "^18.2.0",
+    "@truly-private/omdsh-settings": "workspace:^"
   },
   "files": [
     "lib/index.js",

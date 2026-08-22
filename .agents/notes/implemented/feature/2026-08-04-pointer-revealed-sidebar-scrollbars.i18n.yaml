@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-08-04-pointer-revealed-sidebar-scrollbars.md
 2026-08-04-pointer-revealed-sidebar-scrollbars.md: e933cc7793c13719613d4fb06e46593a89438730
-2026-08-04-pointer-revealed-sidebar-scrollbars.zh.md: dfc18b01872a8a0c3989afb02cf61d130201e66a
+2026-08-04-pointer-revealed-sidebar-scrollbars.zh.md: dd9528fec4bd24a53b17ecf888a9af03d457ce0e

@@ -14,7 +14,7 @@ The command prints the Web UI URL; the default is `http://127.0.0.1:3080`. The `
 
 ## Configure a model
 
-On first launch, paste the endpoint key into **Connect 9Router to get started**. The shipped first-party route already uses `http://127.0.0.1:20128/v1`, `openai-completions`, `NINE_ROUTER_API_KEY`, and the starter model `kr/claude-sonnet-4.5`. To use another model or combo, open **Settings → Models → 9Router → Edit**, fetch the available models, and apply the exact ID. No server restart is required.
+Open **Settings → Models**, enter a [DeepSeek API key](https://platform.deepseek.com/), and save it. The model route becomes usable immediately without restarting the server.
 
 The [model configuration guide](./providers.md) covers other providers and custom OpenAI-compatible endpoints.
 
@@ -35,4 +35,4 @@ The agent can read and edit workspace files, run commands, delegate work, and ma
 - [Configure models](./providers.md)
 - [Use the Python SDK](./python-sdk.md)
 - [Use other CLI modes](../../../apps/cli/README.md)
-- [Develop a plugin](../develop/basic/)
+- [Develop a plugin](../develop/basic/index.md)

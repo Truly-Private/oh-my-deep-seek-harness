@@ -13,6 +13,9 @@ import type { TodoItem } from '@truly-private/omdsh-session/types'
 export type { TodoItem } from '@truly-private/omdsh-session/types'
 
 declare module '@truly-private/omdsh-session-projection/types' {
+  interface SessionProjectionStateMap {
+    todos: TodoItem[] | null
+  }
   interface SessionProjectionMap {
     /**
      * The agent's current whole todo list (the latest `todo/write` snapshot),

@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write docs/fork/integrations.md
 integrations.md: 876391b68f0802b0390488eeedf9f292f9df3de9
-integrations.zh.md: 35b08cafac1e56d658b4e4be067adadbb69c19c2
+integrations.zh.md: 022f10b2917d6b22272e9e3695fcb1cbfc664416

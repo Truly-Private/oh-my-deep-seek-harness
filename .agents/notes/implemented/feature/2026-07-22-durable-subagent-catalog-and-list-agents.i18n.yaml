@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-07-22-durable-subagent-catalog-and-list-agents.md
 2026-07-22-durable-subagent-catalog-and-list-agents.md: 69e5d52afdf0897f255f2343ca809cb37615f50f
-2026-07-22-durable-subagent-catalog-and-list-agents.zh.md: 919c13ebb2ac89e12f7f858f3c4143bf9732c9ea
+2026-07-22-durable-subagent-catalog-and-list-agents.zh.md: 0f2e632a25e8ec0a576e5bf5760ba5614d078102

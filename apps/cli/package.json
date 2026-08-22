@@ -59,6 +59,7 @@
     "@truly-private/omdsh-tool-ask-user": "workspace:^",
     "@truly-private/omdsh-tool-bash": "workspace:^",
     "@truly-private/omdsh-tool-bash-persistent": "workspace:^",
+    "@truly-private/omdsh-tool-pwsh-persistent": "workspace:^",
     "@truly-private/omdsh-tool-cordis": "workspace:^",
     "@truly-private/omdsh-tool-fs": "workspace:^",
     "@truly-private/omdsh-tool-fs-search": "workspace:^",

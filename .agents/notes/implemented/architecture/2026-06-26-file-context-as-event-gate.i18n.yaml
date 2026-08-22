@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/architecture/2026-06-26-file-context-as-event-gate.md
 2026-06-26-file-context-as-event-gate.md: b44e3f33b8dbc106e49ac0fc2bc89b9913a91f82
-2026-06-26-file-context-as-event-gate.zh.md: 5adc3cc203aea375ca5f214b79220189bc16dc47
+2026-06-26-file-context-as-event-gate.zh.md: faacc9aac48545ea8ec1cdb5216298b3f14c89f8

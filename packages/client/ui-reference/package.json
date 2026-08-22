@@ -1,0 +1,77 @@
+{
+  "name": "@truly-private/omdsh-client-ui-reference",
+  "description": "Unified Web @file and @session reference source",
+  "version": "0.0.2",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Truly-Private/oh-my-deepseek-harness.git",
+    "directory": "packages/client/ui-reference"
+  },
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./invariant": {
+      "types": "./lib/types/invariant.d.ts",
+      "default": "./lib/invariant.js"
+    },
+    "./client": {
+      "types": "./lib/types/client/index.d.ts",
+      "default": "./lib/client.js"
+    },
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "client": {
+      "inject": [
+        "@truly-private/omdsh-client-runtime",
+        "@truly-private/omdsh-api-remotes",
+        "@truly-private/omdsh-client-locale",
+        "@truly-private/omdsh-client-ui-input-trigger"
+      ],
+      "platform": "web"
+    }
+  },
+  "scripts": {
+    "bundle": "tsdown",
+    "watch": "tsdown --watch"
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "@truly-private/omdsh-api-remotes": "workspace:^",
+    "@truly-private/omdsh-client-locale": "workspace:^",
+    "@truly-private/omdsh-client-runtime": "workspace:^",
+    "@truly-private/omdsh-client-ui-input-trigger": "workspace:^",
+    "@truly-private/omdsh-file-reference": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-session-reference": "workspace:^",
+    "@truly-private/omdsh-typert-protocol": "workspace:^",
+    "@deepseek-ai/cordis": "workspace:^"
+  },
+  "devDependencies": {
+    "@truly-private/omdsh-api-remotes": "workspace:^",
+    "@truly-private/omdsh-client-locale": "workspace:^",
+    "@truly-private/omdsh-client-runtime": "workspace:^",
+    "@truly-private/omdsh-client-ui-input-trigger": "workspace:^",
+    "@truly-private/omdsh-client-ui-slots": "workspace:^",
+    "@truly-private/omdsh-file-reference": "workspace:^",
+    "@truly-private/omdsh-invariants": "workspace:^",
+    "@truly-private/omdsh-session-reference": "workspace:^",
+    "@truly-private/omdsh-typert-protocol": "workspace:^",
+    "@deepseek-ai/cordis": "workspace:^"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/invariant.js",
+    "lib/client.js",
+    "lib/types/**/*.d.ts"
+  ]
+}

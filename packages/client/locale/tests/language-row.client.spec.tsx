@@ -4,7 +4,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { createSnapshotStore, type SessionListState, type WorkspaceListState } from '@truly-private/omdsh-client-runtime/client'
-import { bindSnapshotSelector } from '@truly-private/omdsh-client-web-react'
+import { bindSnapshotSelector } from '@truly-private/omdsh-client-test-runtime'
 import { LanguageRow } from '../src/client/LanguageRow.tsx'
 import type { LanguageRowComponentProps } from '../src/client/LanguageRow.tsx'
 import { createLanguageRowStore } from '../src/client/settings-store.ts'

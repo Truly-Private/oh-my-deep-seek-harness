@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/simplification/2026-08-11-remove-sdk-project-toolchain.md
 2026-08-11-remove-sdk-project-toolchain.md: 8e364dad81f222d39cb141d21cacedcd47971db0
-2026-08-11-remove-sdk-project-toolchain.zh.md: 5786e6357296fc69fa133e3a1a6b24cd458d3f45
+2026-08-11-remove-sdk-project-toolchain.zh.md: 8fbdf72e480a599bf44795ad5dd78f8ff8d49bb0

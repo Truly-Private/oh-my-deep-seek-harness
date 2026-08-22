@@ -178,7 +178,7 @@ describe('dsh web keyless CLI smoke', () => {
     const tsxLoader = pathToFileURL(createRequire(join(REPO_ROOT, 'package.json')).resolve('tsx')).href
     const child = spawn(
       process.execPath,
-      ['--import', tsxLoader, join(REPO_ROOT, 'apps/cli/src/bin.ts'), 'web', '--port', '0'],
+      ['--import', tsxLoader, join(REPO_ROOT, 'apps/cli/src/bin.ts'), 'web', '--no-open', '--port', '0'],
       {
         cwd: sessionsDir,
         env: {
@@ -246,7 +246,7 @@ describe('dsh web keyless CLI smoke', () => {
     const tsxLoader = pathToFileURL(createRequire(join(REPO_ROOT, 'package.json')).resolve('tsx')).href
     const child = spawn(
       process.execPath,
-      ['--import', tsxLoader, join(REPO_ROOT, 'apps/cli/src/bin.ts'), 'web', '--port', '0'],
+      ['--import', tsxLoader, join(REPO_ROOT, 'apps/cli/src/bin.ts'), 'web', '--no-open', '--port', '0'],
       {
         cwd: workspace,
         env: {
@@ -364,7 +364,7 @@ describe('dsh web keyless CLI smoke', () => {
     const tsxLoader = pathToFileURL(createRequire(join(REPO_ROOT, 'package.json')).resolve('tsx')).href
     const child = spawn(
       process.execPath,
-      ['--import', tsxLoader, join(REPO_ROOT, 'apps/cli/src/bin.ts'), 'web', '--port', '0'],
+      ['--import', tsxLoader, join(REPO_ROOT, 'apps/cli/src/bin.ts'), 'web', '--no-open', '--port', '0'],
       {
         cwd: workspace,
         env: {
@@ -396,7 +396,7 @@ describe('dsh web keyless CLI smoke', () => {
         turn: 1,
         step: 1,
         retry: 1,
-        maxRetries: 2,
+        maxRetries: 5,
         failure: { code: 'TRANSPORT' },
       })
       expect(JSON.stringify(page.events)).toContain('WEB_RETRY_DISCARDED')
@@ -447,7 +447,7 @@ describe('dsh web keyless CLI smoke', () => {
     const tsxLoader = pathToFileURL(createRequire(join(REPO_ROOT, 'package.json')).resolve('tsx')).href
     const child = spawn(
       process.execPath,
-      ['--import', tsxLoader, join(REPO_ROOT, 'apps/cli/src/bin.ts'), 'web', '--port', '0'],
+      ['--import', tsxLoader, join(REPO_ROOT, 'apps/cli/src/bin.ts'), 'web', '--no-open', '--port', '0'],
       {
         cwd: workspace,
         env: {
@@ -516,6 +516,7 @@ describe.skipIf(!process.env.NINE_ROUTER_API_KEY || notReady.length > 0)('web sm
         // Pin the in-browser picker: the shipped `-auto` row would resolve to
         // the native OS chooser on this bind, and no page can drive that.
         '--patch', fileURLToPath(new URL('./pin-browse-picker.overlay.yml', import.meta.url)),
+        '--no-open',
         '--port', String(port),
       ],
       {
@@ -565,6 +566,7 @@ describe.skipIf(!process.env.NINE_ROUTER_API_KEY || notReady.length > 0)('web sm
     await connectFreshWorkspace(page, sessionsDir)
     const input = page.locator('textarea').first()
     await input.waitFor({ timeout: 10_000 })
+    const productTitle = await page.title()
     await screen(page, '02-empty-state')
     const prompt = `Please answer this request carefully: explain event sourcing in two sentences, ending with exactly ${ROUND_DONE_MARKER}.`
     await input.fill(prompt)
@@ -574,8 +576,8 @@ describe.skipIf(!process.env.NINE_ROUTER_API_KEY || notReady.length > 0)('web sm
     await page.waitForFunction(() => document.body.innerText.length > 50, undefined, { timeout: 15_000 })
     expect(pageErrors).toEqual([])
     await page.waitForFunction(
-      () => document.title !== 'DeepSeek Harness' && document.title.endsWith(' — DeepSeek Harness'),
-      undefined,
+      expected => document.title !== expected && document.title.endsWith(` — ${expected}`),
+      productTitle,
       { timeout: 15_000 },
     )
     await expect.poll(async () => (await rpc<{ items: { sessionId: string }[] }>(baseUrl, 'session.list', {})).items.length, {
@@ -586,8 +588,8 @@ describe.skipIf(!process.env.NINE_ROUTER_API_KEY || notReady.length > 0)('web sm
     if (sessionId === undefined) throw new Error('created Web session was not listed')
     const durableTitle = await waitForProviderTitle(baseUrl, sessionId)
     await page.waitForFunction(
-      expected => document.title === `${expected} — DeepSeek Harness`,
-      durableTitle,
+      ({ expected, product }) => document.title === `${expected} — ${product}`,
+      { expected: durableTitle, product: productTitle },
       { timeout: 15_000 },
     )
     const sessionTree = page.getByRole('tree', { name: 'Sessions' })

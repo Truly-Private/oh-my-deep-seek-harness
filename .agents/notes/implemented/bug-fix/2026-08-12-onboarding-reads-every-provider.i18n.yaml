@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/bug-fix/2026-08-12-onboarding-reads-every-provider.md
 2026-08-12-onboarding-reads-every-provider.md: 0f9553bded8233151e9effa9c91b2cf034ff723d
-2026-08-12-onboarding-reads-every-provider.zh.md: 3e7852a650de77cbe1674b53e05d94f1dcb00daa
+2026-08-12-onboarding-reads-every-provider.zh.md: 5c1a4f8307efe3cf07fb5ed7b6632ff1660d1dbb

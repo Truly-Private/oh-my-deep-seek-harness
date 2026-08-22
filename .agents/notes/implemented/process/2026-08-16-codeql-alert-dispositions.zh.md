@@ -16,7 +16,7 @@ CodeQL 工作流成功只表示 GitHub 接受了分析结果，并不表示结�
 
 GitHub 处置只有在报告路径属于测试或 fixture 且不存在生产可达性时，才使用 `used in tests`。`false positive` 必须记录为何查询所建模的安全属性并不存在。`won't fix` 只用于有意提供的可执行代码能力，而且其信任假设与隔离限制已经属于面向用户的约定。工作流通过、位置继承自上游或输入在本地受信任，本身都不足以完成处置。查询套件保持启用，工作流不会通过宽泛排除路径来隐藏已复核发现。
 
-CodeQL 证据不会把 [`security/upstream-lock.json`](../../../../security/upstream-lock.json) 从 `candidate` 改为其他状态。依照[经复核下游接纳决策](2026-08-15-reviewed-downstream-intake.md)，`reviewed` 状态仍要求完整的提交匹配证据与维护者批准。
+CodeQL 证据不会把 [`security/upstream-lock.json`](../../../../security/upstream-lock.json) 从 `candidate` 改为其他状态。依照[经复核下游接纳决策](2026-08-15-reviewed-downstream-intake.zh.md)，`reviewed` 状态仍要求完整的提交匹配证据与维护者批准。
 
 ## Alternatives considered
 

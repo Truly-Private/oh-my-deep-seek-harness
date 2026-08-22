@@ -15,9 +15,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, waitFor, within } from '@testing-library/react'
 import type { ISession, SessionId, WorkspaceId } from '@truly-private/omdsh-client-runtime/client'
 import type { PropsRenderSlots } from '@truly-private/omdsh-client-ui-slots'
-import { SlotTestRuntime } from '@truly-private/omdsh-client-test-runtime'
+import { SlotTestRuntime, usePinnedBrowserLanguages } from '@truly-private/omdsh-client-test-runtime'
 import { LocaleRuntime } from '@truly-private/omdsh-client-locale/client'
 import { apply, inject } from '@truly-private/omdsh-client-ui-workspace/client'
+
+// The service reads its initial locale from the browser; these specs assert
+// the shipped Chinese copy, so they state the browser they assume.
+usePinnedBrowserLanguages('zh-CN')
 
 const SID = 's1' as SessionId
 
@@ -27,6 +31,9 @@ beforeEach(() => { localStorage.clear() })
 /** Runtime with the locale face installed and Chinese selected for these copy assertions. */
 async function createRuntime(): Promise<SlotTestRuntime> {
   const runtime = await SlotTestRuntime.create()
+  runtime.provide('connection', {
+    hostDescription: { getSnapshot: () => undefined, subscribe: () => () => {} },
+  })
   const locale = new LocaleRuntime(runtime.ctx)
   locale.setLocale('zh')
   runtime.provide('locale', locale)

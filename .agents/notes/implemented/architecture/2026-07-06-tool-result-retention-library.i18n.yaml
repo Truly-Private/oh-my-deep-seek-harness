@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/architecture/2026-07-06-tool-result-retention-library.md
 2026-07-06-tool-result-retention-library.md: cca83b332cd9df37546ecde92d1818f3024a5063
-2026-07-06-tool-result-retention-library.zh.md: 110e0531cbff70167b545d891d6a9d391551eab0
+2026-07-06-tool-result-retention-library.zh.md: a80b9cf872f190ff2a97fecd75eaa6b908915f05

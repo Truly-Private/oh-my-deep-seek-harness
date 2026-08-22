@@ -4,7 +4,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, render } from '@testing-library/react'
 import { createSnapshotStore } from '@truly-private/omdsh-client-runtime/client'
-import { bindSnapshotSelector } from '@truly-private/omdsh-client-web-react'
+import { bindSnapshotSelector } from '@truly-private/omdsh-client-test-runtime'
 import type { RunningToolCall, SessionId, SessionListState, ToolResultNode } from '@truly-private/omdsh-client-runtime/client'
 import { makeTranslate } from '@truly-private/omdsh-client-test-runtime'
 import { zh as commonZh } from '@truly-private/omdsh-client-locale/src/locales/zh.ts'

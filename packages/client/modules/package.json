@@ -55,6 +55,8 @@
   ],
   "peerDependencies": {
     "@truly-private/omdsh-invariants": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^"
+    "@deepseek-ai/cordis": "workspace:^",
+    "@deepseek-ai/cordis-plugin-loader": "workspace:^",
+    "@truly-private/omdsh-host-webserver": "workspace:^"
   }
 }

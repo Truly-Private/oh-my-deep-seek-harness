@@ -13,6 +13,7 @@ import { describe, expect, it } from 'vitest'
 import { SlotRegistry, type SessionId } from '@truly-private/omdsh-client-runtime/client'
 import { LocaleRuntime } from '@truly-private/omdsh-client-locale/client'
 import { TestRemote } from '@truly-private/omdsh-client-test-runtime'
+import { apply as settingsApply, inject as settingsInject } from '@truly-private/omdsh-client-ui-settings/client'
 import type { CommandDecoration } from '@truly-private/omdsh-client-ui-commands/client'
 import type { PermissionSelect } from '@truly-private/omdsh-permission-presets/client'
 import {
@@ -58,6 +59,7 @@ async function bench() {
       },
     },
   } as never)
+  await ctx.plugin({ inject: [...settingsInject], apply: settingsApply }).await()
   let decoration: CommandDecoration | undefined
   ctx.provide('commandUi', {
     decorate(c: CommandDecoration) {

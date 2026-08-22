@@ -21,13 +21,13 @@ typed locale 标准席位（`locale:` 注册声明 → 框架注入强类型 `t`
 - **错误/失败类字符串一律英文**：client 自产的兜底串（`command failed`、plan 切换失败）、RpcError 消息、wire 透出的 `error.message (code)` 原样呈现。
 - **设计字面量不进字典**：工具行 variant 标题（Think/Bash/…）、SYSTEM/USER 类 kind 徽标、Plan chip 字标、整个 StatsLine——中英界面显示一致。
 - **ui-trajectory 整包缓做**（开发者检查面，术语密集，单独裁决）。
-- **boot 文案保持硬编码**（AppRoot 渲染早于 locale 服务可用）。
+- **boot 文案保持硬编码**（不依赖框架的启动页运行早于 locale 服务可用）。
 
 **派生层保持纯函数，本地化只在渲染层**：ui-workspace 的 `relativeTime` 返回结构化 `{unit, n}` 由渲染组合字典模板；blank 会话/未分组桶的存储标题不变，渲染按 `blank` 标志/`workspaceId` 缺席替换本地化文案；**搜索态 blank 行一律排除**（双语标题无法与单语查询稳定匹配）。日期不引 Intl：格式模板进字典（消息时钟 `clock.md`/`clock.ymd`，workspace hover `date.ymd`），格式化函数吃 `t` 参数保持纯。
 
-**测试与 e2e 口径**：`makeTranslate(...dicts)`（dsh-client-test-runtime）镜像服务查找链（首个命中字典胜出、key 回退、`{name}` 插值），组件测试的 `t` 桩统一使用它，并以真实 props 席位定型。Web e2e 的英文场景通过 `newEnglishPage` 打开；中文场景则在浏览器启动前显式写入 Host locale 偏好。浏览器语言不参与产品默认值的选择（[由 Host 持久化的 Web 偏好](../bug-fix/2026-08-06-host-backed-web-preferences.md)）。
+**测试与 e2e 口径**：`makeTranslate(...dicts)`（dsh-client-test-runtime）镜像服务查找链（首个命中字典胜出、key 兜底、`{name}` 插值），组件测试的 `t` 桩统一用它并以真实 props 席位定型。web e2e 统一通过 `newEnglishPage` 处理英文场景；中文场景则会在浏览器启动前显式写入 Host locale 偏好，浏览器语言不再决定产品默认值（[Host 支持的 Web 偏好](../bug-fix/2026-08-06-host-backed-web-preferences.zh.md)）。
 
-[settings/locale/theme 分层 Note](../../proposed/architecture/2026-07-25-client-settings-locale-theme.md) 中「apply 层订阅 `locale/change` 重注册刷新 label」的机制已被本决定取代（thunk + revision 生命周期）。
+[settings/locale/theme 分层 Note](../../proposed/architecture/2026-07-25-client-settings-locale-theme.zh.md) 中「apply 层订阅 `locale/change` 重注册刷新 label」的机制已被本决定取代（thunk + revision 生命周期）。
 
 ## Alternatives considered
 
@@ -42,4 +42,4 @@ typed locale 标准席位（`locale:` 注册声明 → 框架注入强类型 `t`
 - 语言切换全 UI 即时刷新且零重注册；新包接入 = 字典 + declare-merge + `locale: NS` 三步，无手写胶水。
 - 代价：list label 的消费方必须知道 `resolveSlotLabel`（裸读 `options.label` 现在可能拿到函数）；类型上 `SlotLabel` 已挡住多数误用。
 - ui-primitives 的中文默认值在英文语言下依旧是中文，**直到消费方传入 labels**——未迁移的 JsonTree 消费方（ui-trajectory）显示其英文默认值，恰好符合其整包英文现状。
-- e2e 英文钉死意味着 zh 默认态主要靠包级组件测试与 settings 语言切换用例覆盖，浏览器 e2e 不再验证 zh 文案。
+- e2e 英文钉死意味着 zh 文案面主要靠包级组件测试与 settings 语言切换用例覆盖，浏览器 e2e 不再验证 zh 文案。开场/回落 locale（声明了本应用都不支持语言的浏览器，或非浏览器运行）是 `en` 而非 `zh`，见 [browser-derived initial locale](../../archived/feature/2026-07-31-browser-derived-initial-locale.md)。

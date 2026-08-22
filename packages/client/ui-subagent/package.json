@@ -46,16 +46,11 @@
     "watch": "tsdown --watch"
   },
   "license": "MIT",
-  "dependencies": {
-    "react": "^18.2.0"
-  },
   "peerDependencies": {
     "@truly-private/omdsh-client-locale": "workspace:^",
     "@truly-private/omdsh-client-runtime": "workspace:^",
     "@truly-private/omdsh-client-ui-conversation": "workspace:^",
-    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
     "@truly-private/omdsh-client-ui-input-trigger": "workspace:^",
-    "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@truly-private/omdsh-subagent": "workspace:^",
     "@truly-private/omdsh-token-meter": "workspace:^",
@@ -66,14 +61,17 @@
     "@truly-private/omdsh-client-runtime": "workspace:^",
     "@truly-private/omdsh-client-test-runtime": "workspace:^",
     "@truly-private/omdsh-client-ui-conversation": "workspace:^",
-    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
     "@truly-private/omdsh-client-ui-input-trigger": "workspace:^",
+    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
     "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@truly-private/omdsh-subagent": "workspace:^",
     "@truly-private/omdsh-token-meter": "workspace:^",
     "@types/react": "~18.3.1",
-    "@deepseek-ai/cordis": "workspace:^"
+    "@types/react-dom": "~18.3.0",
+    "@deepseek-ai/cordis": "workspace:^",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "files": [
     "lib/index.js",

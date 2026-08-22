@@ -13,6 +13,9 @@
 export {}
 
 declare module '@truly-private/omdsh-session-projection/types' {
+  interface SessionProjectionStateMap {
+    title: string | null
+  }
   interface SessionProjectionMap {
     /**
      * The session's current normalized title — the latest `session/title`

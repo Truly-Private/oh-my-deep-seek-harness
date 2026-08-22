@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/process/2026-08-20-downstream-npm-scope.md
 2026-08-20-downstream-npm-scope.md: 9b1de89963eca12312773de855a730a97cee76be
-2026-08-20-downstream-npm-scope.zh.md: 6fdff8ae99b55ce4824eecf62ba5059e403cfc37
+2026-08-20-downstream-npm-scope.zh.md: 56790156fea13794218a5508633d9a463fe5f36e

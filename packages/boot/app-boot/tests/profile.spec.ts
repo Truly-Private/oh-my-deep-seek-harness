@@ -83,7 +83,7 @@ describe('initProfile', () => {
       throw denied
     })
     expect(() => {
-      initProfile(dir, ['@deepseek-ai/dsh-base'])
+      initProfile(dir, ['@truly-private/omdsh-base'])
     }).toThrow(denied)
   })
 })

@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write packages/session/session-telemetry-otel/README.md
 README.md: ed4882bce01bc8787233c115550b7cd2dc6bc584
-README.zh.md: ac5c104011fd47ce868f185c5ef4292cfa8f5f99
+README.zh.md: 1870df72cdae320373d867a75aed56a23962687e

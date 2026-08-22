@@ -45,15 +45,11 @@
     "watch": "tsdown --watch"
   },
   "license": "MIT",
-  "dependencies": {
-    "react": "^18.2.0"
-  },
   "peerDependencies": {
     "@truly-private/omdsh-client-connection": "workspace:^",
     "@truly-private/omdsh-client-locale": "workspace:^",
     "@truly-private/omdsh-client-runtime": "workspace:^",
     "@truly-private/omdsh-client-ui-conversation": "workspace:^",
-    "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@truly-private/omdsh-system-prompt": "workspace:^",
     "@deepseek-ai/cordis": "workspace:^"
@@ -68,7 +64,9 @@
     "@truly-private/omdsh-invariants": "workspace:^",
     "@truly-private/omdsh-system-prompt": "workspace:^",
     "@types/react": "~18.3.1",
-    "@deepseek-ai/cordis": "workspace:^"
+    "@deepseek-ai/cordis": "workspace:^",
+    "react": "^18.2.0",
+    "@truly-private/omdsh-client-ui-primitives": "workspace:^"
   },
   "files": [
     "lib/index.js",

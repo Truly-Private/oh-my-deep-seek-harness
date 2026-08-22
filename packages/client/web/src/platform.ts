@@ -8,10 +8,12 @@
 export const PLATFORM_MODULES = [
   'react', 'react/jsx-runtime', 'react-dom', 'react-dom/client', '@deepseek-ai/cordis',
   '@truly-private/omdsh-client-ui-slots',
-  '@truly-private/omdsh-client-web-react',
   '@truly-private/omdsh-client-ui-primitives',
-  '@truly-private/omdsh-client-ui-attachment',
-  '@truly-private/omdsh-client-schema-form',
+] as const
+
+/** Client-bundle specifiers whose factories the parser preloads before the shell starts. */
+export const PRELOADED_CLIENT_EXTERNALS = [
+  '@truly-private/omdsh-client-runtime/client',
 ] as const
 
 /** One platform module specifier (a seed-table key). */

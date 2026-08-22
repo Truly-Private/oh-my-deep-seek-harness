@@ -2,13 +2,13 @@
 
 Status: implemented
 
-后续的[下游 npm scope 决策](2026-08-20-downstream-npm-scope.md)把 dsh 发布族改为 `@truly-private` 下的公开包；本文仍说明公开依赖族与由 manifest 持有 access 的理由。
+后续的[下游 npm scope 决策](2026-08-20-downstream-npm-scope.zh.md)把 dsh 发布族改为 `@truly-private` 下的公开包；本文仍说明公开依赖族与由 manifest 持有 access 的理由。
 
 [English](2026-08-13-public-vendor-and-native-sequences.md) | 中文
 
 ## Problem
 
-[三条发布序列](2026-08-10-npm-release-sequences.md)交付时带的是 `publishConfig.access: restricted`,因此发到 `@deepseek-ai` scope 的每个包只在组织内可见。五次排练发布都是这样跑的:`dsh@0.0.1-rc.5`、vendor 的 `*-rc.4`、`landlock-run@0.0.1`。
+[三条发布序列](2026-08-10-npm-release-sequences.zh.md)交付时带的是 `publishConfig.access: restricted`,因此发到 `@deepseek-ai` scope 的每个包只在组织内可见。五次排练发布都是这样跑的:`dsh@0.0.1-rc.5`、vendor 的 `*-rc.4`、`landlock-run@0.0.1`。
 
 真正卡住公开消费者的是**受限的依赖**。每个 harness 包都把 vendored 框架声明成 `peerDependency`,`dsh-sandbox-local` 把 Landlock 入口声明成 `dependency`。一个公开包若要求一个受限包,组织外的人根本装不上;所以这两条序列必须先公开,dsh 族才可能公开 —— 而在 dsh 族仍受限期间,它们也正是外部消费者唯一需要解析到的两条。
 

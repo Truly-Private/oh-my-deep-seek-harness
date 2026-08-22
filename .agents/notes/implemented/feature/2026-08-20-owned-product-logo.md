@@ -10,7 +10,7 @@ The Web sidebar, empty-state hero, favicon, and install manifest used the upstre
 
 ## Decision
 
-The Web application serves the supplied cowboy-riding-a-whale artwork as `apps/web/public/omdsh-logo.jpg`. A centered mechanical crop removes unused paper margin without redrawing the artwork. `BrandLogo` in `@truly-private/omdsh-client-ui-primitives` renders that asset in both the expanded and collapsed sidebar and in the empty-state hero. A square padded derivative at `apps/web/public/omdsh-icon.jpg` supplies the favicon and install-manifest icon.
+The Web application serves the supplied cowboy-riding-a-whale artwork as `apps/web/public/omdsh-logo.jpg`. A centered mechanical crop removes unused paper margin without redrawing the artwork. `BrandLogo` in `@truly-private/omdsh-client-ui-primitives` renders that asset. `@truly-private/omdsh-client-ui-brand-official` fills the generic sidebar and empty-state hero slots with that logo and the oh-my-deepseek-harness name. A square padded derivative at `apps/web/public/omdsh-icon.jpg` supplies the favicon and install-manifest icon.
 
 The image remains decorative in labeled controls and beside the hero heading, so it uses an empty alternative text and `aria-hidden`. The visible source and browser icon derive from the same supplied artwork.
 

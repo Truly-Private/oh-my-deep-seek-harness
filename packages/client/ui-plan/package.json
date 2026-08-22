@@ -49,12 +49,9 @@
     "@truly-private/omdsh-client-locale": "workspace:^",
     "@truly-private/omdsh-client-runtime": "workspace:^",
     "@truly-private/omdsh-client-ui-conversation": "workspace:^",
-    "@truly-private/omdsh-client-ui-primitives": "workspace:^",
-    "@truly-private/omdsh-client-ui-slots": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@truly-private/omdsh-plan-mode": "workspace:^",
-    "@deepseek-ai/cordis": "workspace:^",
-    "react": "^18.2.0"
+    "@deepseek-ai/cordis": "workspace:^"
   },
   "devDependencies": {
     "@truly-private/omdsh-api-remotes": "workspace:^",
@@ -64,7 +61,6 @@
     "@truly-private/omdsh-client-ui-conversation": "workspace:^",
     "@truly-private/omdsh-client-ui-primitives": "workspace:^",
     "@truly-private/omdsh-client-ui-slots": "workspace:^",
-    "@truly-private/omdsh-client-web-react": "workspace:^",
     "@truly-private/omdsh-invariants": "workspace:^",
     "@truly-private/omdsh-plan-mode": "workspace:^",
     "@types/react": "~18.3.1",
