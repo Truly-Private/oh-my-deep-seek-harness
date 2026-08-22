@@ -99,8 +99,8 @@ interface DeepSeekDefaultsServer {
   close(): Promise<void>
 }
 
-const DEEPSEEK_DEFAULTS_KEEP_ALIVE_INTERVAL_MS = 100
-const DEEPSEEK_DEFAULTS_KEEP_ALIVE_COUNT = 11
+const DEEPSEEK_DEFAULTS_KEEP_ALIVE_INTERVAL_MS = 10
+const DEEPSEEK_DEFAULTS_KEEP_ALIVE_COUNT = 20
 
 /** Serve one deterministic DeepSeek-compatible response while retaining its request body. */
 async function deepseekDefaultsServer(): Promise<DeepSeekDefaultsServer> {

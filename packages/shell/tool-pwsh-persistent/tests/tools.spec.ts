@@ -92,6 +92,7 @@ type StubMode =
   | 'end-only'
   | 'init-exit'
   | 'init-timeout'
+  | 'init-prompt-after-idle'
   | 'spawn-error'
   | 'send-error'
   | 'prompt-after-idle'
@@ -116,6 +117,7 @@ class StubTerminalSession implements TerminalBackendSession {
   pendingText = ''
   historyTruncated = false
   throwOnSend = false
+  initializationPending = false
 
   constructor(mode: StubMode) {
     this.mode = mode
@@ -131,6 +133,16 @@ class StubTerminalSession implements TerminalBackendSession {
       if (this.mode === 'init-timeout') {
         return this.operation(Promise.resolve(this.result('', 'timeout')))
       }
+      if (this.mode === 'init-prompt-after-idle') {
+        this.initializationPending = true
+        this.scrollback = request.text
+        return this.operation(Promise.resolve(this.result(request.text, 'inferred_idle')))
+      }
+      return this.operation(Promise.resolve(this.result(this.motd, 'stdin_read')))
+    }
+    if (this.initializationPending) {
+      this.initializationPending = false
+      this.scrollback += `\n${this.motd}`
       return this.operation(Promise.resolve(this.result(this.motd, 'stdin_read')))
     }
     if (this.mode === 'send-error') throw new Error('stub send failed')
@@ -561,6 +573,13 @@ describe('tool-pwsh-persistent', () => {
       expect(stub.sessions[0]?.closed).toContain('persistent pwsh initialization failed')
     },
   )
+
+  it('waits past an echoed prompt bootstrap until the private prompt is ready', async () => {
+    const { ctx, owner, stub } = await setup({ backendType: 'stub' }, 'init-prompt-after-idle')
+
+    expect(text(await call(ctx, owner, 'pwd'))).toBe('hello from stub')
+    expect(stub.sessions[0]?.sends).toBe(3)
+  })
 
   it('clears a failed spawn without trying to close an unpublished shell', async () => {
     const { ctx, owner, stub } = await setup({ backendType: 'stub' }, 'spawn-error')

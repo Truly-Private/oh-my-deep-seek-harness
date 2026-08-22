@@ -126,7 +126,7 @@ const SHIPPED_PRESET_DIR = join(REPO_ROOT, 'apps/cli/config/agent-presets')
 const REPLAY_PROVIDERS = [{
   id: '9router',
   name: '9Router',
-  models: [{ id: 'kr/claude-sonnet-4.5', name: 'Claude Sonnet 4.5 (Kiro)', contextWindow: 128_000 }],
+  models: [{ id: 'trifecta', name: 'Trifecta', contextWindow: 128_000 }],
 }, {
   id: 'deepseek-official',
   name: 'DeepSeek',

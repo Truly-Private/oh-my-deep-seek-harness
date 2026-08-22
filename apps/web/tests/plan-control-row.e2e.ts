@@ -92,7 +92,7 @@ describe('web e2e: plan chip click area at the narrow viewport', () => {
     // The regression depends on the real model label width: a bare fallback
     // trigger would fit beside the chip even on the pre-fix layout. The
     // directory loads asynchronously, so poll for the real label.
-    await expect.poll(() => trigger.getAttribute('aria-label'), { timeout: 10_000 }).toContain('DeepSeek-V4-Flash')
+    await expect.poll(() => trigger.getAttribute('aria-label'), { timeout: 10_000 }).toContain('Trifecta')
     const chipBox = await chip.boundingBox()
     const triggerBox = await trigger.boundingBox()
     expect(chipBox).not.toBeNull()

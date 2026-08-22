@@ -16,6 +16,9 @@ function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+const CURSOR_POSITION_QUERY = '\x1b[6n'
+const CURSOR_POSITION_RESPONSE = '\x1b[1;1R'
+
 function signalName(number: number | undefined): NodeJS.Signals | null {
   if (number === undefined || number === 0) return null
   for (const [name, value] of Object.entries(constants.signals)) {
@@ -43,6 +46,7 @@ export class LocalTerminalHandle implements SubprocessTerminalHandle {
   private cleanup: Promise<void> | undefined
   private exited = false
   private trackedDescendants: ProcessIdentity[] = []
+  private terminalQueryTail = ''
   /** The spawned shell's start identity; scans stop adopting members once the root pid no longer carries it. */
   private readonly rootIdentity: ProcessIdentity | undefined
 
@@ -61,7 +65,7 @@ export class LocalTerminalHandle implements SubprocessTerminalHandle {
     this.pid = terminal.pid
     this.rootIdentity = inspector.processTree(this.pid).find(member => member.pid === this.pid)
     this.done = this.outcome.promise
-    this.dataDisposable = terminal.onData((data) => { this.output.write(Buffer.from(data, 'utf8')) })
+    this.dataDisposable = terminal.onData(this.onData)
     this.exitDisposable = terminal.onExit(({ exitCode, signal: exitSignal }) => {
       if (this.exited) return
       this.exited = true
@@ -71,6 +75,19 @@ export class LocalTerminalHandle implements SubprocessTerminalHandle {
         signal: signalName(exitSignal),
       })
     })
+  }
+
+  private readonly onData = (data: string): void => {
+    this.output.write(Buffer.from(data, 'utf8'))
+    const candidate = this.terminalQueryTail + data
+    let offset = 0
+    while (true) {
+      const query = candidate.indexOf(CURSOR_POSITION_QUERY, offset)
+      if (query < 0) break
+      this.terminal.write(CURSOR_POSITION_RESPONSE)
+      offset = query + CURSOR_POSITION_QUERY.length
+    }
+    this.terminalQueryTail = candidate.slice(-(CURSOR_POSITION_QUERY.length - 1))
   }
 
   // node-pty writes synchronously; the seam returns a promise for remote transports.

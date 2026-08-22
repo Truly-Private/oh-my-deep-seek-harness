@@ -77,7 +77,7 @@ afterEach(async () => {
 it('assembles the shipped Web catalog, file-reference guidance, retry policy, and confined access default', async () => {
   scaffold = await launchWebScaffold({ firstPartyMissingCredential: true })
   const ctx = scaffold.ctx
-  expect(ctx.llm.providerRetryPolicy('deepseek-official')).toMatchInlineSnapshot(`
+  expect(ctx.llm.providerRetryPolicy('9router')).toMatchInlineSnapshot(`
     {
       "initialDelayMs": 500,
       "jitterRatio": 0.1,
@@ -93,10 +93,14 @@ it('assembles the shipped Web catalog, file-reference guidance, retry policy, an
       ],
     }
   `)
-  await ctx.settings.update(settingsNamespace('llm-deepseek'), {
-    retryPolicy: { mode: 'always', maxRetries: 5 },
+  await ctx.settings.update(settingsNamespace('llm-pi-ai'), {
+    providers: {
+      '9router': { retryPolicy: { mode: 'always' } },
+      openai: {},
+      anthropic: { retryPolicy: { mode: 'always' } },
+    },
   })
-  expect(ctx.llm.providerRetryPolicy('deepseek-official')).toMatchInlineSnapshot(`
+  expect(ctx.llm.providerRetryPolicy('9router')).toMatchInlineSnapshot(`
     {
       "initialDelayMs": 500,
       "jitterRatio": 0.1,
@@ -104,12 +108,6 @@ it('assembles the shipped Web catalog, file-reference guidance, retry policy, an
       "mode": "always",
     }
   `)
-  await ctx.settings.update(settingsNamespace('llm-pi-ai'), {
-    providers: {
-      openai: {},
-      anthropic: { retryPolicy: { mode: 'always' } },
-    },
-  })
   expect(ctx.llm.providerRetryPolicy('openai')).toMatchInlineSnapshot(`
     {
       "initialDelayMs": 500,

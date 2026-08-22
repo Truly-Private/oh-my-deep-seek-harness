@@ -307,14 +307,23 @@ function persistentShells(ctx: Context, config: ResolvedConfig): PersistentShell
             live.delete(owner)
           }, 'tool-pwsh-persistent owner cache cleanup')
         }
-        const setup = ctx.terminals.startSend(owner, spawned.sessionId, {
-          text: PWSH_PROMPT_SETUP,
-          submit: true,
-          signal: combinedSignal,
-        })
-        const result = await setup.done
-        if (result.sessionStatus.kind === 'exited' || result.waitReason === 'timeout') {
-          throw new Error('persistent pwsh shell did not accept initialization')
+        let first = true
+        for (;;) {
+          const setup = ctx.terminals.startSend(owner, spawned.sessionId, {
+            text: first ? PWSH_PROMPT_SETUP : '',
+            submit: first,
+            signal: combinedSignal,
+          })
+          first = false
+          const result = await setup.done
+          if (result.sessionStatus.kind === 'exited' || result.waitReason === 'timeout') {
+            throw new Error('persistent pwsh shell did not accept initialization')
+          }
+          const scrollback = ctx.terminals.read(owner, spawned.sessionId, {
+            offset: 0,
+            count: SCROLLBACK_PAGE_LINES,
+          }).text
+          if (promptCompleted(result) || scrollback.endsWith(SHELL_PROMPT)) break
         }
         return spawned.sessionId
       } catch (error: unknown) {

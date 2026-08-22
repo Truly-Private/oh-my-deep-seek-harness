@@ -347,14 +347,19 @@ describe('BashTerminalBackend startup rollback', () => {
     await ctx.plugin(EmptySandbox)
     await ctx.plugin(SandboxPolicyService, { mode: 'danger-full-access', workspaceRoot: '/workspace' })
     let spawned: SubprocessTerminalSpawnSpec | undefined
-    let sent: TerminalSendRequest | undefined
+    const sends: TerminalSendRequest[] = []
     const session = {
       motd: '',
       startSend: (request: TerminalSendRequest) => {
-        sent = request
+        sends.push(request)
+        const startupReady = sends.length === 1
+        const promptReady = sends.length > 2
         return {
           done: Promise.resolve({
-            viewport: 'setup-echo dsh> ', waitReason: 'stdin_read' as const,
+            viewport: startupReady
+              ? 'PS /workspace> '
+              : promptReady ? 'dsh> ' : ENCODING_PREAMBLE + PWSH_PROMPT_SETUP,
+            waitReason: promptReady ? 'stdin_read' as const : 'inferred_idle' as const,
             sessionStatus: { kind: 'running' as const }, truncated: false,
           }),
           readOutput: () => ({ delta: '', truncated: false }),
@@ -370,8 +375,11 @@ describe('BashTerminalBackend startup rollback', () => {
       () => session,
     )
     expect(await backend.spawn(spec(agent(ctx)))).toBe(session)
-    expect(sent).toMatchObject({ text: ENCODING_PREAMBLE + PWSH_PROMPT_SETUP, submit: true })
-    expect(session.motd).toBe('setup-echo dsh> ')
+    expect(sends).toHaveLength(3)
+    expect(sends[0]).toMatchObject({ text: '', submit: false })
+    expect(sends[1]).toMatchObject({ text: ENCODING_PREAMBLE + PWSH_PROMPT_SETUP, submit: true })
+    expect(sends[2]).toMatchObject({ text: '', submit: false })
+    expect(session.motd).toBe('dsh> ')
     expect(spawned?.env).toMatchObject({
       TERM: 'dumb', NO_COLOR: '1', DSH_SHELL: '1', DSH_SESSION_ID: 'agent', DSH_PTY_SESSION_ID: 'pty-1',
     })
@@ -388,11 +396,12 @@ describe('BashTerminalBackend startup rollback', () => {
       motd: '',
       startSend: (request: TerminalSendRequest) => {
         sends.push(request)
-        const second = sends.length > 1
+        const startup = sends.length === 1
+        const prompt = sends.length > 2
         return {
           done: Promise.resolve({
-            viewport: second ? 'dsh> ' : 'PowerShell 7.6.4\n',
-            waitReason: 'inferred_idle' as const,
+            viewport: startup ? 'PS /workspace> ' : prompt ? 'dsh> ' : 'PowerShell 7.6.4\n',
+            waitReason: prompt ? 'stdin_read' as const : 'inferred_idle' as const,
             sessionStatus: { kind: 'running' as const }, truncated: false,
           }),
           readOutput: () => ({ delta: '', truncated: false }),
@@ -408,8 +417,8 @@ describe('BashTerminalBackend startup rollback', () => {
       () => session,
     )
     await backend.spawn(spec(agent(ctx)))
-    expect(sends).toHaveLength(2)
-    expect(sends[1]).toMatchObject({ text: '', submit: false })
+    expect(sends).toHaveLength(3)
+    expect(sends[2]).toMatchObject({ text: '', submit: false })
     expect(session.motd).toBe('dsh> ')
   })
 
@@ -446,7 +455,8 @@ describe('BashTerminalBackend startup rollback', () => {
         sends.push(request)
         return {
           done: Promise.resolve({
-            viewport: 'dsh> ', waitReason: 'stdin_read' as const,
+            viewport: sends.length === 1 ? 'PS /workspace> ' : 'dsh> ',
+            waitReason: sends.length === 1 ? 'inferred_idle' as const : 'stdin_read' as const,
             sessionStatus: { kind: 'running' as const }, truncated: false,
           }),
           readOutput: () => ({ delta: '', truncated: false }),
@@ -464,8 +474,8 @@ describe('BashTerminalBackend startup rollback', () => {
     const signal = new AbortController().signal
     const spawned = await backend.spawn({ ...spec(agent(ctx)), signal })
     expect(spawned.motd).toBe('dsh> ')
-    expect(sends).toHaveLength(1)
-    expect(sends[0]?.signal).toBe(signal)
+    expect(sends).toHaveLength(2)
+    expect(sends.every(send => send.signal === signal)).toBe(true)
   })
 })
 

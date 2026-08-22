@@ -45,8 +45,8 @@
 - button "Commands":
   - img
 - 'button "Access mode, current: Workspace Write"': Workspace Write
-- button "Select model, current Claude Sonnet 4.5 (Kiro)":
-  - text: Claude Sonnet 4.5 (Kiro)
+- button "Select model, current Trifecta":
+  - text: Trifecta
   - img
 - button "6% of context used"
 - button "Send message" [disabled]

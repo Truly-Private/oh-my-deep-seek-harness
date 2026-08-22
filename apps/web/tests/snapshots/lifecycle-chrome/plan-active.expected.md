@@ -34,8 +34,8 @@
   - img
 - 'button "Access mode, current: Workspace Write"': Workspace Write
 - button "Plan mode on, press to turn off": Plan
-- button "Select model, current Claude Sonnet 4.5 (Kiro)":
-  - text: Claude Sonnet 4.5 (Kiro)
+- button "Select model, current Trifecta":
+  - text: Trifecta
   - img
 - button "Send message" [disabled]
 - text: Details

@@ -113,30 +113,37 @@ async function startupSession(
       await session.initialize(signal)
       return
     }
-    // pwsh cannot install its prompt from the environment: write the prompt
-    // function through the session and wait for the first marker prompt,
-    // which is also the readiness contract of the bash initialize path. The
-    // first send also pins UTF-8 output (the shared pwsh-local preamble)
-    // before anything runs: the session decode path treats PTY bytes as
-    // UTF-8, and an un-pinned console writes its host code page for
-    // non-ASCII output. The banner-to-prompt gap can outlast the silence
-    // bound, so the wait loops over follow-up sends until the controlled
-    // prompt is actually visible (in the viewport or the retained scrollback
-    // when it landed between sends), bounded by the send deadline.
+    // pwsh cannot install its prompt from the environment. Wait for its native
+    // prompt first: the local PTY provider answers the cursor-position query
+    // that PSReadLine issues before rendering that prompt, and the send cannot
+    // settle on silence until printable prompt output exists. Then install the
+    // marker prompt and pin UTF-8 output with the shared pwsh-local preamble.
+    // Submit exactly once, then use empty follow-up sends until the controlled
+    // prompt is the output suffix; the echoed setup source contains that prompt
+    // literal and is not readiness evidence by itself.
+    const nativePrompt = session.startSend({
+      text: '',
+      submit: false,
+      ...signal !== undefined ? { signal } : {},
+    })
+    const nativeResult = await nativePrompt.done
+    if (nativeResult.waitReason === 'session_exit') throw new Error('PTY shell exited during startup')
+    if (nativeResult.waitReason === 'timeout') throw new Error('PTY shell did not reach readiness before startup timeout')
+    let first = true
     let viewport = ''
     for (;;) {
-      const first = viewport.length === 0
       const operation = session.startSend({
         text: first ? ENCODING_PREAMBLE + PWSH_PROMPT_SETUP : '',
         submit: first,
         ...signal !== undefined ? { signal } : {},
       })
+      first = false
       const result = await operation.done
       if (result.waitReason === 'session_exit') throw new Error('PTY shell exited during startup')
       if (result.waitReason === 'timeout') throw new Error('PTY shell did not reach readiness before startup timeout')
       viewport = result.viewport
       const scrollback = session.read({ offset: 0, count: 20 }).text
-      if (viewport.includes(CONTROLLED_PROMPT) || scrollback.includes(CONTROLLED_PROMPT)) break
+      if (viewport.endsWith(CONTROLLED_PROMPT) || scrollback.endsWith(CONTROLLED_PROMPT)) break
     }
     session.motd = viewport
   }
