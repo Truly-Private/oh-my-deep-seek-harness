@@ -6,6 +6,7 @@ import { defineConfig } from 'vitest/config'
 import { standardDecoratorPlugin, vitestExecArgv } from './vitest.shared.ts'
 import { COVERAGE_EXEMPT_ENV, coverageExemptHeavySuites } from './scripts/coverage-exempt.ts'
 import { COVERAGE_PARTITION_MODE_ENV } from './scripts/coverage-partitions.ts'
+import { processBoundTests } from './scripts/process-bound-test-inventory.ts'
 
 // Prints exact `path:line:col` records for every uncovered statement, branch
 // path, and function when a file misses the per-file 100% gate — the built-in
@@ -114,22 +115,6 @@ const coveragePartitionMode = coveragePartitionRaw === '1'
 // These suites exercise process-global state, process APIs, or timing-sensitive process I/O
 // that worker threads cannot isolate reliably under aggregate gate contention.
 // Keep the narrow exception in forks while the rest of the inventory avoids per-file processes.
-const processBoundTests = [
-  'packages/session/session-persistence-jsonl/tests/jsonl.spec.ts',
-  'packages/subagent/subagent-acp/tests/subagent-acp.spec.ts',
-  'packages/subprocess/subprocess-local/tests/process-exit.spec.ts',
-  'packages/subprocess/subprocess-local/tests/spawn.spec.ts',
-  'packages/context/time-context/tests/time-context.spec.ts',
-  'packages/llm/llm-pi-ai/tests/adapter.spec.ts',
-  'packages/boot/app-boot/tests/app-boot.spec.ts',
-  'packages/boot/app-boot/tests/hmr-config.spec.ts',
-  'packages/shell/pwsh-local/tests/executor.spec.ts',
-  'packages/shell/tool-pwsh-persistent/tests/loader-composition.spec.ts',
-  'packages/terminal/terminal-bash/tests/local.spec.ts',
-  'packages/workflow/workflow-worker-thread/tests/session.spec.ts',
-  'packages/workflow/workflow-worker-thread/tests/workflow-worker-thread.spec.ts',
-]
-
 export default defineConfig({
   plugins: [pathsPlugin(), standardDecoratorPlugin()],
   test: {

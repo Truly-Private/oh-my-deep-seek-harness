@@ -13,8 +13,16 @@ import {
   type CoverageCommand,
   type CoverageCommandResult,
 } from './coverage-partitions.ts'
+import {
+  processBoundCoreCoverageTests,
+  processIsolatedCoverageTests,
+} from './process-bound-test-inventory.ts'
 
 const passed: CoverageCommandResult = { exitCode: 0, signalCode: null }
+const processCoverageLabels = [
+  'process-bound core coverage',
+  ...processIsolatedCoverageTests.map(test => `isolated coverage: ${test}`),
+]
 
 afterEach(() => vi.restoreAllMocks())
 
@@ -82,7 +90,7 @@ describe('coverage forwarded arguments', () => {
 })
 
 describe('coverage partition coordinator', () => {
-  it('runs thread-safe partitions, then process-bound coverage, before one merged threshold check', async () => {
+  it('runs thread-safe partitions, then fresh process-bound coverage passes, before one merged threshold check', async () => {
     const root = await temporaryRoot()
     const commands: CoverageCommand[] = []
     const runCommand = successfulCommandRecorder(commands)
@@ -100,7 +108,7 @@ describe('coverage partition coordinator', () => {
       'partition 1/3',
       'partition 2/3',
       'partition 3/3',
-      'process-bound coverage',
+      ...processCoverageLabels,
       'merged coverage report',
     ])
     for (const [index, command] of commands.slice(0, 3).entries()) {
@@ -121,23 +129,33 @@ describe('coverage partition coordinator', () => {
         [COVERAGE_PARTITION_MODE_ENV]: '1',
       })
     }
-    const processBoundCommand = commands[3]
-    if (processBoundCommand === undefined) throw new Error('process-bound coverage command was not observed')
-    expect(processBoundCommand.args).toEqual(expect.arrayContaining([
-      '--coverage',
-      '--coverage.reportOnFailure',
-      '--maxWorkers=1',
-      '--project=process-bound',
-      '--reporter=default',
-      '--reporter=blob',
-      '--testTimeout=30000',
-    ]))
-    expect(processBoundCommand.args.some(argument => argument.startsWith('--shard='))).toBe(false)
-    expect(processBoundCommand.env).toEqual({
-      [COVERAGE_PARTITIONS_ENV]: undefined,
-      [COVERAGE_PARTITION_MODE_ENV]: '1',
-    })
-    const mergeCommand = commands[4]
+    const processBoundCommands = commands.slice(3, -1)
+    expect(processBoundCommands).toHaveLength(4)
+    for (const command of processBoundCommands) {
+      expect(command.args).toEqual(expect.arrayContaining([
+        '--coverage',
+        '--coverage.reportOnFailure',
+        '--maxWorkers=1',
+        '--project=process-bound',
+        '--reporter=default',
+        '--reporter=blob',
+        '--testTimeout=30000',
+      ]))
+      expect(command.args.some(argument => argument.startsWith('--shard='))).toBe(false)
+      expect(command.env).toEqual({
+        [COVERAGE_PARTITIONS_ENV]: undefined,
+        [COVERAGE_PARTITION_MODE_ENV]: '1',
+      })
+    }
+    expect(processBoundCommands[0]?.args).toEqual(expect.arrayContaining(processBoundCoreCoverageTests))
+    for (const [index, test] of processIsolatedCoverageTests.entries()) {
+      const command = processBoundCommands[index + 1]
+      expect(command?.args).toContain(test)
+      expect(command?.args.filter(argument => processIsolatedCoverageTests.includes(
+        argument as typeof processIsolatedCoverageTests[number],
+      ))).toEqual([test])
+    }
+    const mergeCommand = commands.at(-1)
     if (mergeCommand === undefined) throw new Error('coverage merge command was not observed')
     expect(mergeCommand.args).toContain('--coverage')
     expect(mergeCommand.args.some(argument => argument.startsWith('--merge-reports='))).toBe(true)
@@ -159,7 +177,7 @@ describe('coverage partition coordinator', () => {
     })
 
     await expect(coordinator.run()).resolves.toBe(0)
-    expect(commands).toHaveLength(4)
+    expect(commands).toHaveLength(7)
     for (const command of commands) {
       expect(command.command).toBe('/tools/pnpm')
       expect(command.args[0]).toBe('exec')
@@ -178,7 +196,7 @@ describe('coverage partition coordinator', () => {
         await gate.promise
         activePartitions -= 1
       }
-      if (command.label === 'process-bound coverage') expect(activePartitions).toBe(0)
+      if (processCoverageLabels.includes(command.label)) expect(activePartitions).toBe(0)
       await writeBlob(command)
       return passed
     })
@@ -198,7 +216,7 @@ describe('coverage partition coordinator', () => {
     expect(labels).toEqual([
       'partition 1/2',
       'partition 2/2',
-      'process-bound coverage',
+      ...processCoverageLabels,
       'merged coverage report',
     ])
   })
@@ -224,7 +242,7 @@ describe('coverage partition coordinator', () => {
     expect(reported).toHaveBeenCalledWith(
       'coverage-partitions: output tail for partition 2/2:\nspecific Vitest failure',
     )
-    expect(runCommand).toHaveBeenCalledTimes(4)
+    expect(runCommand).toHaveBeenCalledTimes(7)
   })
 
   it('rejects a missing partition blob before merge', async () => {
@@ -241,7 +259,7 @@ describe('coverage partition coordinator', () => {
     })
 
     await expect(coordinator.run()).rejects.toThrow('coverage partitions produced')
-    expect(runCommand).toHaveBeenCalledTimes(3)
+    expect(runCommand).toHaveBeenCalledTimes(6)
   })
 
   it('reports signal termination before missing-blob validation', async () => {
@@ -286,7 +304,7 @@ describe('coverage partition coordinator', () => {
     await expect(coordinator.run()).resolves.toBe(1)
     expect(reported).toHaveBeenCalledWith('coverage-partitions: FAIL partition 1/2 (spawn unavailable)')
     expect(secondFinished).toBe(true)
-    expect(runCommand).toHaveBeenCalledTimes(4)
+    expect(runCommand).toHaveBeenCalledTimes(7)
   })
 
   it('unlinks a link-shaped coverage path without touching its target', async () => {

@@ -1,8 +1,12 @@
-/** Coordinate thread-safe Vitest coverage partitions, one process-bound pass, and one merged report. */
+/** Coordinate thread-safe Vitest coverage partitions, isolated process-bound passes, and one merged report. */
 import { spawn } from 'node:child_process'
 import { lstat, mkdir, readdir, rm, unlink } from 'node:fs/promises'
 import { join, relative, sep } from 'node:path'
 import { pnpmInvocation } from './pnpm-invocation.ts'
+import {
+  processBoundCoreCoverageTests,
+  processIsolatedCoverageTests,
+} from './process-bound-test-inventory.ts'
 
 /** Environment variable selecting the number of instrumented coverage processes. */
 export const COVERAGE_PARTITIONS_ENV = 'DSH_COVERAGE_PARTITIONS'
@@ -131,17 +135,21 @@ export class CoveragePartitionCoordinator {
         }
         return result
       }))
-      const processBoundCommand = this.processBoundCommand()
-      console.log(`coverage-partitions: start ${processBoundCommand.label}`)
-      const processBoundResult = await this.runCommand(processBoundCommand)
-      if (commandFailed(processBoundResult)) {
-        console.error(`coverage-partitions: FAIL ${processBoundCommand.label} (${commandFailureReason(processBoundResult)})`)
-        if (processBoundResult.outputTail !== undefined && processBoundResult.outputTail !== '') {
-          console.error(`coverage-partitions: output tail for ${processBoundCommand.label}:\n${processBoundResult.outputTail}`)
+      const processBoundCommands = this.processBoundCommands()
+      const processBoundResults: CoverageCommandResult[] = []
+      for (const command of processBoundCommands) {
+        console.log(`coverage-partitions: start ${command.label}`)
+        const result = await this.runCommand(command)
+        processBoundResults.push(result)
+        if (commandFailed(result)) {
+          console.error(`coverage-partitions: FAIL ${command.label} (${commandFailureReason(result)})`)
+          if (result.outputTail !== undefined && result.outputTail !== '') {
+            console.error(`coverage-partitions: output tail for ${command.label}:\n${result.outputTail}`)
+          }
         }
       }
-      const coverageCommands = [...partitionCommands, processBoundCommand]
-      const coverageResults = [...partitionResults, processBoundResult]
+      const coverageCommands = [...partitionCommands, ...processBoundCommands]
+      const coverageResults = [...partitionResults, ...processBoundResults]
       await this.assertCompleteBlobSet(coverageCommands)
 
       const mergeCommand = this.mergeCommand()
@@ -183,9 +191,20 @@ export class CoveragePartitionCoordinator {
     }
   }
 
-  private processBoundCommand(): CoverageCommand {
-    const blobPath = join(this.blobsRoot, 'process-bound.json')
-    const reportsDirectory = join(this.temporaryRoot, 'coverage-process-bound')
+  private processBoundCommands(): CoverageCommand[] {
+    return [
+      this.processBoundCommand('process-bound core coverage', 'process-bound-core', processBoundCoreCoverageTests),
+      ...processIsolatedCoverageTests.map((test, index) => this.processBoundCommand(
+        `isolated coverage: ${test}`,
+        `process-isolated-${index + 1}`,
+        [test],
+      )),
+    ]
+  }
+
+  private processBoundCommand(label: string, outputName: string, tests: readonly string[]): CoverageCommand {
+    const blobPath = join(this.blobsRoot, `${outputName}.json`)
+    const reportsDirectory = join(this.temporaryRoot, `coverage-${outputName}`)
     const invocation = pnpmInvocation([
       'exec',
       'vitest',
@@ -194,6 +213,7 @@ export class CoveragePartitionCoordinator {
       '--coverage.reportOnFailure',
       '--maxWorkers=1',
       '--project=process-bound',
+      ...tests,
       '--reporter=default',
       '--reporter=blob',
       `--outputFile.blob=${this.relativePath(blobPath)}`,
@@ -201,7 +221,7 @@ export class CoveragePartitionCoordinator {
       ...this.vitestArgs,
     ], { npm_execpath: this.pnpmEntrypoint })
     return {
-      label: 'process-bound coverage',
+      label,
       ...invocation,
       env: {
         [COVERAGE_PARTITIONS_ENV]: undefined,
