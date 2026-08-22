@@ -183,6 +183,17 @@ describe('web e2e: seeded history renders through cold resume', () => {
   let page: Page
   let tripwire: ReturnType<typeof watchConsole>
 
+  /** @returns the host agent after cold-session attachment completes. */
+  const waitForSeededAgent = async () => {
+    await expect.poll(
+      () => scaffold.ctx.agents.get(SessionId(SEED_ID)),
+      { timeout: 15_000 },
+    ).toBeDefined()
+    const agent = scaffold.ctx.agents.get(SessionId(SEED_ID))
+    if (agent === undefined) throw new Error('seeded session did not attach an agent')
+    return agent
+  }
+
   beforeAll(async () => {
     scaffold = await launchWebScaffold({})
     // The workspace-aware flow runs sessions in <workspaceCwd>/workspace
@@ -292,8 +303,7 @@ describe('web e2e: seeded history renders through cold resume', () => {
     // only — the prompt and full tool output must stay on screen.
     expect(await page.getByText(PROMPT, { exact: true }).count()).toBe(1)
 
-    const agent = scaffold.ctx.agents.get(SessionId(SEED_ID))
-    if (agent === undefined) throw new Error('seeded session did not attach an agent')
+    const agent = await waitForSeededAgent()
     agent.session.append('user/message', createUserMessage({
       content: [{
         type: 'text',
@@ -504,8 +514,7 @@ describe('web e2e: seeded history renders through cold resume', () => {
       await disclosure.click()
       await expect.poll(() => disclosure.getAttribute('aria-expanded')).toBe('true')
 
-      const agent = scaffold.ctx.agents.get(SessionId(SEED_ID))
-      if (agent === undefined) throw new Error('seeded session did not attach an agent')
+      const agent = await waitForSeededAgent()
       const done = agent.session.events.filter(event => event.type === 'command/done').at(-1)
       if (done?.type !== 'command/done') throw new Error('feedback command did not settle')
       const [sessionLine, userLine, extraLine] = done.data.text?.split('\n') ?? []
@@ -526,8 +535,7 @@ describe('web e2e: seeded history renders through cold resume', () => {
   }, 60_000)
 
   it.skipIf(MODE === 'record')('fits short logged context without a scrollport', async () => {
-    const agent = scaffold.ctx.agents.get(SessionId(SEED_ID))
-    if (agent === undefined) throw new Error('seeded session did not attach an agent')
+    const agent = await waitForSeededAgent()
     agent.session.append('user/message', createUserMessage({
       content: [{ type: 'text', text: 'Short injected context.' }],
       source: { kind: 'plugin', plugin: 'fixture' },
