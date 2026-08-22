@@ -283,6 +283,37 @@ describe('LocalPtySession readiness and output', () => {
     expect((await operation.done).waitReason).toBe('stdin_read')
   })
 
+  it('starts a fresh silence window when a delayed poll first observes post-write activity', async () => {
+    vi.useFakeTimers()
+    const terminal = new FakeTerminal()
+    const session = new LocalPtySession(terminal, config({ exactProbeAfterMs: 100, timeoutMs: 200 }))
+    await initialize(session, terminal)
+
+    const readiness = Promise.withResolvers<{ processGroupId: number; inputWaiting: boolean }>()
+    let inspections = 0
+    terminal.inspectForeground = async () => {
+      inspections += 1
+      if (inspections === 1) return { processGroupId: 456, inputWaiting: true }
+      return await readiness.promise
+    }
+    const operation = session.startSend({ text: 'delayed command', submit: true })
+    let settled = false
+    void operation.done.then(() => { settled = true })
+    await Promise.resolve()
+    await Promise.resolve()
+    await vi.advanceTimersByTimeAsync(60)
+    expect(settled).toBe(false)
+
+    readiness.resolve({ processGroupId: 456, inputWaiting: false })
+    await Promise.resolve()
+    await Promise.resolve()
+    expect(settled).toBe(false)
+    await vi.advanceTimersByTimeAsync(40)
+    expect(settled).toBe(false)
+    await vi.advanceTimersByTimeAsync(10)
+    expect((await operation.done).waitReason).toBe('inferred_idle')
+  })
+
   it('rejects a delayed prompt until the submitted send produces post-write evidence', async () => {
     vi.useFakeTimers()
     const terminal = new FakeTerminal()

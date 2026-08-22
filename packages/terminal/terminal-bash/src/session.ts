@@ -82,7 +82,7 @@ class LocalSendOperation implements TerminalSendOperation {
   private submittedInput = false
   private postWriteTextSeen = false
   private initialForegroundKnown = false
-  private postWriteForegroundActivity = false
+  private postWriteForegroundActivityAt: number | undefined
   private initialForegroundInputWaiting: boolean | undefined
   private initialForegroundPgid: number | undefined
 
@@ -149,12 +149,13 @@ class LocalSendOperation implements TerminalSendOperation {
   }
 
   markPostWriteForegroundActivity(): void {
-    if (this.submittedInput) this.postWriteForegroundActivity = true
+    if (!this.submittedInput || this.postWriteForegroundActivityAt !== undefined) return
+    this.postWriteForegroundActivityAt = Date.now()
   }
 
   acceptsPrompt(hasTextBeforePrompt: boolean): boolean {
     return !this.submittedInput
-      || this.postWriteForegroundActivity
+      || this.postWriteForegroundActivityAt !== undefined
       || this.postWriteTextSeen
       || hasTextBeforePrompt
   }
@@ -164,18 +165,22 @@ class LocalSendOperation implements TerminalSendOperation {
     // Observe every poll so a departure before the exact-settlement threshold
     // still makes a later return to that wait post-write evidence.
     if (pgid !== this.initialForegroundPgid) {
-      this.postWriteForegroundActivity = true
+      this.markPostWriteForegroundActivity()
       return waiting
     }
     if (this.initialForegroundInputWaiting === true && !waiting) {
-      this.postWriteForegroundActivity = true
+      this.markPostWriteForegroundActivity()
     }
     const busyBeforeWriteThenProducedOutput = this.initialForegroundInputWaiting === false && this.postWriteTextSeen
-    return waiting && (this.postWriteForegroundActivity || busyBeforeWriteThenProducedOutput)
+    return waiting && (this.postWriteForegroundActivityAt !== undefined || busyBeforeWriteThenProducedOutput)
   }
 
   allowsIdleInference(): boolean {
-    return !this.submittedInput || !this.initialForegroundKnown || this.postWriteForegroundActivity
+    return !this.submittedInput || !this.initialForegroundKnown || this.postWriteForegroundActivityAt !== undefined
+  }
+
+  idleReferenceAt(lastOutputAt: number): number {
+    return Math.max(lastOutputAt, this.postWriteForegroundActivityAt ?? 0)
   }
 
   cancel(): boolean {
@@ -496,11 +501,12 @@ export class LocalPtySession implements TerminalBackendSession {
       }
       const foreground = await this.terminal.inspectForeground()
       if (this.active !== operation || this.closing || this.interrupting === operation) return
-      const idleFor = Date.now() - this.lastOutputAt
+      const now = Date.now()
+      const outputIdleFor = now - this.lastOutputAt
       if (this.promptSeen && foreground !== undefined && this.shellPgid === undefined) {
         this.shellPgid = foreground.processGroupId
       }
-      if (this.promptSeen && this.promptTextSeen && idleFor >= this.config.pollIntervalMs
+      if (this.promptSeen && this.promptTextSeen && outputIdleFor >= this.config.pollIntervalMs
         && foreground?.processGroupId === this.shellPgid) {
         this.settleActive('stdin_read')
         return
@@ -518,6 +524,7 @@ export class LocalPtySession implements TerminalBackendSession {
       // on waiting for shell ownership instead of letting a child marker suppress
       // readiness until the absolute timeout.
       const handoffGrace = this.promptSeen ? this.config.handoffGraceMs : 0
+      const idleFor = now - operation.idleReferenceAt(this.lastOutputAt)
       if (startupHasOutput && operation.allowsIdleInference()
         && idleFor >= this.config.idleSilenceMs + handoffGrace) {
         this.settleActive('inferred_idle')
