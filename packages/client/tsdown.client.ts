@@ -58,7 +58,7 @@ function styleInjectionModule(
  * Everything else under @truly-private/* is either a module-table entry
  * (external) or a leak the purity gate rejects.
  */
-export const INLINE_SAFE = /^@deepseek-ai\/dsh-(host-apiproxy|file-reference|session|llm|tools|brand)(\/|$)/
+export const INLINE_SAFE = /^@truly-private\/omdsh-(host-apiproxy|file-reference|session|llm|tools|brand)(\/|$)/
 
 /**
  * Vendored framework libraries: rescoped into @deepseek-ai, so the gate below
@@ -479,15 +479,15 @@ function clientConfig(id: string, entry: string): UserConfig {
     plugins: [{
       // Bundle purity gate (build-time mirror of the module-edge rules): the
       // baseline and package-specific requests stay external, inline-safe wire layers
-      // inline, and every other @deepseek-ai value import is a build error — a
+      // inline, and every other @truly-private value import is a build error — a
       // cross-plugin value import either inlines a duplicate runtime instance
       // or requires a specifier the module table cannot answer for this package.
       // Cross-plugin collaboration goes through cordis services instead.
       name: 'dsh-client-bundle-purity',
       resolveId(source: string) {
-        if (!source.startsWith('@deepseek-ai/')) return null
-        if (isRequested(source)) return null // requested module-table row: external wins
         if (VENDORED_LIBRARY.test(source)) return null // vendored library: inline, no shared identity
+        if (!source.startsWith('@truly-private/')) return null
+        if (isRequested(source)) return null // requested module-table row: external wins
         if (INLINE_SAFE.test(source) || GENERATED_REMOTE.test(source)) return null // wire contribution: inline is the point
         throw new Error(
           `client bundle purity: "${source}" is not in the default client externals or ${id}'s dsh.client.external, an inline-safe wire layer, or a generated /remote contribution — `

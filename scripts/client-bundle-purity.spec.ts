@@ -88,7 +88,7 @@ describe('client bundle purity gate', () => {
     expect(() => resolveId('@truly-private/omdsh-goal/remote/nested')).toThrow(/purity/)
   })
 
-  it('throws on any other @deepseek-ai leak', () => {
+  it('throws on any other @truly-private leak', () => {
     expect(() => resolveId('@truly-private/omdsh-agent')).toThrow(/purity/)
     expect(() => resolveId('@truly-private/omdsh-client-web')).toThrow(/purity/)
   })

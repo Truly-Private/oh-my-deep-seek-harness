@@ -385,8 +385,8 @@ describe.skipIf(!existsSync(dshBin))('dsh BUILT bin (node lib/bin.js, no tsx)', 
         '      api: openai-completions',
         `      baseURL: ${server.baseURL}/v1`,
         '      models:',
-        '        - id: kr/claude-sonnet-4.5',
-        '          name: Claude Sonnet 4.5 (Kiro)',
+        '        - id: trifecta',
+        '          name: Trifecta',
         '',
       ].join('\n'))
       const result = await runBuiltBin(['--profile', 'headless', 'answer', 'from', 'the', 'published', 'entry'], {

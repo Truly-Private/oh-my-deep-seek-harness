@@ -8,4 +8,5 @@ llm-pi-ai:
       api: openai-completions
       baseURL: http://127.0.0.1:20128/v1
       models:
-        - id: replace-with-an-exact-9router-model-id
+        - id: trifecta
+          name: Trifecta

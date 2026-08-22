@@ -6,7 +6,7 @@ This guide assumes you started the Web UI through the [root README](../../../REA
 
 ## Configure the first-party 9Router provider
 
-The base profile already registers **9Router** with `http://127.0.0.1:20128/v1`, the `openai-completions` protocol, the safe `NINE_ROUTER_API_KEY` credential reference, and `kr/claude-sonnet-4.5` as its starter model. Paste the endpoint key into the first-run dialog. To use a different model or combo, open **Settings → Models → 9Router → Edit → Customized settings**, fetch the available models, and apply the exact ID returned by 9Router.
+The base profile already registers **9Router** with `http://127.0.0.1:20128/v1`, the `openai-completions` protocol, the safe `NINE_ROUTER_API_KEY` credential reference, and `trifecta` as its starter model. Paste the endpoint key into the first-run dialog. To use a different model or combo, open **Settings → Models → 9Router → Edit → Customized settings**, fetch the available models, and apply the exact ID returned by 9Router.
 
 9Router is a first-party row, not a custom provider. The custom-provider form remains for other gateways that the distribution does not preconfigure.
 

@@ -78,7 +78,7 @@ describe('ui-settings-plugins apply', () => {
     const section = slots.entries('settings.section')[0]!
     expect(section.options).toMatchObject({ id: 'plugins', order: 15 })
     // The nav label is a locale-following thunk; owners resolve it at read time.
-    expect(resolveSlotLabel(section.options.label)).toBe('Plugins')
+    expect(resolveSlotLabel(section.options.label)).toBe('插件')
     expect(slots.spec('settings.plugins.tab')).toMatchObject({ kind: 'list', scope: 'root' })
     const tab = slots.entries('settings.plugins.tab')[0]!
     expect(tab.options).toMatchObject({ id: 'configurable', order: 0 })
@@ -96,7 +96,7 @@ describe('ui-settings-plugins apply', () => {
     const sectionFace = (section.inject as unknown as () => PluginsSettingsSectionInjected)()
     const initialTabs = sectionFace.hooks.tabs.getSnapshot()
     expect(initialTabs).toEqual([
-      { id: 'configurable', order: 0, label: 'Plugin configuration' },
+      { id: 'configurable', order: 0, label: '插件配置' },
     ])
     expect(sectionFace.hooks.tabs.getSnapshot()).toBe(initialTabs)
 
@@ -104,7 +104,7 @@ describe('ui-settings-plugins apply', () => {
     const unsubscribe = sectionFace.hooks.tabs.subscribe(listener)
     slots.register({ name: 'settings.plugins.tab', id: 'plain' } as never, () => null)
     expect(sectionFace.hooks.tabs.getSnapshot()).toEqual([
-      { id: 'configurable', order: 0, label: 'Plugin configuration' },
+      { id: 'configurable', order: 0, label: '插件配置' },
       { id: 'plain', order: 0, label: '' },
     ])
     unsubscribe()

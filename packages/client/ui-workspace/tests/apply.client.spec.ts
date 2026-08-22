@@ -67,7 +67,7 @@ describe('ui-workspace apply', () => {
     // Copy rides the standard locale seat: the entry declares the namespace
     // and apply registered both dictionaries.
     expect(before.slots.entries('sidebar.workspaces')[0]!.locale).toBe('workspace')
-    expect(before.locale.bind('workspace')('session.new')).toBe('New Session')
+    expect(before.locale.bind('workspace')('session.new')).toBe('新会话')
 
     const after = await bench()
     await after.ctx.plugin({ inject: [...inject], apply }).await()

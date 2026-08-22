@@ -18,7 +18,7 @@ import type { ModelSelection } from '@truly-private/omdsh-api-remotes/client'
 import type { CommandContribution, SelectOption } from '@truly-private/omdsh-client-ui-commands/client'
 import type { ModelSelectInjected } from '../src/client/slots.ts'
 import { apply, inject } from '../src/client/index.ts'
-import { en } from '../src/client/locales.ts'
+import { zh } from '../src/client/locales.ts'
 
 const sid = (k: string): SessionId => k as SessionId
 
@@ -255,7 +255,7 @@ describe('ui-model-selection dual entry', () => {
     b.ctx.remote.$dispatch('llm/adapters-updated', [])
     await Promise.resolve()
     await Promise.resolve()
-    expect(b.blockOf('s1')?.reason).toBe(en['blocked.composer'])
+    expect(b.blockOf('s1')?.reason).toBe(zh['blocked.composer'])
 
     // Recovering clears it without a reload of the surface.
     b.setRoutable(true)

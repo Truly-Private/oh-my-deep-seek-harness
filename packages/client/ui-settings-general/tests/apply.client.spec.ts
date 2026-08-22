@@ -92,7 +92,7 @@ describe('ui-settings-general apply', () => {
     const entry = generalEntry(before.slots)!
     expect(entry.options).toMatchObject({ id: 'general', order: 0 })
     // The nav label is a locale-following thunk; owners resolve at read time.
-    expect(resolveSlotLabel(entry.options.label)).toBe('General')
+    expect(resolveSlotLabel(entry.options.label)).toBe('通用设置')
     expect(before.slots.spec('settings.general.item')).toEqual({ kind: 'list', scope: 'root' })
     expect(before.slots.entries('settings.general.item')).toEqual([])
     // The onboarding hole stays declared for feature-owned steps; this plugin
@@ -126,8 +126,7 @@ describe('ui-settings-general apply', () => {
     declare(b.slots)
     const fiber = b.ctx.plugin({ inject: [...inject], apply })
     await fiber.await()
-    expect(b.locale.bind('settings')('title')).toBe('Settings')
-    b.locale.setLocale('zh')
+    expect(b.locale.bind('settings')('title')).toBe('设置')
     expect(b.locale.bind('settings')('close')).toBe('关闭')
     await fiber.dispose()
     // The (ns, locale) seats are free again — the dictionary disposer ran.
@@ -146,9 +145,9 @@ describe('ui-settings-general apply', () => {
       expect(b.slots.getVersion(name)).toBe(versions[i]!)
       expect(b.slots.entries(name)).toHaveLength(1)
     })
-    expect(resolveSlotLabel(generalEntry(b.slots)!.options.label)).toBe('General')
-    b.locale.setLocale('zh')
     expect(resolveSlotLabel(generalEntry(b.slots)!.options.label)).toBe('通用设置')
+    b.locale.setLocale('en')
+    expect(resolveSlotLabel(generalEntry(b.slots)!.options.label)).toBe('General')
   })
 
   it('reads availability from the shared mirror and follows its reconnect refresh', async () => {

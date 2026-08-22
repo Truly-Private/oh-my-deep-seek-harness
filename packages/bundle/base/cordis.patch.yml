@@ -64,7 +64,7 @@
       name: '@truly-private/omdsh-agent-default-model'
       config:
         provider: 9router
-        model: kr/claude-sonnet-4.5
+        model: trifecta
 
     - id: jobs
       name: '@truly-private/omdsh-jobs-local'
@@ -92,6 +92,14 @@
     # page or `settings.yaml` supplies their provider profiles.
     - id: llm-pi-ai
       name: '@truly-private/omdsh-llm-pi-ai'
+      config:
+        providers:
+          9router:
+            displayName: 9Router
+            apiKeyEnv: NINE_ROUTER_API_KEY
+            api: openai-completions
+            baseURL: http://127.0.0.1:20128/v1
+            models: [{ id: trifecta, name: Trifecta }]
 
     - id: session-persistence-jsonl
       name: '@truly-private/omdsh-session-persistence-jsonl'

@@ -150,8 +150,8 @@ function writeNineRouterSettings(harnessHome: string, baseURL: string): void {
     '      api: openai-completions',
     `      baseURL: ${baseURL}`,
     '      models:',
-    '        - id: kr/claude-sonnet-4.5',
-    '          name: Claude Sonnet 4.5 (Kiro)',
+    '        - id: trifecta',
+    '          name: Trifecta',
     '',
   ].join('\n'))
 }

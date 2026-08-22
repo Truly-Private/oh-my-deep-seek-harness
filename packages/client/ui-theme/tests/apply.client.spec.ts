@@ -91,9 +91,9 @@ describe('ui-theme apply', () => {
     const before = await bench()
     declareItems(before.slots)
     await before.ctx.plugin({ inject: [...inject], apply }).await()
-    expect(before.locale.bind(SETTINGS_NS)('appearance.title')).toBe('Appearance')
-    before.locale.setLocale('zh')
     expect(before.locale.bind(SETTINGS_NS)('appearance.title')).toBe('外观')
+    before.locale.setLocale('en')
+    expect(before.locale.bind(SETTINGS_NS)('appearance.title')).toBe('Appearance')
     const entry = before.slots.entries(SLOT).find(e => e.component === AppearanceRow)!
     expect(entry.options).toMatchObject({ id: 'appearance', order: 10 })
 

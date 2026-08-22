@@ -22,7 +22,7 @@
 | Base URL | `http://127.0.0.1:20128/v1` |
 | API protocol | `openai-completions` |
 | Credential reference | `NINE_ROUTER_API_KEY` |
-| Starter model | `kr/claude-sonnet-4.5` |
+| Starter model | `trifecta` |
 
 该路由会直接以 **9Router** 显示在 Models 页面中，无需使用自定义提供方表单。选择 **Edit**，再选择 **Fetch available models**，即可把入门模型替换为安装返回的任意准确模型或 combo ID。对于文件覆盖，把 [`integrations/9router/settings.yaml.example`](../../integrations/9router/settings.yaml.example) 合并到 `$DSH_HOME/settings.yaml` 的 `llm-pi-ai` 部分，替换模型 ID 占位符，并导出所引用的密钥。除非网关已经为远程访问进行有意加固，否则请保留回环地址。
 
