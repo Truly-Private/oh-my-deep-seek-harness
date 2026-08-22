@@ -259,7 +259,7 @@ describe('coverage partition coordinator', () => {
     })
 
     await expect(coordinator.run()).rejects.toThrow('coverage partitions produced')
-    expect(runCommand).toHaveBeenCalledTimes(6)
+    expect(runCommand).toHaveBeenCalledTimes(2 + processCoverageLabels.length)
   })
 
   it('reports signal termination before missing-blob validation', async () => {

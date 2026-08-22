@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process'
-import { mkdtemp, realpath, rm, writeFile } from 'node:fs/promises'
+import { mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
@@ -139,11 +139,11 @@ describe.skipIf(!hasPwsh)('persistent pwsh through a real cordis.yml Loader comp
     expect(context.tools.schemas().map(schema => schema.name)).toEqual(['pwsh'])
     const initialized = text(await execute(
       'state',
-      '$env:KEEP = "loader"; New-Item -ItemType Directory -Force -Path nested | Out-Null; Set-Location nested; Write-Output "state-ready"',
+      '$env:KEEP = "loader"; New-Item -ItemType Directory -Force -Path nested | Out-Null; Set-Location nested; Set-Content -LiteralPath state.txt -Value "cwd-preserved"; Write-Output "state-ready"',
     ))
     expect(initialized).toBe('state-ready')
-    const observed = text(await execute('observe', 'Write-Output "cwd=$PWD keep=$env:KEEP"'))
-    expect(observed).toContain(`cwd=${await realpath(join(root, 'nested'))} keep=loader`)
+    const observed = text(await execute('observe', 'Write-Output "$(Get-Content -LiteralPath state.txt) $env:KEEP"'))
+    expect(observed).toBe('cwd-preserved loader')
     expect(observed).not.toContain('DSH_PERSISTENT_PWSH')
 
     const multiline = text(await execute(
@@ -173,6 +173,6 @@ describe.skipIf(!hasPwsh)('persistent pwsh through a real cordis.yml Loader comp
 
     const exited = text(await execute('exit', 'exit'))
     expect(exited).toContain('next pwsh call starts from the workspace')
-    expect(text(await execute('after-exit', 'Write-Output "$PWD"'))).toBe(root)
+    expect(text(await execute('after-exit', 'Write-Output (Test-Path -LiteralPath cordis.yml)'))).toBe('True')
   }, 120_000)
 })
