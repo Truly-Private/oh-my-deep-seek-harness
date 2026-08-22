@@ -175,8 +175,11 @@ class LocalSendOperation implements TerminalSendOperation {
     return waiting && (this.postWriteForegroundActivityAt !== undefined || busyBeforeWriteThenProducedOutput)
   }
 
-  allowsIdleInference(): boolean {
-    return !this.submittedInput || !this.initialForegroundKnown || this.postWriteForegroundActivityAt !== undefined
+  allowsIdleInference(foregroundPgid: number | undefined): boolean {
+    if (!this.submittedInput || !this.initialForegroundKnown) return true
+    return this.postWriteForegroundActivityAt !== undefined
+      && foregroundPgid !== undefined
+      && foregroundPgid !== this.initialForegroundPgid
   }
 
   idleReferenceAt(lastOutputAt: number): number {
@@ -525,7 +528,7 @@ export class LocalPtySession implements TerminalBackendSession {
       // readiness until the absolute timeout.
       const handoffGrace = this.promptSeen ? this.config.handoffGraceMs : 0
       const idleFor = now - operation.idleReferenceAt(this.lastOutputAt)
-      if (startupHasOutput && operation.allowsIdleInference()
+      if (startupHasOutput && operation.allowsIdleInference(foreground?.processGroupId)
         && idleFor >= this.config.idleSilenceMs + handoffGrace) {
         this.settleActive('inferred_idle')
       }

@@ -283,7 +283,7 @@ describe('LocalPtySession readiness and output', () => {
     expect((await operation.done).waitReason).toBe('stdin_read')
   })
 
-  it('starts a fresh silence window when a delayed poll first observes post-write activity', async () => {
+  it('keeps a known shell busy until it returns to stdin wait after a delayed activity poll', async () => {
     vi.useFakeTimers()
     const terminal = new FakeTerminal()
     const session = new LocalPtySession(terminal, config({ exactProbeAfterMs: 100, timeoutMs: 200 }))
@@ -311,7 +311,11 @@ describe('LocalPtySession readiness and output', () => {
     await vi.advanceTimersByTimeAsync(40)
     expect(settled).toBe(false)
     await vi.advanceTimersByTimeAsync(10)
-    expect((await operation.done).waitReason).toBe('inferred_idle')
+    expect(settled).toBe(false)
+
+    terminal.inspectForeground = async () => ({ processGroupId: 456, inputWaiting: true })
+    await vi.advanceTimersByTimeAsync(10)
+    expect((await operation.done).waitReason).toBe('stdin_read')
   })
 
   it('rejects a delayed prompt until the submitted send produces post-write evidence', async () => {
