@@ -5,14 +5,14 @@
  * for host consumers, `./client/types` (the browser half-entry's re-export)
  * for client aggregates — with zero content duplication.
  *
- * @module @deepseek-ai/dsh-tool-todo/types
+ * @module @truly-private/omdsh-tool-todo/types
  */
 
-import type { TodoItem } from '@deepseek-ai/dsh-session/types'
+import type { TodoItem } from '@truly-private/omdsh-session/types'
 
-export type { TodoItem } from '@deepseek-ai/dsh-session/types'
+export type { TodoItem } from '@truly-private/omdsh-session/types'
 
-declare module '@deepseek-ai/dsh-session-projection/types' {
+declare module '@truly-private/omdsh-session-projection/types' {
   interface SessionProjectionStateMap {
     todos: TodoItem[] | null
   }

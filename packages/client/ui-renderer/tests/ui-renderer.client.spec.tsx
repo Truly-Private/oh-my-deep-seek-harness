@@ -2,10 +2,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup } from '@testing-library/react'
 import { Context } from '@deepseek-ai/cordis'
-import { SlotRegistry } from '@deepseek-ai/dsh-client-runtime/client'
-import { TestSessions, TestWorkspaces } from '@deepseek-ai/dsh-client-test-runtime'
-import type { Stabilizer } from '@deepseek-ai/dsh-client-test-runtime'
-import { apply as nodeApply } from '@deepseek-ai/dsh-client-ui-renderer'
+import { SlotRegistry } from '@truly-private/omdsh-client-runtime/client'
+import { TestSessions, TestWorkspaces } from '@truly-private/omdsh-client-test-runtime'
+import type { Stabilizer } from '@truly-private/omdsh-client-test-runtime'
+import { apply as nodeApply } from '@truly-private/omdsh-client-ui-renderer'
 import * as UiRenderer from '../src/client/index.ts'
 
 const mounted: (() => void)[] = []

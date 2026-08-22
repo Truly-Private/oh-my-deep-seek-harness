@@ -5,7 +5,7 @@
     path: ./cordis.yml
     patches:
       - id: agent-spine
-        name: '@deepseek-ai/dsh-agent-spine-demo'
+        name: '@truly-private/omdsh-agent-spine-demo'
         config:
           agents:
             - id: main
@@ -21,14 +21,14 @@
 
             Verify your work by running the code or tests. Keep answers brief and factual.
       - id: persistence
-        name: '@deepseek-ai/dsh-session-persistence-jsonl'
+        name: '@truly-private/omdsh-session-persistence-jsonl'
         config:
           root: './.sessions'
           compression: !!js "process.env.DSH_SNAPSHOT === undefined ? 'zstd' : 'none'"
       - insert:
           - id: code-runtime
-            name: '@deepseek-ai/dsh-code-runtime-worker-thread'
+            name: '@truly-private/omdsh-code-runtime-worker-thread'
           - id: cordis-host-runner
-            name: '@deepseek-ai/dsh-cordis-host-runner'
+            name: '@truly-private/omdsh-cordis-host-runner'
           - id: tool-cordis
-            name: '@deepseek-ai/dsh-tool-cordis'
+            name: '@truly-private/omdsh-tool-cordis'

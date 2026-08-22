@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-tool-jobs
+# @truly-private/omdsh-tool-jobs
 
 [English](README.md) | 中文
 

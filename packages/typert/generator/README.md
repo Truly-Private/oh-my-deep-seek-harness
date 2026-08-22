@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-typert-generator
+# @truly-private/omdsh-typert-generator
 
 English | [中文](README.zh.md)
 

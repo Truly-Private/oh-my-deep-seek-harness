@@ -1,4 +1,4 @@
-# `@deepseek-ai/dsh-file-reference`
+# `@truly-private/omdsh-file-reference`
 
 English | [中文](README.zh.md)
 
@@ -10,7 +10,7 @@ Selecting a candidate does not read or attach file contents. The exported `FILE_
 
 ## Model Experience
 
-Indirectly, through `@deepseek-ai/dsh-file-reference-local`, which conditionally contributes this package's stable file-reference guidance.
+Indirectly, through `@truly-private/omdsh-file-reference-local`, which conditionally contributes this package's stable file-reference guidance.
 
 #### KV Cache effect
 

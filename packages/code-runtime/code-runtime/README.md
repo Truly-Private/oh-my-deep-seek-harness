@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-code-runtime
+# @truly-private/omdsh-code-runtime
 
 English | [中文](README.zh.md)
 

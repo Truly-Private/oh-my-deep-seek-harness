@@ -7,6 +7,6 @@
     patches:
       - insert:
           - id: tool-session-query
-            name: '@deepseek-ai/dsh-tool-session-query'
+            name: '@truly-private/omdsh-tool-session-query'
           - id: timeout-policy
-            name: '@deepseek-ai/dsh-tool-call-timeout-policy'
+            name: '@truly-private/omdsh-tool-call-timeout-policy'

@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-sdk-jsonrpc-demo
+# @truly-private/omdsh-sdk-jsonrpc-demo
 
 [English](README.md) | 中文
 

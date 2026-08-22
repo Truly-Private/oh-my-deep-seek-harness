@@ -7,8 +7,8 @@ import { PassThrough, Writable } from 'node:stream'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
 import Loader from '@deepseek-ai/cordis-plugin-loader'
-import * as agentCore from '@deepseek-ai/dsh-agent-spine-demo'
-import JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
+import * as agentCore from '@truly-private/omdsh-agent-spine-demo'
+import JsonlSessionPersistence from '@truly-private/omdsh-session-persistence-jsonl'
 import * as jsonrpc from '../src/index.ts'
 
 /**

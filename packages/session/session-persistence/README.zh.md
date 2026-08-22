@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-session-persistence
+# @truly-private/omdsh-session-persistence
 
 [English](README.md) | 中文
 

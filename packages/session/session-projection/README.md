@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-session-projection
+# @truly-private/omdsh-session-projection
 
 English | [中文](README.zh.md)
 

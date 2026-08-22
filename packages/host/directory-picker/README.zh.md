@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-host-directory-picker
+# @truly-private/omdsh-host-directory-picker
 
 [English](README.md) | 中文
 

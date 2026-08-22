@@ -4,16 +4,16 @@
  * Session backs every message control in that Session, so a single list read
  * seeds the whole transcript. Mutations go through the generated
  * messageFeedback Remote; the Host owns per-item compare-and-set.
- * @module @deepseek-ai/dsh-client-ui-message-feedback/client
+ * @module @truly-private/omdsh-client-ui-message-feedback/client
  */
 
-import type { ClientContext, SessionId } from '@deepseek-ai/dsh-client-runtime/client'
+import type { ClientContext, SessionId } from '@truly-private/omdsh-client-runtime/client'
 // Type-only: pulls the generated Remote API and ctx.remote merge through the Client assembly boundary.
-import type {} from '@deepseek-ai/dsh-api-remotes/client'
+import type {} from '@truly-private/omdsh-api-remotes/client'
 // Type-only: pulls the ui-conversation SlotMap merge (the assistant-actions entry).
-import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
+import type {} from '@truly-private/omdsh-client-ui-conversation/client'
 // Type-only: pulls the locale plugin's Context merge (ctx.locale).
-import type {} from '@deepseek-ai/dsh-client-locale/client'
+import type {} from '@truly-private/omdsh-client-locale/client'
 import { MessageFeedbackController } from './controller.ts'
 import { MessageFeedbackActions } from './MessageFeedbackActions.tsx'
 import type { MessageFeedbackInjected } from './slots.ts'

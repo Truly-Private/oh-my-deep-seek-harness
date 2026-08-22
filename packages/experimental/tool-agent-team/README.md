@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-experimental-tool-agent-team
+# @truly-private/omdsh-experimental-tool-agent-team
 
 English | [中文](README.zh.md)
 
@@ -8,7 +8,7 @@ Scoped model-facing adapter for [`ctx.agentTeams`](../agent-team/README.md). It 
 
 ```yaml
 - id: tool-agent-team
-  name: '@deepseek-ai/dsh-experimental-tool-agent-team'
+  name: '@truly-private/omdsh-experimental-tool-agent-team'
   config:
     freshProvider: spawn
     forkProvider: fork

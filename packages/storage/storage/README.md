@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-storage
+# @truly-private/omdsh-storage
 
 English | [中文](README.zh.md)
 

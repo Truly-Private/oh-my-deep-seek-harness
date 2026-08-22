@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-jobs
+# @truly-private/omdsh-jobs
 
 English | [中文](README.zh.md)
 

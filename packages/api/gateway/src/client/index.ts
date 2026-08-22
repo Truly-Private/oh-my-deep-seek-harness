@@ -6,7 +6,7 @@
 
 import { Service } from '@deepseek-ai/cordis'
 import type { Context, Events } from '@deepseek-ai/cordis'
-import type { ConnectionHandle } from '@deepseek-ai/dsh-client-connection/client'
+import type { ConnectionHandle } from '@truly-private/omdsh-client-connection/client'
 import type {
   InvocationDescriptor,
   TypertClientRemote,
@@ -15,7 +15,7 @@ import type {
   TypertDisposer,
   TypertRemoteContribution,
   TypertRemoteEvent,
-} from '@deepseek-ai/dsh-typert-protocol'
+} from '@truly-private/omdsh-typert-protocol'
 
 interface MountToken {
   active: boolean

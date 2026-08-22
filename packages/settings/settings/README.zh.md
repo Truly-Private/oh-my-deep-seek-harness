@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-settings
+# @truly-private/omdsh-settings
 
 [English](README.md) | 中文
 

@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-client-ui-skill
+# @truly-private/omdsh-client-ui-skill
 
 [English](README.md) | 中文
 

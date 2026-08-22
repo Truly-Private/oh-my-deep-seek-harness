@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-workspace
+# @truly-private/omdsh-workspace
 
 [English](README.md) | 中文
 

@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-tool-lsp
+# @truly-private/omdsh-tool-lsp
 
 [English](README.md) | 中文
 

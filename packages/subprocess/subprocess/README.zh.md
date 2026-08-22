@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-subprocess
+# @truly-private/omdsh-subprocess
 
 [English](README.md) | 中文
 

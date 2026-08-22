@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-workflow-worker-thread
+# @truly-private/omdsh-workflow-worker-thread
 
 [English](README.md) | 中文
 

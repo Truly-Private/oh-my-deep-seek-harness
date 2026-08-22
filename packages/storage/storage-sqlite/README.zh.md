@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-storage-sqlite
+# @truly-private/omdsh-storage-sqlite
 
 [English](README.md) | 中文
 

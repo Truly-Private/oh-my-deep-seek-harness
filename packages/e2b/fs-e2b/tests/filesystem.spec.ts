@@ -7,12 +7,12 @@ import {
   FileType,
   type EntryInfo,
   type Sandbox,
-} from '@deepseek-ai/dsh-e2b'
-import type E2BRuntime from '@deepseek-ai/dsh-e2b'
-import { FsTargetKey, FsVersion } from '@deepseek-ai/dsh-fs'
-import E2BFileSystem from '@deepseek-ai/dsh-fs-e2b'
+} from '@truly-private/omdsh-e2b'
+import type E2BRuntime from '@truly-private/omdsh-e2b'
+import { FsTargetKey, FsVersion } from '@truly-private/omdsh-fs'
+import E2BFileSystem from '@truly-private/omdsh-fs-e2b'
 import * as E2BFsInvariant from '../src/invariant.ts'
-import InvariantRegistry from '@deepseek-ai/dsh-invariants'
+import InvariantRegistry from '@truly-private/omdsh-invariants'
 import { describe, expect, it, vi } from 'vitest'
 
 interface RemoteNode {

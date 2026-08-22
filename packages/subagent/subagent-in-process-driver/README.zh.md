@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-subagent-in-process-driver
+# @truly-private/omdsh-subagent-in-process-driver
 
 [English](README.md) | 中文
 

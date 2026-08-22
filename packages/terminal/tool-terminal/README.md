@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-tool-terminal
+# @truly-private/omdsh-tool-terminal
 
 English | [中文](README.zh.md)
 
@@ -68,4 +68,4 @@ Append-only; new results follow the reusable request prefix.
 ## Known Limitations and Deferred Work
 
 - No named key sequence, TUI, BEL, resize, auto-start, or cross-agent sharing schema is exposed.
-- Background mode requires both `@deepseek-ai/dsh-jobs` and its model-facing controller.
+- Background mode requires both `@truly-private/omdsh-jobs` and its model-facing controller.

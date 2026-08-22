@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-tool-bash-persistent
+# @truly-private/omdsh-tool-bash-persistent
 
 English | [中文](README.zh.md)
 

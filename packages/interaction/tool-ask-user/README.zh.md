@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-tool-ask-user
+# @truly-private/omdsh-tool-ask-user
 
 [English](README.md) | 中文
 

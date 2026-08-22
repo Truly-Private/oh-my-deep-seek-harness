@@ -7,9 +7,9 @@
  * namespace's `default` field, which is what the host resolves at creation.
  */
 
-import type { IApiClient } from '@deepseek-ai/dsh-api-remotes/client'
-import { createSnapshotStore, type SnapshotStore } from '@deepseek-ai/dsh-client-runtime/client'
-import type { SettingsDescribeFace } from '@deepseek-ai/dsh-client-ui-settings/client'
+import type { IApiClient } from '@truly-private/omdsh-api-remotes/client'
+import { createSnapshotStore, type SnapshotStore } from '@truly-private/omdsh-client-runtime/client'
+import type { SettingsDescribeFace } from '@truly-private/omdsh-client-ui-settings/client'
 
 /** The agent-preset settings namespace on the host wire. */
 export const AGENT_PRESET_SETTINGS_NS = 'agent-presets'

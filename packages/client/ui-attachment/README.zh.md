@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-client-ui-attachment
+# @truly-private/omdsh-client-ui-attachment
 
 [English](README.md) | 中文
 

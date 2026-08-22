@@ -1,11 +1,11 @@
 /**
  * Load-time validation and routed-model policy resolution for compaction-basic.
  *
- * @module @deepseek-ai/dsh-compaction-basic/config
+ * @module @truly-private/omdsh-compaction-basic/config
  */
 
-import { deepFreeze } from '@deepseek-ai/dsh-llm'
-import type { LlmCallConfig } from '@deepseek-ai/dsh-llm'
+import { deepFreeze } from '@truly-private/omdsh-llm'
+import type { LlmCallConfig } from '@truly-private/omdsh-llm'
 import type {
   BasicCompactionConfig,
   CompactionPolicyConfig,

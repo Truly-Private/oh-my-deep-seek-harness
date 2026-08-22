@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-client-hmr
+# @truly-private/omdsh-client-hmr
 
 [English](README.md) | 中文
 

@@ -3,17 +3,17 @@
  * every backend uses for its replacement user message, plus the predicate that
  * recognizes persisted checkpoints.
  *
- * The seam itself lives in `@deepseek-ai/dsh-compaction`, which re-exports these
+ * The seam itself lives in `@truly-private/omdsh-compaction`, which re-exports these
  * contracts; this module is a pure type/value/predicate outlet (no cordis
  * imports, no module augmentation) so client and wire programs can name the
  * checkpoint source without loading the host plugin's Context merges — the
  * `dsh-commands/brand` shape.
  *
- * @module @deepseek-ai/dsh-compaction/checkpoint
+ * @module @truly-private/omdsh-compaction/checkpoint
  */
 
-import type { MessageSource } from '@deepseek-ai/dsh-llm/message'
-import type { CommandId } from '@deepseek-ai/dsh-commands/brand'
+import type { MessageSource } from '@truly-private/omdsh-llm/message'
+import type { CommandId } from '@truly-private/omdsh-commands/brand'
 import type { CompactionId } from './brand.ts'
 
 const COMPACT_CHECKPOINT_MARKER = Object.freeze({ kind: 'plugin', plugin: 'compact' } as const)

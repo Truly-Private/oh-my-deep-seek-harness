@@ -2,7 +2,7 @@
  * Pure protocol translation for the local host: what the server's capabilities allow, and how its
  * `Location`/`LocationLink`/`Hover` payloads normalize into the seam's closed result unions. No I/O
  * or process state — every function here is a pure transform, which the fake-stdio tests pin exactly.
- * @module @deepseek-ai/dsh-lsp-stdio/translate
+ * @module @truly-private/omdsh-lsp-stdio/translate
  */
 
 import type {
@@ -10,9 +10,9 @@ import type {
   LspLocation,
   LspOperation,
   LspRange,
-} from '@deepseek-ai/dsh-lsp'
-import { LspError } from '@deepseek-ai/dsh-lsp'
-import { assertNever } from '@deepseek-ai/dsh-llm'
+} from '@truly-private/omdsh-lsp'
+import { LspError } from '@truly-private/omdsh-lsp'
+import { assertNever } from '@truly-private/omdsh-llm'
 import type {
   WireHover,
   WireLocation,

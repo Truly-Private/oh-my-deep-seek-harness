@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-sdk-protocol
+# @truly-private/omdsh-sdk-protocol
 
 [English](README.md) | 中文
 

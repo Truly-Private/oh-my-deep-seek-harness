@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-subagent-spawn-in-process
+# @truly-private/omdsh-subagent-spawn-in-process
 
 English | [中文](README.zh.md)
 

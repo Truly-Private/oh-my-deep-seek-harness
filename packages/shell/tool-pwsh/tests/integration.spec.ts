@@ -1,5 +1,5 @@
 /**
- * Integration tests: the REAL `@deepseek-ai/dsh-pwsh-local` executor plus the
+ * Integration tests: the REAL `@truly-private/omdsh-pwsh-local` executor plus the
  * `pwsh` tool, exercised through `ctx.tools.execute()` with a real PowerShell
  * process. These verify the world — actual commands run, stdout/stderr come
  * back, exit codes render, timeouts abort, background jobs settle through the
@@ -15,15 +15,15 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { Context } from '@deepseek-ai/cordis'
-import { CallId } from '@deepseek-ai/dsh-llm'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRuntime, { TOOL_ABORTED } from '@deepseek-ai/dsh-tools'
-import LocalJobRegistry from '@deepseek-ai/dsh-jobs-local'
-import * as ToolTasks from '@deepseek-ai/dsh-tool-jobs'
-import LocalSubprocessRuntime from '@deepseek-ai/dsh-subprocess-local'
-import { PwshLocalExecutor, resolvePwshPath } from '@deepseek-ai/dsh-pwsh-local'
-import * as ToolPwsh from '@deepseek-ai/dsh-tool-pwsh'
-import * as BashEnvPlugin from '@deepseek-ai/dsh-shell-env'
+import { CallId } from '@truly-private/omdsh-llm'
+import SystemPrompt from '@truly-private/omdsh-system-prompt'
+import ToolRuntime, { TOOL_ABORTED } from '@truly-private/omdsh-tools'
+import LocalJobRegistry from '@truly-private/omdsh-jobs-local'
+import * as ToolTasks from '@truly-private/omdsh-tool-jobs'
+import LocalSubprocessRuntime from '@truly-private/omdsh-subprocess-local'
+import { PwshLocalExecutor, resolvePwshPath } from '@truly-private/omdsh-pwsh-local'
+import * as ToolPwsh from '@truly-private/omdsh-tool-pwsh'
+import * as BashEnvPlugin from '@truly-private/omdsh-shell-env'
 
 const testToolSignal = new AbortController().signal
 

@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-session-title-first-prompt-llm
+# @truly-private/omdsh-session-title-first-prompt-llm
 
 English | [中文](README.zh.md)
 

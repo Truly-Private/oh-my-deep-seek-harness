@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-storage-domain
+# @truly-private/omdsh-storage-domain
 
 English | [中文](README.zh.md)
 

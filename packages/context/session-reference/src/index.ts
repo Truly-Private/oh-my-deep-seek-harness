@@ -2,17 +2,17 @@
  * Cross-session snapshot preparation. Hosts adapt mentions into structured
  * references; this service owns exact reads, projection, budgets, and durable context.
  *
- * @module @deepseek-ai/dsh-session-reference
+ * @module @truly-private/omdsh-session-reference
  */
 
 import { Context } from '@deepseek-ai/cordis'
 import z from '@deepseek-ai/schemastery'
-import type { Agent, PreStepDecision } from '@deepseek-ai/dsh-agent'
-import { Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
-import { createUserMessage, freezeMessage } from '@deepseek-ai/dsh-llm'
-import type { ContentBlock, UserMessage } from '@deepseek-ai/dsh-llm'
-import type { SessionId } from '@deepseek-ai/dsh-session'
-import type { SessionSurfaceSnapshot, SessionTitleObservationResult } from '@deepseek-ai/dsh-session-query'
+import type { Agent, PreStepDecision } from '@truly-private/omdsh-agent'
+import { Remote, TypertRemoteService } from '@truly-private/omdsh-typert-protocol'
+import { createUserMessage, freezeMessage } from '@truly-private/omdsh-llm'
+import type { ContentBlock, UserMessage } from '@truly-private/omdsh-llm'
+import type { SessionId } from '@truly-private/omdsh-session'
+import type { SessionSurfaceSnapshot, SessionTitleObservationResult } from '@truly-private/omdsh-session-query'
 import {
   DEFAULT_CANDIDATE_LIMIT,
   DEFAULT_MAX_REFERENCE_BYTES,

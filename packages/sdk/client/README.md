@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-sdk-client
+# @truly-private/omdsh-sdk-client
 
 English | [中文](README.zh.md)
 
@@ -9,7 +9,7 @@ Unlike the Python SDK, the launch spec is fully explicit (`command`/`args`): thi
 ## DeepSeekHarness
 
 ```ts
-import { DeepSeekHarness } from '@deepseek-ai/dsh-sdk-client'
+import { DeepSeekHarness } from '@truly-private/omdsh-sdk-client'
 
 await using harness = new DeepSeekHarness({
   launch: { command: 'node', args: ['lib/bin.js', 'cordis.yml'] },

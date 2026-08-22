@@ -5,8 +5,8 @@ import {
   NO_START_CAPABILITIES,
   type ResolvedSubagentStartRequest,
   type SubagentProvider,
-} from '@deepseek-ai/dsh-subagent'
-import { SessionId } from '@deepseek-ai/dsh-session'
+} from '@truly-private/omdsh-subagent'
+import { SessionId } from '@truly-private/omdsh-session'
 
 export const name = 'subagent-result-diagnostic'
 export const inject = ['subagents']

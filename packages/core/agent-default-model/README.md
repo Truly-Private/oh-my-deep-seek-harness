@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-agent-default-model
+# @truly-private/omdsh-agent-default-model
 
 English | [中文](README.zh.md)
 

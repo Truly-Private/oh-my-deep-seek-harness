@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-command-compact
+# @truly-private/omdsh-command-compact
 
 [English](README.md) | 中文
 
@@ -34,11 +34,11 @@ busy 结果有意限定在进程范围内：活动的未匹配标记会阻塞，
 
 ```yaml
 - id: commands
-  name: '@deepseek-ai/dsh-commands'
+  name: '@truly-private/omdsh-commands'
 - id: compaction-basic
-  name: '@deepseek-ai/dsh-compaction-basic'
+  name: '@truly-private/omdsh-compaction-basic'
 - id: command-compact
-  name: '@deepseek-ai/dsh-command-compact'
+  name: '@truly-private/omdsh-command-compact'
 ```
 
 随附 `dsh` 基础配置将它挂载在 `compaction-basic` 旁，Web 客户端提供命令适配器。未组合命令适配器的自动化接口只保留自动压缩。

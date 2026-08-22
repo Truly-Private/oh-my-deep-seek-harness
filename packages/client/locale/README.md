@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-client-locale
+# @truly-private/omdsh-client-locale
 
 English | [中文](README.zh.md)
 

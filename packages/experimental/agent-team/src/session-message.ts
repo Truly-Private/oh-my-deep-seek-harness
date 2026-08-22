@@ -1,7 +1,7 @@
 /** Durable Session-message acceptance checks shared by provisioning and mailbox recovery. */
 
-import type { UserMessage } from '@deepseek-ai/dsh-llm'
-import type { SessionEvent } from '@deepseek-ai/dsh-session'
+import type { UserMessage } from '@truly-private/omdsh-llm'
+import type { SessionEvent } from '@truly-private/omdsh-session'
 
 type InboxProjection = Record<'next-turn' | 'next-step', UserMessage[]>
 

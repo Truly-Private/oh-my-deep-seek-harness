@@ -1,4 +1,4 @@
-# @deepseek-ai/dsh-tool-ralph
+# @truly-private/omdsh-tool-ralph
 
 [English](README.md) | 中文
 

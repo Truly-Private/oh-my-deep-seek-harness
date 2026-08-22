@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
-import { CallId } from '@deepseek-ai/dsh-llm'
-import { Session, SessionId } from '@deepseek-ai/dsh-session'
-import AgentRegistry, { Inbox } from '@deepseek-ai/dsh-agent'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import TerminalSessionService from '@deepseek-ai/dsh-terminal'
+import { CallId } from '@truly-private/omdsh-llm'
+import { Session, SessionId } from '@truly-private/omdsh-session'
+import AgentRegistry, { Inbox } from '@truly-private/omdsh-agent'
+import type { Agent } from '@truly-private/omdsh-agent'
+import TerminalSessionService from '@truly-private/omdsh-terminal'
 import type {
   TerminalBackend,
   TerminalBackendSession,
@@ -14,10 +14,10 @@ import type {
   TerminalSessionStatus,
   TerminalSignal,
   TerminalWaitReason,
-} from '@deepseek-ai/dsh-terminal'
-import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
-import ToolRegistry from '@deepseek-ai/dsh-tools'
-import * as ToolPwshPersistent from '@deepseek-ai/dsh-tool-pwsh-persistent'
+} from '@truly-private/omdsh-terminal'
+import SystemPrompt from '@truly-private/omdsh-system-prompt'
+import ToolRegistry from '@truly-private/omdsh-tools'
+import * as ToolPwshPersistent from '@truly-private/omdsh-tool-pwsh-persistent'
 
 const contexts: Context[] = []
 let callNumber = 0

@@ -1,6 +1,6 @@
 /**
  * Closed, package-owned SQL resource loading for SQLite.
- * @module @deepseek-ai/dsh-session-persistence-sqlite/sql
+ * @module @truly-private/omdsh-session-persistence-sqlite/sql
  */
 
 import { readFileSync } from 'node:fs'

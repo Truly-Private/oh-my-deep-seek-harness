@@ -1,17 +1,17 @@
 /**
  * Plugin-owned human-command registry shared by interactive UI adapters.
- * @module @deepseek-ai/dsh-commands
+ * @module @truly-private/omdsh-commands
  */
 
 import { Context } from '@deepseek-ai/cordis'
-import type { Agent } from '@deepseek-ai/dsh-agent'
-import { AttachmentError, admitEncodedImages } from '@deepseek-ai/dsh-attachment'
-import type { EncodedImageAttachment } from '@deepseek-ai/dsh-attachment/types'
-import type { ImageBlock } from '@deepseek-ai/dsh-llm'
-import { NamedEntries, ScopedLayers } from '@deepseek-ai/dsh-scope'
-import type { ScopeKey, ScopeLayer } from '@deepseek-ai/dsh-scope'
-import type { Session, SessionEvent, SessionEventMap } from '@deepseek-ai/dsh-session'
-import { TypertRemoteService, Remote } from '@deepseek-ai/dsh-typert-protocol'
+import type { Agent } from '@truly-private/omdsh-agent'
+import { AttachmentError, admitEncodedImages } from '@truly-private/omdsh-attachment'
+import type { EncodedImageAttachment } from '@truly-private/omdsh-attachment/types'
+import type { ImageBlock } from '@truly-private/omdsh-llm'
+import { NamedEntries, ScopedLayers } from '@truly-private/omdsh-scope'
+import type { ScopeKey, ScopeLayer } from '@truly-private/omdsh-scope'
+import type { Session, SessionEvent, SessionEventMap } from '@truly-private/omdsh-session'
+import { TypertRemoteService, Remote } from '@truly-private/omdsh-typert-protocol'
 import { CommandId } from './brand.ts'
 import type {
   CommandDescriptor,

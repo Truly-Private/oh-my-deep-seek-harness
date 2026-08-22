@@ -1,4 +1,4 @@
-# `@deepseek-ai/dsh-host-frontend-static`
+# `@truly-private/omdsh-host-frontend-static`
 
 [English](README.md) | 中文
 
