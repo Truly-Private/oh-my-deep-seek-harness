@@ -115,11 +115,14 @@ describe('CI workflow', () => {
     expect(serialWindows['runs-on']).toEqual(['self-hosted', 'dsh-win-ci', 'windows'])
     expect(serialWindows.name).toBe('serial / windows (self-hosted standby)')
 
-    // Aggregate: Wine `windows` required, native `windows-native` excluded.
+    // Aggregate: only PR jobs from this workflow can be dependencies. The
+    // native Windows job remains non-blocking, while the serial jobs live in
+    // ci-master.yml and therefore cannot appear in this workflow's graph.
     expect(aggregate.needs).toContain('windows')
     expect(aggregate.needs).not.toContain('windows-native')
-    expect(aggregate.needs).toContain('serial-windows')
-    expect(aggregate.needs).not.toContain('serial-windows-selfhosted')
+    expect(aggregate.needs).not.toContain('serial-linux')
+    expect(aggregate.needs).not.toContain('serial-macos')
+    expect(aggregate.needs).not.toContain('serial-windows')
 
     // Linux failover is a separate switch: the three required Linux workers
     // and the verdict job resolve their pool through DSH_CI_FAILOVER_LINUX,
@@ -448,7 +451,8 @@ describe('Issue lifecycle workflow', () => {
     // The job has no job-level `if`, so it is listed on every pull_request /
     // pull_request_review event and reports success instead of a gray skip. The
     // write-capable steps are gated at step level so approved/commented reviews
-    // never mint a Project/Issue App token nor touch the board.
+    // and attributed downstreams never mint the upstream Project/Issue App
+    // token nor touch its board.
     expect(lifecycle.on).toHaveProperty('pull_request')
     expect(lifecycle.on).toHaveProperty('pull_request_review')
     expect(lifecycleJob.if).toBeUndefined()
@@ -460,12 +464,15 @@ describe('Issue lifecycle workflow', () => {
     expect(lifecyclePullRequest.types).not.toContain('ready_for_review')
     expect(lifecyclePullRequest.types).toContain('review_requested')
     expect(lifecycleReview.types).toEqual(['submitted'])
-    const gated = "${{ github.event_name != 'pull_request_review' || github.event.review.state == 'changes_requested' }}"
+    const gated = "${{ github.repository == 'deepseek-harness/deepseek-harness' && (github.event_name != 'pull_request_review' || github.event.review.state == 'changes_requested') }}"
+    const downstream = "${{ github.repository != 'deepseek-harness/deepseek-harness' }}"
     const steps = lifecycleJob.steps.filter(isRecord)
     const tokenStep = steps.find(s => s.name === 'Create project token')
     const handleStep = steps.find(s => s.name === 'Handle repository event')
+    const downstreamStep = steps.find(s => s.name === 'Skip upstream Project lifecycle outside the upstream repository')
     expect(tokenStep).toMatchObject({ if: gated })
     expect(handleStep).toMatchObject({ if: gated })
+    expect(downstreamStep).toMatchObject({ if: downstream })
 
     // issue-policy owns PR validation; it is read-only and a real gate.
     const policyPullRequest = workflowEvent(policy, 'pull_request')
