@@ -25,12 +25,12 @@ exports[`sidebar shell snapshots > renders the collapsed rail after the crossfad
             data-slot="sidebar.brand.mark"
             style="display: contents;"
           >
-            <svg
+            <img
+              alt=""
               aria-hidden="true"
-              data-content="965fe321"
-              fill="none"
-              height="17.6580310880829"
-              viewBox="0 0 23.16 17.04"
+              draggable="false"
+              height="20.786324786324787"
+              src="/omdsh-logo.jpg"
               width="24"
             />
           </div>
@@ -120,12 +120,12 @@ exports[`sidebar shell snapshots > renders the expanded column (logo, capsule, e
               data-slot="sidebar.brand.mark"
               style="display: contents;"
             >
-              <svg
+              <img
+                alt=""
                 aria-hidden="true"
-                data-content="965fe321"
-                fill="none"
-                height="17.6580310880829"
-                viewBox="0 0 23.16 17.04"
+                draggable="false"
+                height="20.786324786324787"
+                src="/omdsh-logo.jpg"
                 width="24"
               />
             </div>
@@ -246,12 +246,12 @@ exports[`sidebar shell snapshots > renders the expanded column in explicitly sel
               data-slot="sidebar.brand.mark"
               style="display: contents;"
             >
-              <svg
+              <img
+                alt=""
                 aria-hidden="true"
-                data-content="965fe321"
-                fill="none"
-                height="17.6580310880829"
-                viewBox="0 0 23.16 17.04"
+                draggable="false"
+                height="20.786324786324787"
+                src="/omdsh-logo.jpg"
                 width="24"
               />
             </div>

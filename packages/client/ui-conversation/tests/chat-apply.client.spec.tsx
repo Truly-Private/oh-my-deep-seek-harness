@@ -6,15 +6,11 @@
 // entries. Tool composition belongs to ui-tool and its machinery spec.
 
 import { describe, expect, it, vi } from 'vitest'
-import { SlotTestRuntime, usePinnedBrowserLanguages, stubSettingsScope } from '@truly-private/omdsh-client-test-runtime'
+import { SlotTestRuntime, stubSettingsScope } from '@truly-private/omdsh-client-test-runtime'
 import { resolveSlotLabel } from '@truly-private/omdsh-client-ui-slots'
 import { LocaleRuntime } from '@truly-private/omdsh-client-locale/client'
 import type { SessionId } from '@truly-private/omdsh-client-runtime/client'
 import { apply, inject } from '@truly-private/omdsh-client-ui-conversation/client'
-
-// The service reads its initial locale from the browser; these specs assert
-// the shipped Chinese copy, so they state the browser they assume.
-usePinnedBrowserLanguages('zh-CN')
 
 const ROOT = 'root-1' as SessionId
 const CHILD = 'child-1' as SessionId

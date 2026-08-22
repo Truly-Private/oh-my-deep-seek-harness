@@ -62,7 +62,7 @@ import type { AdapterRegistrationHandle, DirectoryRegistrationHandle, LlmConfigu
 import { deepEqualJson, installSettingsSection, settingsNamespace } from '@truly-private/omdsh-settings'
 import { PiAiAdapter } from './adapter.ts'
 import { authContextFrom, credentialStoreFrom } from './auth.ts'
-import { catalogProviderIds } from './catalog.ts'
+import { catalogProviderIds, firstPartyProviderIds } from './catalog.ts'
 import { assertServiceable, Config, resolveProfiles } from './config.ts'
 import type { ResolvedPiAiProviderProfile } from './config.ts'
 import { discoverModels } from './discovery.ts'

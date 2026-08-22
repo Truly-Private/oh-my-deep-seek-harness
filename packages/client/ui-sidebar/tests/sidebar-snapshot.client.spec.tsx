@@ -10,13 +10,9 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup, waitFor } from '@testing-library/react'
-import { SlotTestRuntime, usePinnedBrowserLanguages } from '@truly-private/omdsh-client-test-runtime'
+import { SlotTestRuntime } from '@truly-private/omdsh-client-test-runtime'
 import { LocaleRuntime } from '@truly-private/omdsh-client-locale/client'
 import { apply, inject } from '@truly-private/omdsh-client-ui-sidebar/client'
-
-// The service reads its initial locale from the browser; these specs assert
-// the shipped Chinese copy, so they state the browser they assume.
-usePinnedBrowserLanguages('zh-CN')
 
 beforeEach(() => { vi.stubEnv('DSH_CLIENT_COMMIT_HASH', 'abc1234') })
 

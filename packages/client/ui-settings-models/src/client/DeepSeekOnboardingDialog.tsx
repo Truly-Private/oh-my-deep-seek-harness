@@ -50,7 +50,7 @@ function assertNever(_value: never): never {
  * @param props - settings-shell owner state and Models feature dependencies.
  * @returns the onboarding modal or null when onboarding needs no intervention.
  */
-export function DeepSeekOnboardingDialog(props: DeepSeekOnboardingDialogProps): ReactNode {
+export function ProviderOnboardingDialog(props: ProviderOnboardingDialogProps): ReactNode {
   const { complete, controller, useModels, api, schema, t } = props
   const state = useModels(snapshot => snapshot)
   const readiness = onboardingReadiness(state)

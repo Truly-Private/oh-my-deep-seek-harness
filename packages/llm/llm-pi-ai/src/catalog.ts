@@ -148,6 +148,9 @@ export const CHAT_TEMPLATE_VARS = Object.keys(CHAT_TEMPLATE_VAR_GATE) as readonl
 
 let providerIndex: Map<string, Provider> | undefined
 
+/** Distribution presets that this adapter presents as first-party when configured. */
+const FIRST_PARTY_PROVIDER_IDS = ['9router'] as const
+
 /**
  * Installed catalog providers by id, constructed once. Each entry owns the API
  * implementations for its own models, which is why a catalog route reuses this
@@ -174,6 +177,14 @@ export function catalogProvider(provider: string): Provider | undefined {
  */
 export function catalogProviderIds(): readonly string[] {
   return getBuiltinProviders()
+}
+
+/**
+ * Provider routes supplied by this distribution rather than the pi-ai catalog.
+ * @returns the first-party preset route ids.
+ */
+export function firstPartyProviderIds(): readonly string[] {
+  return FIRST_PARTY_PROVIDER_IDS
 }
 
 /**

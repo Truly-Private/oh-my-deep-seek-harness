@@ -85,15 +85,7 @@ declare module '@deepseek-ai/cordis' {
   }
 }
 
-/**
- * English is both the locale the UI opens in when the browser names no shipped
- * language (and for non-browser runs), and the dictionary consulted after the
- * active locale misses a key. One constant serves both because the shipped
- * `zh`/`en` dictionaries carry identical key sets, so neither direction can
- * leave a key unresolved; the residual case points at English rather than
- * zh because a browser naming neither shipped language is the reader least
- * likely to read Chinese.
- */
+/** Product-default locale, also consulted after the active locale misses. */
 export const FALLBACK_LOCALE: LocaleId = 'en'
 
 /** Shared namespace for shell-level texts. */
@@ -198,20 +190,13 @@ export class LocaleRuntime {
 
   /**
    * Switch the active locale — the only user preference write entry.
-   *
-   * The durable write happens even when the id already matches the active
-   * locale, because the active value may be a provisional browser-derived or
-   * fallback resolution that nothing has stored yet. Picking the language
-   * already on screen is still an explicit choice, and it must survive a
-   * different browser sharing the same DSH home. Only the render notification
-   * is conditional: republishing an unchanged locale would churn every
-   * subscriber for nothing.
    * @param id - a registered locale id; unknown ids throw.
    */
   setLocale(id: string): void {
     const match = this.snapshot.locales.find(l => l.id === id)
     if (match === undefined) throw new Error(`locale "${id}" is not registered`)
-    if (this.snapshot.active !== match.id) this.publish(match.id, true)
+    if (this.snapshot.active === match.id) return
+    this.publish(match.id, true)
     void this.host?.set(LOCALE_PREFERENCE_FIELD, match.id)
   }
 

@@ -2,9 +2,12 @@
 /** First-run 9Router prompt behavior over the shared Models join. */
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import Schema from '@deepseek-ai/schemastery'
 import type { RpcResponse, SettingsNamespaceView } from '@truly-private/omdsh-api-remotes/client'
 import { bindSnapshotSelector } from '@truly-private/omdsh-client-test-runtime'
 import { SettingsDescribeMirror } from '@truly-private/omdsh-client-ui-settings/src/client/settings-mirror.ts'
+import { ProviderOnboardingDialog } from '../src/client/DeepSeekOnboardingDialog.tsx'
+import type { ProviderOnboardingDialogProps } from '../src/client/DeepSeekOnboardingDialog.tsx'
 import { ModelsSettingsStore } from '../src/client/store.ts'
 import { en } from '../src/client/locales.ts'
 import { settingsSchema } from './settings-schema.client.ts'
@@ -24,6 +27,18 @@ function fail<T>(message: string): RpcResponse<T> {
     result: { ok: false, error: { code: 'internal', message, details: {} } },
   }
 }
+
+const PiAiConfig = Schema.object({
+  providers: Schema.dict(Schema.object({
+    apiKeyEnv: Schema.string().role('credential-ref'),
+    api: Schema.union(['openai-completions']),
+    baseURL: Schema.string(),
+    models: Schema.array(Schema.object({
+      id: Schema.string().required(),
+      name: Schema.string(),
+    })),
+  })),
+})
 
 function providerNamespace(apiKeyEnv: string | null): SettingsNamespaceView {
   const profile = apiKeyEnv === null

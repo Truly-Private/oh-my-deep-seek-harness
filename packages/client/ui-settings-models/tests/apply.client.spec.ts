@@ -57,7 +57,7 @@ describe('ui-settings-models apply', () => {
   })
 
   it('registers the models nav entry for declarations before or after apply', async () => {
-    const before = await bench(true, 'zh')
+    const before = await bench()
     declare(before.slots)
     await before.ctx.plugin({ inject: [...inject], apply }).await()
     const entry = before.slots.entries('settings.section')[0]!
@@ -140,7 +140,7 @@ describe('ui-settings-models apply', () => {
   })
 
   it('registers the zh/en nav dictionaries and disposes everything with the fiber', async () => {
-    const b = await bench(true, 'zh')
+    const b = await bench()
     declare(b.slots)
     const fiber = b.ctx.plugin({ inject: [...inject], apply })
     await fiber.await()
