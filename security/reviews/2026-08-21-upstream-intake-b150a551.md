@@ -16,15 +16,19 @@ The inspiration repository remains comparison material and is not the code merge
 
 ## Local evidence
 
-The following exact-candidate evidence must be recorded before maintainer approval:
+The following evidence was collected at downstream merge commit `d6f77c57f3d43c923f885090b0637bccc46f5920`:
 
 | Check | State |
 | --- | --- |
-| Upstream lock validation and validator tests | Pending on the completed merge commit. |
-| Full-history Gitleaks scan | Pending on the completed merge commit. |
-| Production dependency audit and lockfile policy | Pending after lockfile regeneration. |
-| Targeted review of credentials, subprocesses, filesystem permissions, network parsing, and executable loading | Pending. |
-| Repository static, build, documentation, package, and snapshot gates | Pending. |
+| Upstream lock validation and validator tests | Passed in candidate state; all 12 security-validator tests passed. |
+| Full-history Gitleaks scan | Gitleaks 8.30.1 scanned 7,233 commits and about 160.42 MB after its official release checksum was verified; no undisposed leaks were found. |
+| Production dependency audit and lockfile policy | Passed with zero known low, moderate, high, or critical findings. |
+| Repository static and documentation gates | `pnpm run check:ci:static` passed all 37 gates. |
+| GitHub Actions supply-chain review | All 122 mutable external action references accepted from upstream were replaced with full 40-character commit pins; a repository test rejects future mutable refs. |
+| Pi/OMP host bridge tests | All 27 tests passed. |
+| Hermes plugin tests | All 8 tests passed under the Proto-managed Python 3.10.21 runtime. |
+| Targeted review of credentials, subprocesses, filesystem permissions, network parsing, executable loading, and release workflows | Path and workflow triage completed; the per-commit human review remains pending. |
+| Repository build, hygiene, package, and snapshot gates | Pending. |
 | Downstream release-family verification and package installation smoke tests | Pending for version 0.0.3. |
 
 ## Remote evidence

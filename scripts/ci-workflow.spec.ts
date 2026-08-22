@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import { globSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import * as yaml from 'js-yaml'
 import { describe, expect, it } from 'vitest'
@@ -8,6 +8,17 @@ const runnerPrivatePnpmDestination = '${{ runner.temp }}/setup-pnpm'
 const nativeWindowsPnpmDestination = '${{ runner.temp }}/setup-pnpm-js'
 
 describe('CI workflow', () => {
+  it('pins every external action to an immutable commit', () => {
+    for (const file of globSync('.github/workflows/*.yml', { cwd: root })) {
+      const source = readFileSync(resolve(root, file), 'utf8')
+      const references = [...source.matchAll(/^\s*-\s+uses:\s+([^\s#]+)/gm)].map(match => match[1])
+      for (const reference of references) {
+        if (reference?.startsWith('./') === true) continue
+        expect(reference, `${file} must pin ${String(reference)} to a full commit`).toMatch(/^[^@]+@[0-9a-f]{40}$/)
+      }
+    }
+  })
+
   it('isolates every pnpm action setup destination per runner', () => {
     const files = ['.github/workflows/ci.yml', '.github/workflows/ci-master.yml']
     const setups: Array<{ jobName: string; step: unknown }> = []
@@ -73,8 +84,8 @@ describe('CI workflow', () => {
     expect(windows.if).toBe("github.event_name == 'pull_request'")
     expect(commandSteps.some(step => step.run.includes('wine-windows-gates.sh'))).toBe(true)
     const installWine = commandSteps.find(step => step.name === 'Install Wine')
-    expect(installWine?.run).toContain('cp "$HOME"/wine-debs/*.deb /var/cache/apt/archives/')
-    expect(installWine?.run).toContain('apt-get install -y --no-download --no-install-recommends wine')
+    expect(installWine?.run).toContain('dpkg -i "$HOME"/wine-debs/*.deb')
+    expect(installWine?.run).toContain('apt-get install -y --no-install-recommends "$HOME"/wine-debs/*.deb')
 
     // windows-native: non-blocking native job with failover, runs windows-complete.
     // Its pool is resolved by the Windows-specific switch.
@@ -162,12 +173,12 @@ describe('CI workflow', () => {
 
     // Neither drill may carry a job-level group: it would not exempt the job
     // from run-scoped cancellation.
-    for (const name of ['serial-linux-selfhosted', 'serial-windows-selfhosted']) {
+    for (const name of ['serial-linux-selfhosted', 'serial-windows']) {
       const job = workflow.jobs[name]
       if (!isRecord(job)) throw new TypeError(`${name} must be defined`)
       expect(job.concurrency).toBeUndefined()
-      // Both stay opt-in and master-push-only; that is what makes the push carve-out safe.
-      expect(job.if).toBe("github.event_name == 'push' && github.ref == 'refs/heads/master' && vars.DSH_CI_STANDBY_DRILLS == 'enabled'")
+      // Both stay master-push-only; that is what makes the push carve-out safe.
+      expect(job.if).toBe("github.event_name == 'push' && github.ref == 'refs/heads/master'")
     }
 
     // What bounds the cost of exempting push: a master push may only carry the
@@ -187,7 +198,7 @@ describe('CI workflow', () => {
       })
       .map(([name]) => name)
       .sort()
-    expect(pushReachable).toEqual(['serial-linux-selfhosted', 'serial-windows-selfhosted', 'wine-apt-cache'])
+    expect(pushReachable).toEqual(['serial-linux-selfhosted', 'serial-windows', 'wine-apt-cache'])
 
     // Why workflow_dispatch must keep cancelling: each benchmark fans out to a
     // dozen larger runners at once, in this same group on master. If it stopped
