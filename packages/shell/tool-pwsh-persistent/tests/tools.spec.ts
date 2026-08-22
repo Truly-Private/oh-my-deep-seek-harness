@@ -75,8 +75,6 @@ function call(
 
 type StubMode =
   | 'normal'
-  | 'prompt-only'
-  | 'prompt-crlf'
   | 'empty-read'
   | 'stalled-read'
   | 'exit'
@@ -95,7 +93,6 @@ type StubMode =
   | 'init-prompt-after-idle'
   | 'spawn-error'
   | 'send-error'
-  | 'prompt-after-idle'
   | 'stale-prompt-before-normal'
   | 'incremental-fallback'
   | 'empty-page-after-latest'
@@ -169,31 +166,14 @@ class StubTerminalSession implements TerminalBackendSession {
       this.pendingText = request.text
       return this.operation(Promise.resolve(this.result('', 'inferred_idle')))
     }
-    if (this.mode === 'prompt-after-idle') {
-      if (request.text.length > 0) {
-        const start = START_PATTERN.exec(request.text)?.[0]
-        const output = `${start ?? ''}\npartial syntax output\n`
-        this.scrollback += output
-        return this.operation(Promise.resolve(this.result(output, 'inferred_idle')))
-      }
-      const output = `pwsh: syntax error\n${this.motd}`
-      this.scrollback += output
-      return this.operation(Promise.resolve(this.result(output, 'stdin_read')))
-    }
     if (this.mode === 'stale-prompt-before-normal') {
       if (request.text.length > 0) {
         this.pendingText = request.text
-        this.scrollback += this.motd
-        return this.operation(Promise.resolve(this.result(this.motd, 'stdin_read')))
+        const output = `${request.text}\n${this.motd}`
+        this.scrollback += output
+        return this.operation(Promise.resolve(this.result(output, 'stdin_read')))
       }
       this.mode = 'normal'
-    }
-    if (this.mode === 'prompt-only' || this.mode === 'prompt-crlf') {
-      const newline = this.mode === 'prompt-crlf' ? '\r\n' : '\n'
-      const start = START_PATTERN.exec(request.text)?.[0]
-      const output = `${start ?? ''}${newline}pwsh: syntax error${newline}${this.motd}${newline}`
-      this.scrollback += output
-      return this.operation(Promise.resolve(this.result(output, 'stdin_read')))
     }
     const sent = request.text.length > 0 ? request.text : this.pendingText
     this.pendingText = ''
@@ -219,7 +199,7 @@ class StubTerminalSession implements TerminalBackendSession {
       return this.operation(Promise.resolve(settled))
     }
     if (this.mode === 'incremental-fallback') {
-      const incremental = `${start ?? ''}\nincrement\n${this.motd}`
+      const incremental = `${start ?? ''}\nincrement\n${end ?? ''}0\n${this.motd}`
       return this.operation(Promise.resolve(this.result(this.motd, 'stdin_read')), incremental)
     }
     if (this.mode === 'torn-status') {
@@ -399,7 +379,7 @@ describe('tool-pwsh-persistent', () => {
     expect(text(await call(ctx, owner, 'complete prompt collision'))).toBe(session.motd)
   })
 
-  it('waits past a stale prompt until the current command start marker arrives', async () => {
+  it('waits past an echoed wrapper and stale prompt until the command end marker arrives', async () => {
     const { ctx, owner, stub } = await setup({ backendType: 'stub' })
     await call(ctx, owner, 'warm up')
     const session = stub.sessions[0]!
@@ -425,7 +405,7 @@ describe('tool-pwsh-persistent', () => {
     expect(stub.sessions).toHaveLength(2)
   })
 
-  it('handles inferred idle, prompt fallback, shell exit, clipping, and cleanup', async () => {
+  it('handles inferred idle, incremental output, shell exit, clipping, and cleanup', async () => {
     const { ctx, owner, stub, fiber } = await setup({
       backendType: 'stub',
       maxOutputChars: 10,
@@ -439,17 +419,6 @@ describe('tool-pwsh-persistent', () => {
     session.mode = 'incremental-fallback'
     session.scrollback = ''
     expect(text(await call(ctx, owner, 'incremental fallback'))).toBe('increment')
-
-    session.mode = 'prompt-only'
-    const promptFallback = text(await call(ctx, owner, 'bad {'))
-    expect(promptFallback).toContain('pwsh: synt')
-    expect(promptFallback).not.toContain('DSH_PERSISTENT_PWSH_PROMPT')
-
-    session.mode = 'prompt-crlf'
-    session.scrollback = ''
-    const crlfPromptFallback = text(await call(ctx, owner, 'bad {'))
-    expect(crlfPromptFallback).toContain('pwsh: synt')
-    expect(crlfPromptFallback).not.toContain('DSH_PERSISTENT_PWSH_PROMPT')
 
     session.mode = 'end-only'
     session.scrollback = ''
@@ -533,19 +502,6 @@ describe('tool-pwsh-persistent', () => {
     session.scrollback = 'older one\nolder two\nolder three\nolder four\n'
 
     expect(text(await call(ctx, owner, 'paged output'))).toBe('hello from stub')
-  })
-
-  it('sanitizes a prompt fallback reached after multiple polling rounds', async () => {
-    const { ctx, owner, stub } = await setup({ backendType: 'stub', maxOutputChars: 1_000 })
-    await call(ctx, owner, 'warm up')
-    const session = stub.sessions[0]!
-    session.mode = 'prompt-after-idle'
-    session.scrollback = ''
-    const result = text(await call(ctx, owner, 'bad {'))
-    expect(result).toContain('partial syntax output')
-    expect(result).toContain('pwsh: syntax error')
-    expect(result).not.toContain('DSH_PERSISTENT_PWSH_PROMPT')
-    expect(result).not.toContain('DSH_PERSISTENT_PWSH_START')
   })
 
   it('does not attribute old scrollback truncation to a complete current command', async () => {

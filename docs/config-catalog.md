@@ -2706,7 +2706,7 @@ export interface Config {
 }
 ```
 
-Source: [`packages/shell/tool-pwsh-persistent/src/index.ts:493`](../packages/shell/tool-pwsh-persistent/src/index.ts)
+Source: [`packages/shell/tool-pwsh-persistent/src/index.ts:484`](../packages/shell/tool-pwsh-persistent/src/index.ts)
 
 <a id="truly-privateomdsh-tool-ralph"></a>
 

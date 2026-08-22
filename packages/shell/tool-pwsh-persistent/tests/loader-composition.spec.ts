@@ -149,6 +149,13 @@ describe.skipIf(!hasPwsh)('persistent pwsh through a real cordis.yml Loader comp
     expect(multiline).toBe("line one:it's fine")
     expect(multiline).not.toContain('DSH_PERSISTENT_PWSH')
 
+    const syntaxError = text(await execute('syntax-error', 'bad {'))
+    expect(syntaxError).toContain('[exit code: 1]')
+    expect(syntaxError).not.toContain('DSH_PERSISTENT_PWSH')
+
+    const afterSyntaxError = text(await execute('after-syntax-error', 'Write-Output "still usable"'))
+    expect(afterSyntaxError).toBe('still usable')
+
     const hereString = text(await execute(
       'here-string',
       "$h = @'\nalpha\nbeta\n'@\nWrite-Output $h",

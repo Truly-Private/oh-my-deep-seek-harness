@@ -416,22 +416,13 @@ async function executeCommand(
       const complete = commandOutput(retainedScrollback(ctx, owner, id, latest), marker, wrapped)
       if (complete !== undefined) return renderCaptured(complete, config.maxOutputChars)
     }
+    if (fallback.includes(marker.end)) {
+      const complete = commandOutput({ text: fallback, truncated: fallbackTruncated }, marker, wrapped)
+      if (complete !== undefined) return renderCaptured(complete, config.maxOutputChars)
+    }
     if (result.sessionStatus.kind === 'exited') {
       return await respondToSessionExit(
         ctx, shells, owner, id, result.sessionStatus, marker, wrapped, fallback, fallbackTruncated, config,
-      )
-    }
-    if (promptCompleted(result)) {
-      const snapshot = retainedScrollback(ctx, owner, id, latest)
-      // A prompt fallback belongs to this wrapper only after its unique START
-      // marker. An older prompt can arrive after the provider write.
-      if (!snapshot.text.includes(marker.start) && !fallback.includes(marker.start)) {
-        await pause()
-        continue
-      }
-      return renderCaptured(
-        partialOutput(snapshot, marker, wrapped, fallback, fallbackTruncated),
-        config.maxOutputChars,
       )
     }
     await pause()
