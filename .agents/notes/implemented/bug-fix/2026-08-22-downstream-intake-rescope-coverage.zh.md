@@ -22,7 +22,7 @@ Status: implemented
 
 locale 测试断言各 fixture 所选的语言。将 locale 设为 `zh` 的 fixture 保留已交付的中文文案预期；当两套字典都需要验证时，测试会显式切换到 `en`。
 
-真实 `terminal-bash` 本地 PTY 与持久 PowerShell Loader 组装套件放入既有的 process-bound Vitest 项目。它们仍属于同一次覆盖率调用及其阈值，但会串行执行，不再在聚合插桩下跨广域和 process-bound 项目竞争。
+真实 `pwsh-local` 执行器、`terminal-bash` 本地 PTY 与持久 PowerShell Loader 组装套件放入既有的 process-bound Vitest 项目。分区覆盖率只让 thread-safe 项目并发分片，随后以单个工作进程完整运行一次 process-bound 项目，再合并全部覆盖率 blob 并执行相同阈值。真实进程所有者因此继续接受插桩，同时不会与广域清单或另一覆盖率分片重叠。
 
 本地 node-pty 提供方以最小的 `CSI 1;1 R` 响应处理完整或跨数据块拆分的 `CSI 6 n` 光标位置查询。PowerShell 启动先等待可打印的原生提示符输出，再只提交一次编码与受控提示符 bootstrap；随后，只有已安装提示符位于 viewport 或 scrollback 末尾时才确认就绪。持久 PowerShell 工具在安装自己的私有提示符时使用相同的末尾匹配要求。其组装后的无密钥 snapshot 会记录精确的 `PWSH_OK` 工具结果，不含 bootstrap 源码、截断提示或凭据材料。
 
@@ -38,7 +38,7 @@ history-and-streaming 场景使用专用的 600-delta replay，并在验证并�
 
 **重定作用域后删除纯度断言。** 这会允许客户端插件内联第二份工作区运行时，或请求它从未声明的模块表行。下游作用域需要与上游作用域相同的强制约束。
 
-**重试 PTY 断言。** 重试会隐藏聚合竞争下持久 shell 边界的丢失。process-bound 项目本就用于真实进程和时序敏感 I/O 套件。
+**重试 PTY 断言或仅延长其超时。** 两种做法都会隐藏聚合竞争下持久 shell 边界的丢失。process-bound 项目与分区协调器会为真实进程和时序敏感 I/O 套件提供一个明确所有者。
 
 **只要捕获输出中任意位置出现提示符字面量就确认就绪。** 提交的 PowerShell 函数在实际执行前就含有该字面量。只有最终提示符位于输出末尾，才能证明 shell 已接受 bootstrap 并回到受控输入状态。
 

@@ -123,6 +123,7 @@ const processBoundTests = [
   'packages/llm/llm-pi-ai/tests/adapter.spec.ts',
   'packages/boot/app-boot/tests/app-boot.spec.ts',
   'packages/boot/app-boot/tests/hmr-config.spec.ts',
+  'packages/shell/pwsh-local/tests/executor.spec.ts',
   'packages/shell/tool-pwsh-persistent/tests/loader-composition.spec.ts',
   'packages/terminal/terminal-bash/tests/local.spec.ts',
   'packages/workflow/workflow-worker-thread/tests/session.spec.ts',

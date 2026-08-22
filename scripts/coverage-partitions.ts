@@ -1,4 +1,4 @@
-/** Coordinate single-worker Vitest coverage partitions and one merged report. */
+/** Coordinate thread-safe Vitest coverage partitions, one process-bound pass, and one merged report. */
 import { spawn } from 'node:child_process'
 import { lstat, mkdir, readdir, rm, unlink } from 'node:fs/promises'
 import { join, relative, sep } from 'node:path'
@@ -116,11 +116,11 @@ export class CoveragePartitionCoordinator {
     await mkdir(this.blobsRoot, { recursive: true })
 
     try {
-      const commands = Array.from(
+      const partitionCommands = Array.from(
         { length: this.partitions },
         (_, index) => this.partitionCommand(index + 1),
       )
-      const results = await Promise.all(commands.map(async (command) => {
+      const partitionResults = await Promise.all(partitionCommands.map(async (command) => {
         console.log(`coverage-partitions: start ${command.label}`)
         const result = await this.runCommand(command)
         if (commandFailed(result)) {
@@ -131,12 +131,23 @@ export class CoveragePartitionCoordinator {
         }
         return result
       }))
-      await this.assertCompleteBlobSet(commands)
+      const processBoundCommand = this.processBoundCommand()
+      console.log(`coverage-partitions: start ${processBoundCommand.label}`)
+      const processBoundResult = await this.runCommand(processBoundCommand)
+      if (commandFailed(processBoundResult)) {
+        console.error(`coverage-partitions: FAIL ${processBoundCommand.label} (${commandFailureReason(processBoundResult)})`)
+        if (processBoundResult.outputTail !== undefined && processBoundResult.outputTail !== '') {
+          console.error(`coverage-partitions: output tail for ${processBoundCommand.label}:\n${processBoundResult.outputTail}`)
+        }
+      }
+      const coverageCommands = [...partitionCommands, processBoundCommand]
+      const coverageResults = [...partitionResults, processBoundResult]
+      await this.assertCompleteBlobSet(coverageCommands)
 
       const mergeCommand = this.mergeCommand()
       console.log(`coverage-partitions: start ${mergeCommand.label}`)
       const mergeResult = await this.runCommand(mergeCommand)
-      return results.some(commandFailed) || commandFailed(mergeResult) ? 1 : 0
+      return coverageResults.some(commandFailed) || commandFailed(mergeResult) ? 1 : 0
     } finally {
       await removeOwnedTree(this.temporaryRoot)
     }
@@ -152,6 +163,7 @@ export class CoveragePartitionCoordinator {
       '--coverage',
       '--coverage.reportOnFailure',
       '--maxWorkers=1',
+      '--project=thread-safe',
       `--shard=${index}/${this.partitions}`,
       '--reporter=default',
       '--reporter=blob',
@@ -161,6 +173,35 @@ export class CoveragePartitionCoordinator {
     ], { npm_execpath: this.pnpmEntrypoint })
     return {
       label: `partition ${index}/${this.partitions}`,
+      ...invocation,
+      env: {
+        [COVERAGE_PARTITIONS_ENV]: undefined,
+        [COVERAGE_PARTITION_MODE_ENV]: '1',
+      },
+      cwd: this.root,
+      blobPath,
+    }
+  }
+
+  private processBoundCommand(): CoverageCommand {
+    const blobPath = join(this.blobsRoot, 'process-bound.json')
+    const reportsDirectory = join(this.temporaryRoot, 'coverage-process-bound')
+    const invocation = pnpmInvocation([
+      'exec',
+      'vitest',
+      'run',
+      '--coverage',
+      '--coverage.reportOnFailure',
+      '--maxWorkers=1',
+      '--project=process-bound',
+      '--reporter=default',
+      '--reporter=blob',
+      `--outputFile.blob=${this.relativePath(blobPath)}`,
+      `--coverage.reportsDirectory=${this.relativePath(reportsDirectory)}`,
+      ...this.vitestArgs,
+    ], { npm_execpath: this.pnpmEntrypoint })
+    return {
+      label: 'process-bound coverage',
       ...invocation,
       env: {
         [COVERAGE_PARTITIONS_ENV]: undefined,

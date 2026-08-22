@@ -22,7 +22,7 @@ The credentials invariant test expects the downstream package identity. The base
 
 Locale tests assert the language each fixture selects. Fixtures that stage `zh` keep the shipped Chinese copy expectations and exercise an explicit switch to `en` where both dictionaries matter.
 
-The real `terminal-bash` local PTY and persistent PowerShell Loader-composition suites run in the existing process-bound Vitest project. They remain part of the same coverage invocation and thresholds, but execute serially instead of competing across the broad and process-bound projects under aggregate instrumentation.
+The real `pwsh-local` executor, `terminal-bash` local PTY, and persistent PowerShell Loader-composition suites run in the existing process-bound Vitest project. Partitioned coverage runs only the thread-safe project in concurrent shards, then runs the complete process-bound project once with one worker before merging every coverage blob and enforcing the same thresholds. Real process owners therefore remain instrumented without overlapping the broad inventory or another coverage shard.
 
 The local node-pty provider answers complete or split `CSI 6 n` cursor-position queries with a minimal `CSI 1;1 R` response. PowerShell startup first waits for printable native-prompt output, submits the encoding and controlled-prompt bootstrap exactly once, and then accepts readiness only when the installed prompt is the viewport or scrollback suffix. The persistent PowerShell tool uses the same suffix requirement when installing its private prompt. Its assembled keyless snapshot records the exact `PWSH_OK` tool result without bootstrap source, clipping text, or credential material.
 
@@ -38,7 +38,7 @@ Both PowerShell prompt-installation loops recognize the private prompt as a bare
 
 **Remove the purity assertions after rescoping.** That would permit a client plugin to inline a second workspace runtime or request a module-table row it never declared. The downstream scope needs the same enforcement the upstream scope had.
 
-**Retry the PTY assertions.** A retry would conceal loss of a persistent-shell boundary under aggregate contention. The process-bound project already exists for real process and timing-sensitive I/O suites.
+**Retry the PTY assertions or only lengthen their timeouts.** Either change would conceal loss of a persistent-shell boundary under aggregate contention. The process-bound project and partition coordinator provide one explicit owner for real process and timing-sensitive I/O suites.
 
 **Accept a prompt literal anywhere in captured output.** The submitted PowerShell function contains that literal before the function has executed. Only the final prompt suffix proves that the shell accepted the bootstrap and returned to its controlled input state.
 
