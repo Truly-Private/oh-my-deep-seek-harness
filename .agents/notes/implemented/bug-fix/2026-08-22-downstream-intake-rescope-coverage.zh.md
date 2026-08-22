@@ -10,7 +10,7 @@ Status: implemented
 
 六工作进程 Web snapshot 作业暴露了多项互不依赖的时序与产物所有权缺陷。HMR 场景恢复了动态插件 bundle，却把 `apps/web/dist` 留在重写后的状态，使已完成构建的摘要在内置 bundle 冒烟测试加载前失效。主题检查会在 Host 设置写入完成内存提交之前先观察到持久化文件，并且在下游重定作用域后仍拦截上游 bundle 路由。引用与 Markdown 图像 snapshot 可能在保存的 `trifecta` 选择到达前采集，subagent 悬浮目录可能在挂载前被查询，而双消息 steering fixture 在并发 CI 负载下没有为三次浏览器操作留下足够的流式时间。冷启动的 seeded-history 页面可能在恢复后的 Host agent 完成附加之前就渲染持久化对话，因此同一负载下直接追加实时事件会失败。DeepSeek 注释保活 snapshot 使用 150 毫秒空闲看门狗和 10 毫秒心跳，在并发 snapshot 池中没有留下足够的事件循环调度余量，可能触发一次非预期重试。无密钥 Web 重试冒烟测试还把完整真实 Host 生命周期限制为 30 秒，尽管其启动与恢复等待各自已有更长的显式界限。
 
-其他发布形态检查依赖偶然的调度时序。history-and-streaming 场景可能在建立阅读锚点之前耗尽有限 replay；回答问题后的 transcript 采集可能仍保留离开底部的控件；响应式 queue 几何则可能在 viewport 改变后的浏览器布局完成前被测量。在测试完成必需的折叠区和响应式布局检查之后，Playwright 稳定子会话导航按钮时，实时 workflow fixture 可能已结束。subagent 目录测试会在没有证明打开菜单的 effect 已安装监听器时就派发 resize。一个进程密集型 Oxlint 重试仍使用默认五秒测试超时。PowerShell scrollback 可以用 LF 或 CRLF 结束提示符，但两个提示符安装循环都只接受 scrollback 中不带换行的提示符，因此可能在 shell 已就绪后继续无限等待。
+其他发布形态检查依赖偶然的调度时序。history-and-streaming 场景可能在建立阅读锚点之前耗尽有限 replay；回答问题后的 transcript 采集可能仍保留离开底部的控件；响应式 queue 几何则可能在 viewport 改变后的浏览器布局完成前被测量。在测试完成必需的折叠区和响应式布局检查之后，Playwright 稳定子会话导航按钮时，实时 workflow fixture 可能已结束。subagent 目录测试会在没有证明打开菜单的 effect 已安装监听器时就派发 resize。一个进程密集型 Oxlint 重试仍使用默认五秒测试超时。PowerShell scrollback 可以用 LF 或 CRLF 结束提示符，但两个提示符安装循环都只接受 scrollback 中不带换行的提示符，因此可能在 shell 已就绪后继续无限等待。真实持久 PowerShell Loader 测试还忽略了状态初始化结果，并在完整插桩下只给工具二十秒，因此真实命令超时会重置 shell，随后表现为状态丢失。
 
 ## Decision
 
@@ -32,7 +32,7 @@ HMR 场景会保存完整构建摘要覆盖的每个产物，在恢复前停止�
 
 history-and-streaming 场景使用专用的 600-delta replay，并在验证并发到达之前断言流式输出仍在进行。回答问题后的采集会返回 transcript 底部；queue 与上下文面板几何则在响应式布局稳定后轮询已渲染不变量。实时 workflow 场景使用为 replay 设置的间隔，使六工作进程浏览器池在完成之前的折叠区和响应式布局断言时，仍保留子会话导航时间窗。subagent 目录测试会等待打开菜单的 effect，并验证 resize 驱动的菜单定位。进程密集型 Oxlint 重试使用显式的二十秒测试超时。
 
-两个 PowerShell 提示符安装循环都把私有提示符识别为不带换行的末尾，或后接 LF、CRLF 的末尾。回归 fixture 会验证以换行结束的 scrollback 就绪状态，并区分原生提示符成功之后的安装超时。
+两个 PowerShell 提示符安装循环都把私有提示符识别为不带换行的末尾，或后接 LF、CRLF 的末尾。回归 fixture 会验证以换行结束的 scrollback 就绪状态，并区分原生提示符成功之后的安装超时。真实 Loader 组装会先要求明确的 `state-ready` 结果再检查持久性，在 120 秒测试预算内为 PowerShell 启动提供三十秒，并为插桩命令提供六十秒；因此，超时会在初始化处失败，而不会伪装成状态丢失。
 
 ## Alternatives considered
 
