@@ -16,7 +16,7 @@ The inspiration repository remains comparison material and is not the code merge
 
 ## Local evidence
 
-The following evidence was collected through downstream validation commit `19deefc73f741c74804a61a3d3ff22bcf6796de2`, whose history contains merge commit `d6f77c57f3d43c923f885090b0637bccc46f5920`:
+The following evidence was collected through downstream CodeQL remediation commit `0cb7d79d7f49318469364325c26fbf2709ccf893`, whose history contains merge commit `d6f77c57f3d43c923f885090b0637bccc46f5920`:
 
 | Check | State |
 | --- | --- |
@@ -24,6 +24,7 @@ The following evidence was collected through downstream validation commit `19dee
 | Full-history Gitleaks scan | Gitleaks 8.30.1 scanned 7,233 commits and about 160.42 MB after its official release checksum was verified; no undisposed leaks were found. |
 | Production dependency audit and lockfile policy | Passed with zero known low, moderate, high, or critical findings. |
 | Repository static and documentation gates | `pnpm run check:ci:static` passed all 37 gates. |
+| CodeQL remediation regression checks | Five focused Vitest files passed all 124 tests; repository-wide lint, client typecheck, export JSDoc, Agent Note, translation-pairing, and archived-note gates passed. A repeated aggregate static run passed 36 of 37 gates and found only a stale ignored `website/.dist` collision; after moving that generated directory aside, `pnpm run docs:build:mpa` passed with 2,396 fragment references and 181 raw-Markdown files. |
 | GitHub Actions supply-chain review | All 122 mutable external action references accepted from upstream were replaced with full 40-character commit pins; a repository test rejects future mutable refs. |
 | Pi/OMP host bridge tests | All 27 tests passed. |
 | Hermes plugin tests | All 8 tests passed under the Proto-managed Python 3.10.21 runtime. |
@@ -36,7 +37,11 @@ The following evidence was collected through downstream validation commit `19dee
 
 ## Remote evidence
 
-GitHub provenance validation, production dependency audit, full-history Gitleaks, JavaScript/TypeScript CodeQL, Python CodeQL, and pull-request dependency review remain pending until the candidate branch is pushed and its workflow results are inspected.
+The exact-head [security workflow run 32553453583](https://github.com/Truly-Private/oh-my-deepseek-harness/actions/runs/32553453583) passed on `0cb7d79d7f49318469364325c26fbf2709ccf893`: provenance and policy, full-history Gitleaks, pull-request dependency review, the production dependency audit, JavaScript/TypeScript CodeQL, and Python CodeQL all completed successfully.
+
+The preceding analysis exposed alerts 45–50. Alerts 45–49 were high-severity regular-expression findings in the PowerShell persistent-tool fixture, web index injection renderer, Files API client, and upload index; alert 50 was a medium-severity unsafe-code-construction finding in the dynamic-package precheck. Commit `0cb7d79d7f49318469364325c26fbf2709ccf893` replaced every reported superlinear expression and removed the redundant host-realm `Function` constructor. The next analysis removed alerts 45–50 from the open inventory and reported alert 51 on the remaining compile-only `vm.Script` call.
+
+Alert 51 received a finding-specific `won't fix` disposition because compiling and later executing model-written plugin code is the named feature, the host-runner README requires bash-level trust and states that `node:vm` is not a security boundary, and the browser half does not load this host module. The GitHub disposition records that rationale and the remediation commit; no CodeQL query or path was excluded. After the disposition, the pull request's open CodeQL alert count was zero and the separate GitHub Advanced Security CodeQL check completed successfully.
 
 ## Release decision
 
