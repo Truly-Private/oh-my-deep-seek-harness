@@ -16,7 +16,7 @@ The inspiration repository remains comparison material and is not the code merge
 
 ## Local evidence
 
-The following evidence was collected at downstream merge commit `d6f77c57f3d43c923f885090b0637bccc46f5920`:
+The following evidence was collected through downstream validation commit `19deefc73f741c74804a61a3d3ff22bcf6796de2`, whose history contains merge commit `d6f77c57f3d43c923f885090b0637bccc46f5920`:
 
 | Check | State |
 | --- | --- |
@@ -28,8 +28,11 @@ The following evidence was collected at downstream merge commit `d6f77c57f3d43c9
 | Pi/OMP host bridge tests | All 27 tests passed. |
 | Hermes plugin tests | All 8 tests passed under the Proto-managed Python 3.10.21 runtime. |
 | Targeted review of credentials, subprocesses, filesystem permissions, network parsing, executable loading, and release workflows | Path and workflow triage completed; the per-commit human review remains pending. |
-| Repository build, hygiene, package, and snapshot gates | Pending. |
-| Downstream release-family verification and package installation smoke tests | Pending for version 0.0.3. |
+| Official production build | `pnpm run build:official` passed for the host, client, and web application bundles. Vite reported size warnings but no build failure. |
+| Repository hygiene | `pnpm run hygiene` passed all 13 gates. |
+| Keyless snapshot tests | Thirteen of fourteen files passed in the aggregate run with 126 tests passed and 2 skipped. The remaining deterministic translation-prompt snapshot was refreshed for the downstream README and its exact test passed twice afterward. The complete aggregate suite was not rerun after that isolated correction. |
+| Downstream release-family verification | `pnpm run release:verify --family dsh` passed for all 227 publishable packages at version 0.0.3. |
+| Package assembly and clean installation | Release packing produced 227 downstream, 9 vendored, and 1 Landlock tarball. `release:verify-packed-install` installed all 237 tarballs into a fresh temporary environment and the installed `@truly-private/omdsh` CLI reported version 0.0.3. |
 
 ## Remote evidence
 
