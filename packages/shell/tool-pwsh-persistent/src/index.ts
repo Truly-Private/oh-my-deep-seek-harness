@@ -9,7 +9,7 @@ import { randomUUID } from 'node:crypto'
 import type { Context } from '@deepseek-ai/cordis'
 import z from '@deepseek-ai/schemastery'
 import type { Agent } from '@truly-private/omdsh-agent'
-import type { TerminalReadResult, TerminalSendResult, TerminalSessionId } from '@truly-private/omdsh-terminal'
+import type { TerminalReadResult, TerminalSessionId } from '@truly-private/omdsh-terminal'
 import { deadline, timeoutOf } from '@truly-private/omdsh-timeout'
 import { defineTool } from '@truly-private/omdsh-tools'
 
@@ -17,7 +17,6 @@ import { defineTool } from '@truly-private/omdsh-tools'
 const TRUNCATED_MESSAGE = '<response clipped><NOTE>To save on context only part of this file has been shown to you. You should retry this tool after you have searched inside the file with Select-String in order to find the line numbers of what you are looking for.</NOTE>'
 const LOST_PREFIX_MESSAGE = '<response clipped><NOTE>The beginning of this command output was dropped by the terminal scrollback limit. The following text is the earliest retained output.</NOTE>\n'
 const SHELL_RESET_MESSAGE = 'The persistent pwsh shell was reset; the next pwsh call starts from the workspace with a fresh current directory and environment.'
-const SHELL_PROMPT = '__DSH_PERSISTENT_PWSH_PROMPT__ '
 const TIMEOUT_CODE = 'PERSISTENT_PWSH_TIMEOUT'
 // One page is enough to find a just-emitted completion marker; the full
 // scrollback is assembled only when a command settles or needs partial output.
@@ -28,6 +27,7 @@ const DEFAULT_DESCRIPTION = 'Run commands in a persistent PowerShell shell. Stat
 
 interface ResolvedConfig {
   backendType: string
+  promptText: string
   timeoutMs: number
   maxOutputChars: number
   description: string
@@ -98,10 +98,10 @@ function wrapCommand(command: string, marker: CommandMarkers): string {
   return `Write-Output '${marker.start}'; $LASTEXITCODE = $null; $__s = 1; try { Invoke-Expression "${body}"; $__ok = $? } catch { $__ok = $false }; if ($null -ne $LASTEXITCODE) { $__s = [int]$LASTEXITCODE } else { $__s = if ($__ok) { 0 } else { 1 } }; Write-Output ('${marker.end}' + $__s)`
 }
 
-function stripPrompt(text: string): string {
+function stripPrompt(text: string, promptText: string): string {
   let result = text.replace(/\r?\n$/, '')
-  while (result.endsWith(SHELL_PROMPT)) {
-    result = result.slice(0, -SHELL_PROMPT.length)
+  while (result.endsWith(promptText)) {
+    result = result.slice(0, -promptText.length)
   }
   return result.endsWith('\n') ? result.slice(0, -1) : result
 }
@@ -130,27 +130,18 @@ function commandOutput(
   }
 }
 
-function hasPromptSuffix(text: string): boolean {
-  return text.endsWith(SHELL_PROMPT)
-    || text.endsWith(`${SHELL_PROMPT}\r\n`)
-    || text.endsWith(`${SHELL_PROMPT}\n`)
-}
-
-function promptCompleted(result: TerminalSendResult): boolean {
-  return hasPromptSuffix(result.viewport)
-}
-
 function partialOutput(
   snapshot: RetainedOutput,
   marker: CommandMarkers,
   wrapper: string,
+  promptText: string,
   fallback: string,
   fallbackTruncated = false,
 ): CapturedOutput {
   const startMarker = snapshot.text.lastIndexOf(marker.start)
   if (startMarker >= 0) {
     return {
-      text: stripPrompt(snapshot.text.slice(startMarker + marker.start.length).replace(/^\r?\n/, '')),
+      text: stripPrompt(snapshot.text.slice(startMarker + marker.start.length).replace(/^\r?\n/, ''), promptText),
       incomplete: false,
     }
   }
@@ -161,7 +152,7 @@ function partialOutput(
   const fallbackEnd = afterStart.lastIndexOf(marker.end)
   const beforeEnd = fallbackEnd < 0 ? afterStart : afterStart.slice(0, fallbackEnd)
   return {
-    text: stripPrompt(beforeEnd.replaceAll(SHELL_PROMPT, '').replaceAll(wrapper, '')),
+    text: stripPrompt(beforeEnd.replaceAll(promptText, '').replaceAll(wrapper, ''), promptText),
     incomplete: fallbackTruncated || fallbackStart < 0,
   }
 }
@@ -248,22 +239,16 @@ async function respondToSessionExit(
   await shells.reset(owner, 'persistent pwsh shell exited')
   return [
     renderShellExitStatus(
-      renderCaptured(partialOutput(snapshot, marker, wrapped, fallback, fallbackTruncated), config.maxOutputChars),
+      renderCaptured(
+        partialOutput(snapshot, marker, wrapped, config.promptText, fallback, fallbackTruncated),
+        config.maxOutputChars,
+      ),
       status.exitCode,
       status.signal,
     ),
     SHELL_RESET_MESSAGE,
   ].filter(part => part.length > 0).join('\n')
 }
-
-/**
- * The pwsh prompt function that overrides the backend bootstrap value with
- * this tool's own prompt. `[char]27`/`[char]7` build the OSC bytes at runtime
- * because raw ESC characters in submitted input are unreliable under
- * PSReadLine.
- */
-const PWSH_PROMPT_SETUP =
-  "function prompt { [Console]::Write([char]27 + ']133;D;' + [int]$LASTEXITCODE + [char]7); '" + SHELL_PROMPT + "' }"
 
 function persistentShells(ctx: Context, config: ResolvedConfig): PersistentShells {
   const pending = new WeakMap<Agent, Promise<TerminalSessionId>>()
@@ -310,25 +295,6 @@ function persistentShells(ctx: Context, config: ResolvedConfig): PersistentShell
             pending.delete(owner)
             live.delete(owner)
           }, 'tool-pwsh-persistent owner cache cleanup')
-        }
-        let first = true
-        for (;;) {
-          const setup = ctx.terminals.startSend(owner, spawned.sessionId, {
-            text: first ? PWSH_PROMPT_SETUP : '',
-            submit: first,
-            expectedPromptText: SHELL_PROMPT,
-            signal: combinedSignal,
-          })
-          first = false
-          const result = await setup.done
-          if (result.sessionStatus.kind === 'exited' || result.waitReason === 'timeout') {
-            throw new Error('persistent pwsh shell did not accept initialization')
-          }
-          const scrollback = ctx.terminals.read(owner, spawned.sessionId, {
-            offset: 0,
-            count: SCROLLBACK_PAGE_LINES,
-          }).text
-          if (promptCompleted(result) || hasPromptSuffix(scrollback)) break
         }
         return spawned.sessionId
       } catch (error: unknown) {
@@ -380,7 +346,7 @@ async function executeCommand(
       operation = ctx.terminals.startSend(owner, id, {
         text: first ? wrapped : '',
         submit: first,
-        expectedPromptText: SHELL_PROMPT,
+        expectedPromptText: config.promptText,
         signal: commandDeadline.signal,
       })
       first = false
@@ -397,7 +363,7 @@ async function executeCommand(
     if (timedOut !== undefined) {
       const snapshot = retainedScrollback(ctx, owner, id, latest)
       const partial = renderCaptured(
-        partialOutput(snapshot, marker, wrapped, fallback, fallbackTruncated),
+        partialOutput(snapshot, marker, wrapped, config.promptText, fallback, fallbackTruncated),
         config.maxOutputChars,
       )
       await shells.reset(owner, 'persistent pwsh command timed out')
@@ -484,6 +450,8 @@ export const inject = ['tools', 'terminals']
 export interface Config {
   /** PTY backend used for each owner-isolated persistent shell (default `shell`). */
   backendType?: string
+  /** Exact stable prompt installed by the selected backend (default `dsh> `). */
+  promptText?: string
   /** Wall-clock limit for one command (default 300000). */
   timeoutMs?: number
   /** Maximum returned command-output characters before clipping (default 16000). */
@@ -495,6 +463,7 @@ export interface Config {
 /** Runtime configuration schema for the persistent pwsh tool. */
 export const Config: z<Config> = z.object({
   backendType: z.string().default('shell'),
+  promptText: z.string().default('dsh> '),
   timeoutMs: z.number().default(300_000),
   maxOutputChars: z.number().default(16_000),
   description: z.string().default(DEFAULT_DESCRIPTION),
@@ -504,12 +473,16 @@ export const Config: z<Config> = z.object({
 export function apply(ctx: Context, config: Config): void {
   const resolved: ResolvedConfig = {
     backendType: config.backendType ?? 'shell',
+    promptText: config.promptText ?? 'dsh> ',
     timeoutMs: config.timeoutMs ?? 300_000,
     maxOutputChars: config.maxOutputChars ?? 16_000,
     description: config.description ?? DEFAULT_DESCRIPTION,
   }
   if (resolved.backendType.trim().length === 0) {
     throw new Error('tool-pwsh-persistent: backendType must be non-empty')
+  }
+  if (resolved.promptText.length === 0) {
+    throw new Error('tool-pwsh-persistent: promptText must be non-empty')
   }
   if (!Number.isSafeInteger(resolved.timeoutMs) || resolved.timeoutMs <= 0) {
     throw new Error('tool-pwsh-persistent: timeoutMs must be a positive safe integer')

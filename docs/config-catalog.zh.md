@@ -2699,6 +2699,8 @@ export interface Config {
 export interface Config {
   /** PTY backend used for each owner-isolated persistent shell (default `shell`). */
   backendType?: string
+  /** Exact stable prompt installed by the selected backend (default `dsh> `). */
+  promptText?: string
   /** Wall-clock limit for one command (default 300000). */
   timeoutMs?: number
   /** Maximum returned command-output characters before clipping (default 16000). */
@@ -2708,7 +2710,7 @@ export interface Config {
 }
 ```
 
-来源：[`packages/shell/tool-pwsh-persistent/src/index.ts:484`](../packages/shell/tool-pwsh-persistent/src/index.ts)
+来源：[`packages/shell/tool-pwsh-persistent/src/index.ts:450`](../packages/shell/tool-pwsh-persistent/src/index.ts)
 
 <a id="truly-privateomdsh-tool-ralph"></a>
 

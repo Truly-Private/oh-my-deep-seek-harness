@@ -88,9 +88,6 @@ type StubMode =
   | 'torn-status'
   | 'finish-torn-status'
   | 'end-only'
-  | 'init-exit'
-  | 'init-timeout'
-  | 'init-prompt-after-idle'
   | 'spawn-error'
   | 'send-error'
   | 'stale-prompt-before-normal'
@@ -105,7 +102,7 @@ const START_PATTERN = /__DSH_PERSISTENT_PWSH_START_[^_]+__/
 const END_PATTERN = /__DSH_PERSISTENT_PWSH_END_[^:]+:/
 
 class StubTerminalSession implements TerminalBackendSession {
-  readonly motd = '__DSH_PERSISTENT_PWSH_PROMPT__ '
+  readonly motd = 'dsh> '
   readonly pid = 123
   statusValue: TerminalSessionStatus = { kind: 'running' }
   scrollback = this.motd
@@ -116,7 +113,6 @@ class StubTerminalSession implements TerminalBackendSession {
   pendingText = ''
   historyTruncated = false
   throwOnSend = false
-  initializationPending = false
 
   constructor(mode: StubMode) {
     this.mode = mode
@@ -125,26 +121,6 @@ class StubTerminalSession implements TerminalBackendSession {
   startSend(request: TerminalSendRequest): TerminalSendOperation {
     this.sends += 1
     this.requests.push(request)
-    if (request.text.startsWith('function prompt')) {
-      if (this.mode === 'init-exit') {
-        this.statusValue = { kind: 'exited', exitCode: 1, signal: null }
-        return this.operation(Promise.resolve(this.result('', 'session_exit')))
-      }
-      if (this.mode === 'init-timeout') {
-        return this.operation(Promise.resolve(this.result('', 'timeout')))
-      }
-      if (this.mode === 'init-prompt-after-idle') {
-        this.initializationPending = true
-        this.scrollback = request.text
-        return this.operation(Promise.resolve(this.result(request.text, 'inferred_idle')))
-      }
-      return this.operation(Promise.resolve(this.result(this.motd, 'stdin_read')))
-    }
-    if (this.initializationPending) {
-      this.initializationPending = false
-      this.scrollback += `\n${this.motd}\r\n`
-      return this.operation(Promise.resolve(this.result('PowerShell 7.6.4\n', 'inferred_idle')))
-    }
     if (this.mode === 'send-error') throw new Error('stub send failed')
     if (this.throwOnSend) throw new Error('PTY session has exited')
     if (this.mode === 'wait-for-abort' || this.mode === 'end-on-abort') {
@@ -347,7 +323,7 @@ describe('tool-pwsh-persistent', () => {
     expect(text(await call(ctx, owner, 'Write-Output one'))).toBe('hello from stub')
     expect(text(await call(ctx, owner, 'Write-Output two'))).toBe('hello from stub')
     expect(stub.sessions).toHaveLength(1)
-    expect(stub.sessions[0]?.sends).toBe(3)
+    expect(stub.sessions[0]?.sends).toBe(2)
     expect(stub.sessions[0]?.requests.every(request => request.expectedPromptText === stub.sessions[0]?.motd)).toBe(true)
 
     const ownerWithoutCwd = agent(ctx, undefined)
@@ -545,22 +521,6 @@ describe('tool-pwsh-persistent', () => {
     },
   )
 
-  it.each(['init-exit', 'init-timeout'] as const)(
-    'fails initialization and closes the unusable shell for %s',
-    async (mode) => {
-      const { ctx, owner, stub } = await setup({ backendType: 'stub' }, mode)
-      expect((await call(ctx, owner, 'pwd')).isError).toBe(true)
-      expect(stub.sessions[0]?.closed).toContain('persistent pwsh initialization failed')
-    },
-  )
-
-  it('waits past an echoed prompt bootstrap until the private prompt is ready', async () => {
-    const { ctx, owner, stub } = await setup({ backendType: 'stub' }, 'init-prompt-after-idle')
-
-    expect(text(await call(ctx, owner, 'pwd'))).toBe('hello from stub')
-    expect(stub.sessions[0]?.sends).toBe(3)
-  })
-
   it('clears a failed spawn without trying to close an unpublished shell', async () => {
     const { ctx, owner, stub } = await setup({ backendType: 'stub' }, 'spawn-error')
     expect((await call(ctx, owner, 'pwd')).isError).toBe(true)
@@ -625,6 +585,9 @@ describe('tool-pwsh-persistent', () => {
     expect(() => {
       ToolPwshPersistent.apply(new Context(), { timeoutMs: 0 })
     }).toThrow('timeoutMs must be a positive safe integer')
+    expect(() => {
+      ToolPwshPersistent.apply(new Context(), { promptText: '' })
+    }).toThrow('promptText must be non-empty')
     expect(() => {
       ToolPwshPersistent.apply(new Context(), { maxOutputChars: 0 })
     }).toThrow('maxOutputChars must be a positive safe integer')
