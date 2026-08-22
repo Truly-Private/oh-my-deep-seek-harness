@@ -71,6 +71,28 @@ function splice(html: string, at: number, markup: string): string {
   return `${html.slice(0, at)}${markup}${html.slice(at)}`
 }
 
+/** Find the end of the first opening tag with a bounded linear scan. */
+function openingTagEnd(html: string, tagName: 'head' | 'body'): number | undefined {
+  const tagLength = tagName.length + 1
+  for (let at = 0; at <= html.length - tagLength; at += 1) {
+    if (html[at] !== '<') continue
+    let matches = true
+    for (let offset = 0; offset < tagName.length; offset += 1) {
+      const code = html.charCodeAt(at + offset + 1)
+      if ((code | 32) !== tagName.charCodeAt(offset)) {
+        matches = false
+        break
+      }
+    }
+    if (!matches) continue
+    const afterName = html[at + tagLength]
+    if (afterName !== '>' && (afterName === undefined || afterName.trim() !== '')) continue
+    const close = html.indexOf('>', at + tagLength)
+    return close === -1 ? undefined : close + 1
+  }
+  return undefined
+}
+
 /**
  * Render rows into an index.html body: head rows immediately after the
  * opening head tag, body rows immediately after the opening body tag, each
@@ -89,16 +111,16 @@ export function renderIndexInjections(html: string, rows: readonly IndexInjectio
   }
   let out = html
   if (head !== '') {
-    const open = /<head(?:\s[^>]*)?>/i.exec(out)
+    const openEnd = openingTagEnd(out, 'head')
     // Headless fixture pages may lack <head>; prepending keeps the rows ahead
     // of every document script.
-    out = open === null ? `${head}${out}` : splice(out, open.index + open[0].length, head)
+    out = openEnd === undefined ? `${head}${out}` : splice(out, openEnd, head)
   }
   if (body !== '') {
-    const open = /<body(?:\s[^>]*)?>/i.exec(out)
+    const openEnd = openingTagEnd(out, 'body')
     // Body-less fragments receive the rows at the end, where the HTML parser
     // has already synthesized a body.
-    out = open === null ? `${out}${body}` : splice(out, open.index + open[0].length, body)
+    out = openEnd === undefined ? `${out}${body}` : splice(out, openEnd, body)
   }
   return out
 }

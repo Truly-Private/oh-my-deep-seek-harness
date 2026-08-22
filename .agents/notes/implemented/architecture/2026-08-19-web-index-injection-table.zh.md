@@ -12,7 +12,7 @@ Web 壳的启动 HTML 需要三类注入：client-modules 的引导协议（`__M
 
 注入面事件化、数据化：webserver 声明 `webserver/index-inject` 事件与纯数据行类型 `IndexInjection`（`global`/`script`/`script-src`/`style`/`html`，`head|body` 定位）。想注入的插件订阅事件、往表里 push 行；每次收集（`collectIndexInjections()`）都是一次全新 emit，订阅方现读现填（模块图、主题偏好天然新鲜，无重注册问题），订阅随 fiber 销毁自动摘除。
 
-一张表两个渲染器：served 形态 `webServer.renderIndex(html)` 确定性把行渲染进 index.html（head 行插 head 首、body 行插 body 首，全局值 JSON `<` 转义、src 属性转义）；worker 形态 `/__boot__` 载荷就是 `{ injections }`，页面侧小解释器逐行执行（设全局 / 建脚本元素 / 经 tunnel loadBundle 载外链 / 挂样式与 DOM）。行是纯 JSON 数据，这是双端等价的纪律。
+一张表两个渲染器：served 形态 `webServer.renderIndex(html)` 通过有界线性扫描，确定性把行渲染进 index.html（head 行插 head 首、body 行插 body 首，全局值 JSON `<` 转义、src 属性转义）；worker 形态 `/__boot__` 载荷就是 `{ injections }`，页面侧小解释器逐行执行（设全局 / 建脚本元素 / 经 tunnel loadBundle 载外链 / 挂样式与 DOM）。行是纯 JSON 数据，这是双端等价的纪律。
 
 `tapIndex`/`applyIndexTaps` 保留为原始 HTML 变换的逃生口，在行渲染之后执行；内部消费者全部迁走。
 

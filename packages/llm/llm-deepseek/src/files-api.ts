@@ -2,6 +2,7 @@
 
 import { attributionHeaders, LlmError } from '@truly-private/omdsh-llm'
 import type { ImageMediaType } from '@truly-private/omdsh-attachment'
+import { trimTrailingSlashes } from './base-url.ts'
 import { DeepSeekFileId } from './file-id.ts'
 import type { DeepSeekFileId as DeepSeekFileIdType } from './file-id.ts'
 
@@ -134,7 +135,7 @@ export class DeepSeekFilesClient {
    * @param options - endpoint, API-key snapshot, and optional test transport.
    */
   constructor(options: FilesApiOptions) {
-    this.baseURL = options.baseURL.replace(/\/+$/u, '')
+    this.baseURL = trimTrailingSlashes(options.baseURL)
     this.apiKey = options.apiKey
     this.fetchImpl = options.fetch ?? globalThis.fetch
   }

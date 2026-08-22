@@ -246,6 +246,21 @@ describe('real Loader composition', () => {
       { kind: 'script', placement: 'head', text: 'H' },
       { kind: 'script', placement: 'body', text: 'B' },
     ])).toBe('<script>H</script><main>x</main><script>B</script>')
+
+    // Attribute-bearing mixed-case tags preserve their exact source text.
+    expect(renderIndexInjections('<HTML><HeAd data-x="1"></HeAd><BoDy class="x"></BoDy></HTML>', [
+      { kind: 'script', placement: 'head', text: 'H' },
+      { kind: 'script', placement: 'body', text: 'B' },
+    ])).toBe('<HTML><HeAd data-x="1"><script>H</script></HeAd><BoDy class="x"><script>B</script></BoDy></HTML>')
+    expect(renderIndexInjections('İ<head></head>', [
+      { kind: 'script', placement: 'head', text: 'H' },
+    ])).toBe('İ<head><script>H</script></head>')
+
+    // Repository-sized malformed input stays on the tagless fallback path.
+    const malformed = `${'<headx '.repeat(100_000)}<main>x</main>`
+    expect(renderIndexInjections(malformed, [
+      { kind: 'script', placement: 'head', text: 'H' },
+    ])).toBe(`<script>H</script>${malformed}`)
   })
 
   it('fails the fiber when the port is already taken (fail-loud at activation)', { timeout: 60_000 }, async () => {

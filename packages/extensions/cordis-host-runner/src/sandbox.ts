@@ -196,15 +196,9 @@ export function parseErrorMessage(half: 'code.host' | 'code.client', context: st
 /**
  * Parse one half's source without running it: the define-time precheck that
  * keeps unparseable code out of the registry, so a model fixes it and defines
- * again instead of discovering the failure at run time. `new Function` is the
- * gate — hosts without a real `node:vm` (the browser worker) still refuse
- * unparseable code — and `vm.Script` is only the best-effort prettifier: on a
- * Node host its failure carries the source-line-and-caret prelude the
- * teaching text builds on, and where the vm is a stub the message stays bare.
- * The two parsers' syntax faces differ at the margin (`new.target` parses in
- * a function body but not at the vm wrapper's top level), an accepted cost of
- * a vm-free gate; and under a page CSP without `'unsafe-eval'`, `new Function`
- * throws `EvalError`, which propagates unwrapped.
+ * again instead of discovering the failure at run time. `vm.Script` parses the
+ * same async-function wrapper the host evaluator later runs and provides the
+ * source-line-and-caret prelude used by the teaching text.
  * @param code - the model-written function body.
  * @param half - which define argument carried it, for the error text.
  * @throws when the body does not parse, with the offending line and a teaching hint.
@@ -212,32 +206,12 @@ export function parseErrorMessage(half: 'code.host' | 'code.client', context: st
 export function precheckCode(code: string, half: 'code.host' | 'code.client'): void {
   const wrapped = `(async () => {\n${code}\n})()`
   try {
-    // Compile-only: constructing the function parses the source and runs nothing.
-    // oxlint-disable-next-line typescript/no-implied-eval -- parse gate over model-written code; nothing is invoked
-    new Function(wrapped)
+    // Compile-only: constructing a Script parses the source and runs nothing.
+    new Script(wrapped, { filename: `cordis-dyn-${half}.js` })
   } catch (error) {
     if (!isSyntaxError(error)) throw error
-    throw new Error(parseErrorMessage(half, prettyParseContext(wrapped, half, error)))
+    throw new Error(parseErrorMessage(half, syntaxErrorContext(error)))
   }
-}
-
-/**
- * Best-effort vm recompile of a body `new Function` already refused, for the
- * source-line-and-caret prelude only.
- * @param wrapped - the wrapped source that failed to parse.
- * @param half - which define argument carried it, for the vm filename.
- * @param refusal - the gate's own `SyntaxError`, the fallback context source.
- * @returns the vm prelude when a real vm produced one, else the bare refusal.
- */
-function prettyParseContext(wrapped: string, half: 'code.host' | 'code.client', refusal: Error): string {
-  try {
-    new Script(wrapped, { filename: `cordis-dyn-${half}.js` })
-  } catch (vmError) {
-    if (isSyntaxError(vmError)) return syntaxErrorContext(vmError)
-    // A stubbed vm (the browser worker) refuses Script itself; the gate's
-    // error is the only context there is.
-  }
-  return String(refusal)
 }
 
 /**

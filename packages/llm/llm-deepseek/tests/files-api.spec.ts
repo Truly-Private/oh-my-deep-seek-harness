@@ -242,6 +242,19 @@ describe('DeepSeekFilesClient', () => {
     }
   })
 
+  it('normalizes a long trailing-slash suffix before sending requests', async () => {
+    const fetchImpl = vi.fn(() => Promise.resolve(new Response(JSON.stringify({
+      object: 'list', data: [], has_more: false,
+    }), { status: 200 })))
+    const client = new DeepSeekFilesClient({
+      baseURL: `https://api.deepseek.com${'/'.repeat(100_000)}`,
+      apiKey: 'key',
+      fetch: fetchImpl,
+    })
+    await client.list()
+    expect(fetchImpl).toHaveBeenCalledWith('https://api.deepseek.com/files?purpose=user_data', expect.any(Object))
+  })
+
   it.each([
     null,
     [],

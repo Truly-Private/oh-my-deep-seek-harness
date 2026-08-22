@@ -7,6 +7,7 @@ import { withFileLock, writeFileAtomic } from '@truly-private/omdsh-atomic-write
 import { resolveDshHome } from '@truly-private/omdsh-home-paths'
 import { ImageVariantId } from '@truly-private/omdsh-attachment'
 import type { AttachmentId, ImageVariantId as ImageVariantIdType } from '@truly-private/omdsh-attachment'
+import { trimTrailingSlashes } from './base-url.ts'
 import { DeepSeekFileId, DeepSeekFileScope } from './file-id.ts'
 import type { DeepSeekFileId as DeepSeekFileIdType, DeepSeekFileScope as DeepSeekFileScopeType } from './file-id.ts'
 
@@ -44,7 +45,7 @@ export interface UploadIndexCommit {
  */
 export function deepSeekFileScope(baseURL: string, apiKey: string): DeepSeekFileScopeType {
   const digest = createHash('sha256')
-    .update(baseURL.replace(/\/+$/u, ''))
+    .update(trimTrailingSlashes(baseURL))
     .update('\0')
     .update(apiKey)
     .digest('hex')

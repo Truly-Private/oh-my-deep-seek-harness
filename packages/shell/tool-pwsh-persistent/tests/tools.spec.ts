@@ -102,7 +102,7 @@ type StubMode =
   | 'exit-after-send'
   | 'prompt-collision'
 
-const START_PATTERN = /__DSH_PERSISTENT_PWSH_START_[^_]+(?:-[^_]+)*__/
+const START_PATTERN = /__DSH_PERSISTENT_PWSH_START_[^_]+__/
 const END_PATTERN = /__DSH_PERSISTENT_PWSH_END_[^:]+:/
 
 class StubTerminalSession implements TerminalBackendSession {

@@ -13,6 +13,8 @@ describe('DeepSeekUploadIndex', () => {
   it('normalizes trailing endpoint slashes in the credential scope', () => {
     expect(deepSeekFileScope('https://api.deepseek.com///', 'key'))
       .toBe(deepSeekFileScope('https://api.deepseek.com', 'key'))
+    expect(deepSeekFileScope(`https://api.deepseek.com${'/'.repeat(100_000)}`, 'key'))
+      .toBe(deepSeekFileScope('https://api.deepseek.com', 'key'))
   })
 
   it('isolates API-key namespaces and reuses only records above the refresh margin', async () => {
