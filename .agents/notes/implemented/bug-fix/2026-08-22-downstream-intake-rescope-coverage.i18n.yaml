@@ -2,5 +2,5 @@
 # side as of the last confirmed-consistent state. Both languages carry equal authority;
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write .agents/notes/implemented/bug-fix/2026-08-22-downstream-intake-rescope-coverage.md
-2026-08-22-downstream-intake-rescope-coverage.md: c5a716f9311c91e2860e00749b09dddc14be1c98
-2026-08-22-downstream-intake-rescope-coverage.zh.md: bc495152d83b4097efed3ac108eb41ccb89979d5
+2026-08-22-downstream-intake-rescope-coverage.md: 340e4a43e87e38169f87c74f81bf728b7711bbdc
+2026-08-22-downstream-intake-rescope-coverage.zh.md: 61bfbe74fb4865e5f4bde22bc1c10a59b473913c

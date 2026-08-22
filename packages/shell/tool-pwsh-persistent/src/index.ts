@@ -130,10 +130,14 @@ function commandOutput(
   }
 }
 
+function hasPromptSuffix(text: string): boolean {
+  return text.endsWith(SHELL_PROMPT)
+    || text.endsWith(`${SHELL_PROMPT}\r\n`)
+    || text.endsWith(`${SHELL_PROMPT}\n`)
+}
+
 function promptCompleted(result: TerminalSendResult): boolean {
-  return result.viewport.endsWith(SHELL_PROMPT)
-    || result.viewport.endsWith(`${SHELL_PROMPT}\r\n`)
-    || result.viewport.endsWith(`${SHELL_PROMPT}\n`)
+  return hasPromptSuffix(result.viewport)
 }
 
 function partialOutput(
@@ -323,7 +327,7 @@ function persistentShells(ctx: Context, config: ResolvedConfig): PersistentShell
             offset: 0,
             count: SCROLLBACK_PAGE_LINES,
           }).text
-          if (promptCompleted(result) || scrollback.endsWith(SHELL_PROMPT)) break
+          if (promptCompleted(result) || hasPromptSuffix(scrollback)) break
         }
         return spawned.sessionId
       } catch (error: unknown) {

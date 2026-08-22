@@ -422,6 +422,39 @@ describe('BashTerminalBackend startup rollback', () => {
     expect(session.motd).toBe('dsh> ')
   })
 
+  it('accepts a newline-terminated marker prompt from pwsh scrollback', async () => {
+    const ctx = new Context()
+    await ctx.plugin(EmptySandbox)
+    await ctx.plugin(SandboxPolicyService, { mode: 'danger-full-access', workspaceRoot: '/workspace' })
+    const sends: TerminalSendRequest[] = []
+    const session = {
+      motd: '',
+      startSend: (request: TerminalSendRequest) => {
+        sends.push(request)
+        return {
+          done: Promise.resolve({
+            viewport: sends.length === 1 ? 'PS /workspace> ' : 'PowerShell 7.6.4\n',
+            waitReason: 'inferred_idle' as const,
+            sessionStatus: { kind: 'running' as const }, truncated: false,
+          }),
+          readOutput: () => ({ delta: '', truncated: false }),
+          cancel: () => false,
+        }
+      },
+      read: () => ({ text: 'dsh> \r\n', totalLines: 1, lineBegin: 0, lineEnd: 1, truncated: false }),
+    } as unknown as LocalPtySession
+    const backend = new BashTerminalBackend(
+      ctx,
+      { ...config(), shellDialect: 'pwsh', shellPath: 'pwsh' },
+      async () => terminalHandle(),
+      () => session,
+    )
+
+    await backend.spawn(spec(agent(ctx)))
+    expect(sends).toHaveLength(2)
+    expect(session.motd).toBe('PowerShell 7.6.4\n')
+  })
+
   it('rejects a pwsh bootstrap whose shell exits or times out', async () => {
     const ctx = new Context()
     await ctx.plugin(EmptySandbox)
@@ -442,6 +475,27 @@ describe('BashTerminalBackend startup rollback', () => {
     await expect(exited.spawn(spec(agent(ctx)))).rejects.toThrow('PTY shell exited during startup')
     const timedOut = new BashTerminalBackend(ctx, { ...config(), shellDialect: 'pwsh' }, async () => terminalHandle(), () => sessionFor('timeout'))
     await expect(timedOut.spawn(spec(agent(ctx)))).rejects.toThrow('did not reach readiness before startup timeout')
+
+    let sends = 0
+    const setupTimedOut = sessionFor('timeout')
+    setupTimedOut.startSend = () => ({
+      done: Promise.resolve({
+        viewport: ++sends === 1 ? 'PS /workspace> ' : 'no-prompt',
+        waitReason: sends === 1 ? 'inferred_idle' : 'timeout',
+        sessionStatus: { kind: 'running' as const }, truncated: false,
+      }),
+      readOutput: () => ({ delta: '', truncated: false }),
+      cancel: () => false,
+    })
+    const setupTimeoutBackend = new BashTerminalBackend(
+      ctx,
+      { ...config(), shellDialect: 'pwsh' },
+      async () => terminalHandle(),
+      () => setupTimedOut,
+    )
+    await expect(setupTimeoutBackend.spawn(spec(agent(ctx)))).rejects.toThrow(
+      'did not reach readiness before startup timeout',
+    )
   })
 
   it('forwards the spawn signal into the pwsh bootstrap sends', async () => {

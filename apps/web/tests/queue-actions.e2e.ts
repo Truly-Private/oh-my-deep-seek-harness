@@ -112,23 +112,22 @@ describe('web e2e: queue row actions', () => {
     ).toBe(2)
 
     await page.setViewportSize({ width: 640, height: 1000 })
-    const queueBox = await page.locator('[data-queue-dock]').boundingBox()
-    const composerBox = await page.locator('[data-composer-card]').boundingBox()
-    expect(queueBox).not.toBeNull()
-    expect(composerBox).not.toBeNull()
-    expect(queueBox!.x).toBeGreaterThanOrEqual(composerBox!.x)
-    expect(queueBox!.x + queueBox!.width)
-      .toBeLessThanOrEqual(composerBox!.x + composerBox!.width)
-    const queueLeftInset = queueBox!.x - composerBox!.x
-    const queueRightInset = composerBox!.x + composerBox!.width - queueBox!.x - queueBox!.width
-    const composerMetrics = await page.locator('[data-composer-card]').evaluate((element) => {
-      const style = getComputedStyle(element)
-      return {
-        dockInset: Number.parseFloat(style.getPropertyValue('--dsh-composer-dock-inset')),
-      }
-    })
-    expect(queueLeftInset).toBeCloseTo(composerMetrics.dockInset, 1)
-    expect(queueRightInset).toBeCloseTo(composerMetrics.dockInset, 1)
+    await expect.poll(async () => {
+      const queueBox = await page.locator('[data-queue-dock]').boundingBox()
+      const composerBox = await page.locator('[data-composer-card]').boundingBox()
+      if (queueBox === null || composerBox === null) return Number.POSITIVE_INFINITY
+      const dockInset = await page.locator('[data-composer-card]').evaluate(element =>
+        Number.parseFloat(getComputedStyle(element).getPropertyValue('--dsh-composer-dock-inset')),
+      )
+      const queueLeftInset = queueBox.x - composerBox.x
+      const queueRightInset = composerBox.x + composerBox.width - queueBox.x - queueBox.width
+      return Math.max(
+        composerBox.x - queueBox.x,
+        queueBox.x + queueBox.width - composerBox.x - composerBox.width,
+        Math.abs(queueLeftInset - dockInset),
+        Math.abs(queueRightInset - dockInset),
+      )
+    }, { timeout: 10_000 }).toBeLessThanOrEqual(0.05)
     await page.setViewportSize({ width: 1680, height: 1000 })
 
     const editRow = page.getByText(EDIT, { exact: true }).locator('..')
@@ -229,18 +228,23 @@ describe('web e2e: queue row actions', () => {
     await compareOrRefreshGolden(LAYOUT_EXPECTED, layoutSnapshot, MODE)
 
     const expectAlignedContextPanels = async () => {
-      const queuePanelBox = await page.locator('[data-queue-dock] > div').boundingBox()
-      const todoBox = await page.locator('[data-testid="todo-panel"]').boundingBox()
-      const goalBox = await page.locator('[data-goal-bar] > div').boundingBox()
-      expect(queuePanelBox).not.toBeNull()
-      expect(todoBox).not.toBeNull()
-      expect(goalBox).not.toBeNull()
-      expect(todoBox!.y).toBeLessThan(goalBox!.y)
-      expect(goalBox!.y).toBeLessThan(queuePanelBox!.y)
-      expect(todoBox!.x).toBeCloseTo(goalBox!.x, 1)
-      expect(todoBox!.x).toBeCloseTo(queuePanelBox!.x, 1)
-      expect(todoBox!.width).toBeCloseTo(goalBox!.width, 1)
-      expect(todoBox!.width).toBeCloseTo(queuePanelBox!.width, 1)
+      await expect.poll(async () => {
+        const queuePanelBox = await page.locator('[data-queue-dock] > div').boundingBox()
+        const todoBox = await page.locator('[data-testid="todo-panel"]').boundingBox()
+        const goalBox = await page.locator('[data-goal-bar] > div').boundingBox()
+        if (queuePanelBox === null || todoBox === null || goalBox === null) {
+          return Number.POSITIVE_INFINITY
+        }
+        if (todoBox.y >= goalBox.y || goalBox.y >= queuePanelBox.y) {
+          return Number.POSITIVE_INFINITY
+        }
+        return Math.max(
+          Math.abs(todoBox.x - goalBox.x),
+          Math.abs(todoBox.x - queuePanelBox.x),
+          Math.abs(todoBox.width - goalBox.width),
+          Math.abs(todoBox.width - queuePanelBox.width),
+        )
+      }, { timeout: 10_000 }).toBeLessThanOrEqual(0.05)
     }
     await expectAlignedContextPanels()
     await page.setViewportSize({ width: 640, height: 1000 })

@@ -142,8 +142,8 @@ class StubTerminalSession implements TerminalBackendSession {
     }
     if (this.initializationPending) {
       this.initializationPending = false
-      this.scrollback += `\n${this.motd}`
-      return this.operation(Promise.resolve(this.result(this.motd, 'stdin_read')))
+      this.scrollback += `\n${this.motd}\r\n`
+      return this.operation(Promise.resolve(this.result('PowerShell 7.6.4\n', 'inferred_idle')))
     }
     if (this.mode === 'send-error') throw new Error('stub send failed')
     if (this.throwOnSend) throw new Error('PTY session has exited')

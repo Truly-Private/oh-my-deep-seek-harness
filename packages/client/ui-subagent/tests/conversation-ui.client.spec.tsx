@@ -239,7 +239,14 @@ describe('SubagentHeaderLineage', () => {
     expect(screen.queryByRole('tree')).toBeNull()
     await vi.advanceTimersByTimeAsync(1)
     const tree = screen.getByRole('tree')
+    await act(async () => {})
+    vi.spyOn(trigger, 'getBoundingClientRect').mockReturnValue({
+      bottom: 100,
+      left: 50,
+    } as DOMRect)
     fireEvent.resize(window)
+    expect(tree.style.top).toBe('105px')
+    expect(tree.style.left).toBe('50px')
     fireEvent.mouseLeave(trigger.parentElement!)
     fireEvent.mouseEnter(tree)
     await vi.advanceTimersByTimeAsync(120)

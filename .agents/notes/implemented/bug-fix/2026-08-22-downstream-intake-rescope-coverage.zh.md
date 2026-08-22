@@ -10,6 +10,8 @@ Status: implemented
 
 六工作进程 Web snapshot 作业暴露了多项互不依赖的时序与产物所有权缺陷。HMR 场景恢复了动态插件 bundle，却把 `apps/web/dist` 留在重写后的状态，使已完成构建的摘要在内置 bundle 冒烟测试加载前失效。主题检查会在 Host 设置写入完成内存提交之前先观察到持久化文件，并且在下游重定作用域后仍拦截上游 bundle 路由。引用 snapshot 可能在保存的 `trifecta` 选择到达前采集，subagent 悬浮目录可能在挂载前被查询，而双消息 steering fixture 在并发 CI 负载下没有为三次浏览器操作留下足够的流式时间。冷启动的 seeded-history 页面可能在恢复后的 Host agent 完成附加之前就渲染持久化对话，因此同一负载下直接追加实时事件会失败。
 
+其他发布形态检查依赖偶然的调度时序。history-and-streaming 场景可能在建立阅读锚点之前耗尽有限 replay；回答问题后的 transcript 采集可能仍保留离开底部的控件；响应式 queue 几何则可能在 viewport 改变后的浏览器布局完成前被测量。subagent 目录测试会在没有证明打开菜单的 effect 已安装监听器时就派发 resize。一个进程密集型 Oxlint 重试仍使用默认五秒测试超时。PowerShell scrollback 可以用 LF 或 CRLF 结束提示符，但两个提示符安装循环都只接受 scrollback 中不带换行的提示符，因此可能在 shell 已就绪后继续无限等待。
+
 ## Decision
 
 客户端纯度门禁把 `@truly-private/*` 视为自有工作区作用域，保留对 `@truly-private/omdsh-*` 线路包和生成的 Remote 贡献的显式内联许可，并在应用下游作用域检查之前允许独立入库的 `@deepseek-ai` 库。
@@ -26,6 +28,10 @@ locale 测试断言各 fixture 所选的语言。将 locale 设为 `zh` 的 fixt
 
 HMR 场景会保存完整构建摘要覆盖的每个产物，在恢复前停止两个写入方，替换生成的 Web 目录，恢复全部原始字节，并在清理期间重新验证构建记录。浏览器检查等待 Host 的权威主题和模型状态，不再把文件或首次绘制当作提交完成的替代信号；同时拦截下游 `@truly-private/omdsh-client-ui-theme` 路由，并在选择条目前等待 subagent 目录树挂载。双消息 steering 场景使用为六工作进程池单独设置的 replay 间隔；其他 steering 场景继续使用较短间隔。seeded-history 场景会先等待 Host 的权威 agent 附加完成，再向冷恢复会话追加实时上下文。
 
+history-and-streaming 场景使用专用的 600-delta replay，并在验证并发到达之前断言流式输出仍在进行。回答问题后的采集会返回 transcript 底部；queue 与上下文面板几何则在响应式布局稳定后轮询已渲染不变量。subagent 目录测试会等待打开菜单的 effect，并验证 resize 驱动的菜单定位。进程密集型 Oxlint 重试使用显式的二十秒测试超时。
+
+两个 PowerShell 提示符安装循环都把私有提示符识别为不带换行的末尾，或后接 LF、CRLF 的末尾。回归 fixture 会验证以换行结束的 scrollback 就绪状态，并区分原生提示符成功之后的安装超时。
+
 ## Alternatives considered
 
 **把 fixture 改为英文。** 受影响的客户端界面有意交付中文产品文案，而测试已明确选择中文。改动 fixture 只会隐藏纳入不匹配，不能保留上游行为。
@@ -40,4 +46,4 @@ HMR 场景会保存完整构建摘要覆盖的每个产物，在恢复前停止�
 
 ## Consequences
 
-下游浏览器构建会再次拒绝未声明的工作区值导入，同时入库的框架库仍然可用。包标识断言和 locale fixture 与下游运行时保持一致，基础 profile 能解析其选择的 9Router 路由，完整覆盖率门禁会隔离真实 PTY 生命周期但不会把它从覆盖率中移除，Web snapshot 池则会保留客户端产物摘要并等待持久 UI 状态。一个全新的原生 ARM64 Ubuntu OrbStack 容器通过 Proto 安装 Node、Python、Bun 和 pnpm 后，完成了冻结锁文件安装、宿主库构建、两项真实 PowerShell PTY 测试以及定向组装 snapshot。这些修正不会把上游纳入提升到 `candidate` 以上，也不会授权发布。
+下游浏览器构建会再次拒绝未声明的工作区值导入，同时入库的框架库仍然可用。包标识断言和 locale fixture 与下游运行时保持一致，基础 profile 能解析其选择的 9Router 路由，完整覆盖率门禁会隔离真实 PTY 生命周期但不会把它从覆盖率中移除，Web snapshot 池则会保留客户端产物摘要并等待持久 UI 状态。响应式与流式检查现在会在发布工作进程池中保留原有行为断言，而以换行结束的 PowerShell 提示符不会再使 shell 创建停滞。一个全新的原生 ARM64 Ubuntu OrbStack 容器通过 Proto 安装 Node、Python、Bun 和 pnpm 后，完成了冻结锁文件安装、宿主库构建、两项真实 PowerShell PTY 测试以及定向组装 snapshot。这些修正不会把上游纳入提升到 `candidate` 以上，也不会授权发布。

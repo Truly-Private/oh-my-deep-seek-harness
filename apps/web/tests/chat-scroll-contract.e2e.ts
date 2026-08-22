@@ -29,6 +29,7 @@ const RESTORE_SESSION_A_ID = 'chat-scroll-restore-a-e2e'
 const RESTORE_SESSION_B_ID = 'chat-scroll-restore-b-e2e'
 const REPLAY_CONTEXT_WINDOW = 10_000_000
 const STREAM_PACE_MS = 24
+const HISTORY_CONCURRENT_STREAM_DELTAS = 600
 const GEOMETRY_TOLERANCE = 2
 const LIVE_TEXT_PROMPT = 'CHAT_SCROLL_LIVE_USER Continue this long conversation while I inspect older history.'
 const LIVE_TEXT_FIRST = 'CHAT_SCROLL_LIVE_FIRST'
@@ -467,7 +468,11 @@ describe('web e2e: long Chat scroll contract', () => {
   it.skipIf(MODE === 'record')('preserves the reader anchor when history and streaming arrive concurrently', async () => {
     await withScrollWorld({
       failureShot: 'web-e2e-chat-scroll-history-stream',
-      replay: [replayEntry(textStream(LIVE_TEXT_FIRST, LIVE_TEXT_DONE, 120))],
+      replay: [replayEntry(textStream(
+        LIVE_TEXT_FIRST,
+        LIVE_TEXT_DONE,
+        HISTORY_CONCURRENT_STREAM_DELTAS,
+      ))],
       seeds: [{ fixture: HISTORY_FIXTURE, id: HISTORY_SESSION_ID }],
     }, async (world) => {
       await openSeed(
@@ -508,6 +513,7 @@ describe('web e2e: long Chat scroll contract', () => {
         await wheelTranscript(world.page, 420)
         const readerAnchor = await visibleFlowAnchor(world.page)
         const chunksAfterAnchor = world.events.filter(event => event.type === 'assistant/chunk').length
+        expect(chunksAfterAnchor).toBeLessThan(HISTORY_CONCURRENT_STREAM_DELTAS)
         await expect.poll(
           () => world.events.filter(event => event.type === 'assistant/chunk').length,
           { timeout: 10_000 },

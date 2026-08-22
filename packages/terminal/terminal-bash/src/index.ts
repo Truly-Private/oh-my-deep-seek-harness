@@ -89,6 +89,12 @@ function childEnvironment(spec: TerminalBackendSpawnSpec, dialect: ShellDialect)
 export const PWSH_PROMPT_SETUP =
   "function prompt { [Console]::Write([char]27 + ']133;D;' + [int]$LASTEXITCODE + [char]7); '" + CONTROLLED_PROMPT + "' }"
 
+function hasControlledPromptSuffix(text: string): boolean {
+  return text.endsWith(CONTROLLED_PROMPT)
+    || text.endsWith(`${CONTROLLED_PROMPT}\r\n`)
+    || text.endsWith(`${CONTROLLED_PROMPT}\n`)
+}
+
 function spawnArgv(ctx: Context, config: ResolvedConfig, policy: SandboxExecutionPolicy): string[] {
   const argv = [config.shellPath, ...config.shellArgs]
   if (policy.mode === 'danger-full-access') return argv
@@ -143,7 +149,7 @@ async function startupSession(
       if (result.waitReason === 'timeout') throw new Error('PTY shell did not reach readiness before startup timeout')
       viewport = result.viewport
       const scrollback = session.read({ offset: 0, count: 20 }).text
-      if (viewport.endsWith(CONTROLLED_PROMPT) || scrollback.endsWith(CONTROLLED_PROMPT)) break
+      if (hasControlledPromptSuffix(viewport) || hasControlledPromptSuffix(scrollback)) break
     }
     session.motd = viewport
   }
