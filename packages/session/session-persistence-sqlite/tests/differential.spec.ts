@@ -25,7 +25,7 @@ afterEach(async () => {
   for (const directory of directories.splice(0)) {
     await rm(directory, { recursive: true, force: true })
   }
-})
+}, 120_000)
 
 async function freshDirectory(prefix: string): Promise<string> {
   const directory = await mkdtemp(join(tmpdir(), prefix))
