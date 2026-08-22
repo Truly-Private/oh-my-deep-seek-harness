@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-session-persistence-sqlite",
   "description": "SQLite durable session persistence with physical chunk-row packing",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },

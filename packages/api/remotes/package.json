@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-api-remotes",
   "description": "Remote BFF assembly and Host Agent/Session lookup policy",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },

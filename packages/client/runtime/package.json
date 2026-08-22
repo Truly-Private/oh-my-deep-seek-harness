@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-client-runtime",
   "description": "Client core services: SlotRegistry, SessionRuntime (scope tree + object layer)",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },

@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-web-frontend",
   "description": "Web application entry: vite build over the @truly-private/omdsh-client-web shell library; dist/ served by apps/cli's dsh web",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },

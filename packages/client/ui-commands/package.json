@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-client-ui-commands",
   "description": "Client command surface: global directory cache, '/' source, three command UI kinds, popupSelect registry",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },

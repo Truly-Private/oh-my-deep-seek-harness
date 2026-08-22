@@ -1,7 +1,7 @@
 {
   "name": "@truly-private/omdsh-tool-ask-user",
   "description": "Model-facing ask_user_question tool over the ctx.userQuestions seam",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publishConfig": {
     "access": "public"
   },
