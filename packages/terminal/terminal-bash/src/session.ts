@@ -79,6 +79,7 @@ class LocalSendOperation implements TerminalSendOperation {
   private readonly promise: PromiseWithResolvers<TerminalSendResult>
   private finished = false
   private cancellationRequested = false
+  private submittedInput = false
   private initialForegroundLeftWait: boolean
   private initialForegroundPgid: number | undefined
 
@@ -135,13 +136,24 @@ class LocalSendOperation implements TerminalSendOperation {
     this.initialForegroundLeftWait = foreground?.inputWaiting !== true
   }
 
+  markInputSubmitted(): void {
+    this.submittedInput = true
+  }
+
   acceptsStdinWait(pgid: number, waiting: boolean): boolean {
     // The same group may still expose the wait that existed before terminal.write.
     // Observe every poll so a departure before the exact-settlement threshold
     // still makes a later return to that wait post-write evidence.
-    if (pgid !== this.initialForegroundPgid) return waiting
+    if (pgid !== this.initialForegroundPgid) {
+      this.initialForegroundLeftWait = true
+      return waiting
+    }
     if (!waiting) this.initialForegroundLeftWait = true
     return waiting && this.initialForegroundLeftWait
+  }
+
+  allowsIdleInference(promptSeen: boolean): boolean {
+    return !this.submittedInput || this.initialForegroundLeftWait || promptSeen
   }
 
   cancel(): boolean {
@@ -279,6 +291,7 @@ export class LocalPtySession implements TerminalBackendSession {
       const input = `${request.text}${request.submit ? '\r' : ''}`
       if (input.length > 0 && !operation.cancelRequested) {
         this.resetReadinessEvidence()
+        operation.markInputSubmitted()
         const write = this.terminal.write(input)
         this.activeWrite = write.then(() => true, () => false)
         try {
@@ -461,7 +474,8 @@ export class LocalPtySession implements TerminalBackendSession {
       // on waiting for shell ownership instead of letting a child marker suppress
       // readiness until the absolute timeout.
       const handoffGrace = this.promptSeen ? this.config.handoffGraceMs : 0
-      if (startupHasOutput && idleFor >= this.config.idleSilenceMs + handoffGrace) {
+      if (startupHasOutput && operation.allowsIdleInference(this.promptSeen)
+        && idleFor >= this.config.idleSilenceMs + handoffGrace) {
         this.settleActive('inferred_idle')
       }
     } catch (error: unknown) {

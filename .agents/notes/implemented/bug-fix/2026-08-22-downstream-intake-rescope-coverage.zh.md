@@ -6,7 +6,7 @@ Status: implemented
 
 ## Problem
 
-上游纳入重定作用域把工作区包改为 `@truly-private/omdsh-*`，但动态客户端 bundle 纯度门禁和一项凭据不变量断言仍然选择 `@deepseek-ai/*`。因此，未声明的下游跨插件值导入会绕过构建错误，而不变量测试预期了错误的包标识。纳入适配器还把若干英文预期值改掉，却没有改动显式选择中文的 fixture，导致测试与自身设置矛盾。合并保留了下游 9Router 默认选择，却丢失了让该选择可执行的提供方配置。在完整 Linux 覆盖率工作负载下，真实 PowerShell PTY 与 Loader 组装套件在聚合插桩下跨广域和 process-bound 测试项目竞争时，可能丢失持久 shell 输出。串行化两个项目消除了重叠，但托管运行仍在启动 PowerShell 时超时，因为所有 process-bound 套件会在 PowerShell 执行器套件之后复用同一个插桩 Vitest 进程。本地 node-pty 提供方还会转发 PowerShell 的光标位置查询，却不返回响应。因此，bootstrap 可能在 PSReadLine 的原生提示符接受输入之前到达；同时，子串就绪检查会把回显的 bootstrap 源码误判为已安装提示符，因为源码本身含有提示符字面量。
+上游纳入重定作用域把工作区包改为 `@truly-private/omdsh-*`，但动态客户端 bundle 纯度门禁和一项凭据不变量断言仍然选择 `@deepseek-ai/*`。因此，未声明的下游跨插件值导入会绕过构建错误，而不变量测试预期了错误的包标识。纳入适配器还把若干英文预期值改掉，却没有改动显式选择中文的 fixture，导致测试与自身设置矛盾。合并保留了下游 9Router 默认选择，却丢失了让该选择可执行的提供方配置。在完整 Linux 覆盖率工作负载下，真实 PowerShell PTY 与 Loader 组装套件在聚合插桩下跨广域和 process-bound 测试项目竞争时，可能丢失持久 shell 输出。串行化两个项目消除了重叠，但托管运行仍在启动 PowerShell 时超时，因为所有 process-bound 套件会在 PowerShell 执行器套件之后复用同一个插桩 Vitest 进程。全新进程隔离又暴露了第二个托管环境竞争：如果第一次就绪轮询发生在静默阈值之后，已提交的 PowerShell 输入可能沿用 shell 在写入前已经确认的 stdin 等待，并在 shell 消费输入前结算为 `inferred_idle`。本地 node-pty 提供方还会转发 PowerShell 的光标位置查询，却不返回响应。因此，bootstrap 可能在 PSReadLine 的原生提示符接受输入之前到达；同时，子串就绪检查会把回显的 bootstrap 源码误判为已安装提示符，因为源码本身含有提示符字面量。
 
 六工作进程 Web snapshot 作业暴露了多项互不依赖的时序与产物所有权缺陷。HMR 场景恢复了动态插件 bundle，却把 `apps/web/dist` 留在重写后的状态，使已完成构建的摘要在内置 bundle 冒烟测试加载前失效。主题检查会在 Host 设置写入完成内存提交之前先观察到持久化文件，并且在下游重定作用域后仍拦截上游 bundle 路由。引用与 Markdown 图像 snapshot 可能在保存的 `trifecta` 选择到达前采集，subagent 悬浮目录可能在挂载前被查询，而双消息 steering fixture 在并发 CI 负载下没有为三次浏览器操作留下足够的流式时间。冷启动的 seeded-history 页面可能在恢复后的 Host agent 完成附加之前就渲染持久化对话，因此同一负载下直接追加实时事件会失败。DeepSeek 注释保活 snapshot 使用 150 毫秒空闲看门狗和 10 毫秒心跳，在并发 snapshot 池中没有留下足够的事件循环调度余量，可能触发一次非预期重试。无密钥 Web 重试冒烟测试还把完整真实 Host 生命周期限制为 30 秒，尽管其启动与恢复等待各自已有更长的显式界限。
 
@@ -26,6 +26,8 @@ locale 测试断言各 fixture 所选的语言。将 locale 设为 `zh` 的 fixt
 
 本地 node-pty 提供方以最小的 `CSI 1;1 R` 响应处理完整或跨数据块拆分的 `CSI 6 n` 光标位置查询。PowerShell 启动先等待可打印的原生提示符输出，再只提交一次编码与受控提示符 bootstrap；随后，只有已安装提示符位于 viewport 或 scrollback 末尾时才确认就绪。持久 PowerShell 工具在安装自己的私有提示符时使用相同的末尾匹配要求。其组装后的无密钥 snapshot 会记录精确的 `PWSH_OK` 工具结果，不含 bootstrap 源码、截断提示或凭据材料。
 
+当写入前检查证明前台进程组正在等待 stdin 时，提交了输入的 send 只有在轮询观察到该进程组脱离等待、观察到不同的前台进程组或收到自有提示符标记之后，才能通过静默结算。如果快速命令在两次轮询之间离开并返回，则由其标记继续充当完成证据；消费方有意替换后端的可打印提示符文本时也一样。只轮询的 send 与没有已证明写入前等待的提供方保留现有静默回退。
+
 HMR 场景会保存完整构建摘要覆盖的每个产物，在恢复前停止两个写入方，替换生成的 Web 目录，恢复全部原始字节，并在清理期间重新验证构建记录。浏览器检查等待 Host 的权威主题和模型状态，不再把文件或首次绘制当作提交完成的替代信号，其中包括每个记录持久化 `trifecta` 选择的 golden；同时拦截下游 `@truly-private/omdsh-client-ui-theme` 路由，并在选择条目前等待 subagent 目录树挂载。双消息 steering 场景使用为六工作进程池单独设置的 replay 间隔；其他 steering 场景继续使用较短间隔。seeded-history 场景会先等待 Host 的权威 agent 附加完成，再向冷恢复会话追加实时上下文。DeepSeek 注释保活 fixture 会在 500 毫秒空闲看门狗下以 25 毫秒间隔发送一秒心跳，既保留每次心跳二十倍的调度余量，也证明注释能让流存活超过看门狗时长。Web 重试冒烟测试保留 20 秒恢复轮询界限，并使用与其他真实 Host 冒烟测试相同的 120 秒外层生命周期预算。
 
 history-and-streaming 场景使用专用的 600-delta replay，并在验证并发到达之前断言流式输出仍在进行。回答问题后的采集会返回 transcript 底部；queue 与上下文面板几何则在响应式布局稳定后轮询已渲染不变量。实时 workflow 场景使用为 replay 设置的间隔，使六工作进程浏览器池在完成之前的折叠区和响应式布局断言时，仍保留子会话导航时间窗。subagent 目录测试会等待打开菜单的 effect，并验证 resize 驱动的菜单定位。进程密集型 Oxlint 重试使用显式的二十秒测试超时。
@@ -40,10 +42,12 @@ history-and-streaming 场景使用专用的 600-delta replay，并在验证并�
 
 **重试 PTY 断言或仅延长其超时。** 两种做法都会隐藏聚合竞争或进程全局污染下持久 shell 边界的丢失。process-bound 清单与分区协调器会为每个真实 PowerShell 或 PTY 套件提供一个全新的插桩进程。
 
+**提高 PowerShell 静默阈值。** 调度器竞争可以超过任何选定的启发式阈值，因此更长阈值只会降低竞争出现频率。要求先观察到前台活动，可以阻止静默把 shell 尚未消费的输入误判为完成。
+
 **只要捕获输出中任意位置出现提示符字面量就确认就绪。** 提交的 PowerShell 函数在实际执行前就含有该字面量。只有最终提示符位于输出末尾，才能证明 shell 已接受 bootstrap 并回到受控输入状态。
 
 **忽略或重试 Web snapshot 失败。** 构建记录拒绝揭示了真实的共享产物变更，而浏览器失败表明测试没有与权威状态同步。重试会让发布证据取决于调度器运气。
 
 ## Consequences
 
-下游浏览器构建会再次拒绝未声明的工作区值导入，同时入库的框架库仍然可用。包标识断言和 locale fixture 与下游运行时保持一致，基础 profile 能解析其选择的 9Router 路由，完整覆盖率门禁会分别隔离每个真实 PowerShell 或 PTY 生命周期但不会把它们从覆盖率中移除，Web snapshot 池则会保留客户端产物摘要并等待持久 UI 状态。响应式、重试、注释保活与流式检查会在发布工作进程池中保留原有行为断言，而以换行结束的 PowerShell 提示符不会再使 shell 创建停滞。一个全新的原生 ARM64 Ubuntu OrbStack 容器通过 Proto 安装 Node、Python、Bun 和 pnpm 后，完成了冻结锁文件安装和宿主库构建；随后，三个全新的插桩进程通过全部 45 项 PowerShell 执行器、持久 Loader 与终端测试。完整无密钥 snapshot 套件通过 127 项测试，并有两项预期跳过。这些修正不会把上游纳入提升到 `candidate` 以上，也不会授权发布。
+下游浏览器构建会再次拒绝未声明的工作区值导入，同时入库的框架库仍然可用。包标识断言和 locale fixture 与下游运行时保持一致，基础 profile 能解析其选择的 9Router 路由，完整覆盖率门禁会分别隔离每个真实 PowerShell 或 PTY 生命周期但不会把它们从覆盖率中移除，Web snapshot 池则会保留客户端产物摘要并等待持久 UI 状态。响应式、重试、注释保活与流式检查会在发布工作进程池中保留原有行为断言；以换行结束的 PowerShell 提示符不会再使 shell 创建停滞；调度延迟也不能通过静默把提供方已证明尚未消费的输入结算为完成。一个全新的原生 ARM64 Ubuntu OrbStack 容器通过 Proto 安装 Node、Python、Bun 和 pnpm 后，完成了冻结锁文件安装和宿主库构建；随后，全新插桩进程通过全部 45 项 PowerShell 执行器、持久 Loader 与终端测试，其中包括最终就绪修正后的两项托管环境失败。完整无密钥 snapshot 套件通过 127 项测试，并有两项预期跳过。这些修正不会把上游纳入提升到 `candidate` 以上，也不会授权发布。
