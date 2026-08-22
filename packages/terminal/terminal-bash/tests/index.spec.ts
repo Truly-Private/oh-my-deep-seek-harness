@@ -482,7 +482,7 @@ describe('BashTerminalBackend startup rollback', () => {
       ctx,
       { ...config(), shellDialect: 'pwsh' },
       async () => terminalHandle(),
-      () => sessionFor('session_exit', new Error('PTY shell exited during startup')),
+      () => sessionFor('session_exit'),
     )
     await expect(exited.spawn(spec(agent(ctx)))).rejects.toThrow('PTY shell exited during startup')
     const timedOut = new BashTerminalBackend(

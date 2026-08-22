@@ -97,6 +97,8 @@ type StubMode =
   | 'with-echo'
   | 'exit-after-send'
   | 'prompt-collision'
+  | 'fallback-markers-on-abort'
+  | 'prompt-tail-on-abort'
 
 const START_PATTERN = /__DSH_PERSISTENT_PWSH_START_[^_]+__/
 const END_PATTERN = /__DSH_PERSISTENT_PWSH_END_[^:]+:/
@@ -123,15 +125,24 @@ class StubTerminalSession implements TerminalBackendSession {
     this.requests.push(request)
     if (this.mode === 'send-error') throw new Error('stub send failed')
     if (this.throwOnSend) throw new Error('PTY session has exited')
-    if (this.mode === 'wait-for-abort' || this.mode === 'end-on-abort') {
+    if (
+      this.mode === 'wait-for-abort'
+      || this.mode === 'end-on-abort'
+      || this.mode === 'fallback-markers-on-abort'
+      || this.mode === 'prompt-tail-on-abort'
+    ) {
       const done = new Promise<ReturnType<StubTerminalSession['result']>>((resolve) => {
         request.signal?.addEventListener('abort', () => {
           const start = START_PATTERN.exec(request.text)?.[0]
           const end = END_PATTERN.exec(request.text)?.[0]
-          const output = this.mode === 'end-on-abort'
-            ? `${start ?? ''}\ninterrupted\n${end ?? ''}130\n${this.motd}`
-            : 'partial output'
-          this.scrollback += output
+          const output = this.mode === 'wait-for-abort'
+            ? 'partial output'
+            : this.mode === 'end-on-abort'
+              ? `${start ?? ''}\ninterrupted\n${end ?? ''}130\n${this.motd}`
+              : this.mode === 'fallback-markers-on-abort'
+                ? `${start ?? ''}\npartial from fallback\n${this.motd}${this.motd}\n${end ?? ''}130\n`
+                : `${start ?? ''}\npartial before prompt\n${this.motd}${this.motd}\n`
+          if (this.mode !== 'fallback-markers-on-abort') this.scrollback += output
           resolve(this.result(output, 'stdin_read'))
         }, { once: true })
       })
@@ -499,6 +510,33 @@ describe('tool-pwsh-persistent', () => {
     expect(text(result)).toContain('partial output')
     expect(text(result)).toContain('next pwsh call starts from the workspace')
     expect(stub.sessions[0]?.closed).toContain('persistent pwsh command timed out')
+  })
+
+  it('extracts timed-out fallback markers when terminal scrollback is empty', async () => {
+    const { ctx, owner, stub } = await setup({ backendType: 'stub', timeoutMs: 10 })
+    await call(ctx, owner, 'warm up')
+    const session = stub.sessions[0]!
+    session.mode = 'fallback-markers-on-abort'
+    session.scrollback = ''
+
+    const result = text(await call(ctx, owner, 'hang without retained scrollback'))
+    expect(result).toContain('partial from fallback')
+    expect(result).not.toContain(session.motd)
+    expect(result).not.toContain('__DSH_PERSISTENT_PWSH_')
+    expect(session.closed).toContain('persistent pwsh command timed out')
+  })
+
+  it('strips repeated prompt tails from timed-out retained output', async () => {
+    const { ctx, owner, stub } = await setup({ backendType: 'stub', timeoutMs: 10 })
+    await call(ctx, owner, 'warm up')
+    const session = stub.sessions[0]!
+    session.mode = 'prompt-tail-on-abort'
+    session.scrollback = ''
+
+    const result = text(await call(ctx, owner, 'hang before completion marker'))
+    expect(result).toContain('partial before prompt')
+    expect(result).not.toContain(session.motd)
+    expect(session.closed).toContain('persistent pwsh command timed out')
   })
 
   it.each(['wait-for-abort', 'end-on-abort'] as const)(

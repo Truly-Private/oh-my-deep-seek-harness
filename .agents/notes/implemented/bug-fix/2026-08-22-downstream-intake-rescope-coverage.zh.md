@@ -12,6 +12,8 @@ Status: implemented
 
 其他发布形态检查依赖偶然的调度时序。history-and-streaming 场景可能在建立阅读锚点之前耗尽有限 replay；回答问题后的 transcript 采集可能仍保留离开底部的控件；响应式 queue 几何则可能在 viewport 改变后的浏览器布局完成前被测量。在测试完成必需的折叠区和响应式布局检查之后，Playwright 稳定子会话导航按钮时，实时 workflow fixture 可能已结束。subagent 目录测试会在没有证明打开菜单的 effect 已安装监听器时就派发 resize。一个进程密集型 Oxlint 重试仍使用默认五秒测试超时。PowerShell scrollback 可以用 LF 或 CRLF 结束提示符，但两个提示符安装循环都只接受 scrollback 中不带换行的提示符，因此可能在 shell 已就绪后继续无限等待。真实持久 PowerShell Loader 测试还忽略了状态初始化结果，并在完整插桩下只给工具二十秒，因此真实命令超时会重置 shell，随后表现为状态丢失。在结果变得显式且预算提高后，托管 x64 组装仍会让第一条包装命令超时，而同一 runner 上由提供方拥有的 PowerShell PTY 生命周期会通过。工具在 terminal provider 已经安装并验证稳定提示符之后又进行了冗余替换。删除这个重复生命周期后又暴露了提供方启动竞争：PowerShell 分支使用普通的空 send 等待原生提示符，而没有调用会话初始化操作。在较慢的 x64 启动中，零输出静默可能在 PSReadLine 绘制第一个提示符之前就结算该 send，使 bootstrap 排入未完成的输入状态，最终无法返回受控提示符。
 
+提供方启动竞争修正后，托管覆盖率运行通过了全部测试，但未达到逐文件阈值。shell 退出断言在初始化期间就抛出了预期错误，没有覆盖初始化完成后的 `session_exit` 结果；持久工具 fixture 也没有覆盖 scrollback 为空时从带标记 fallback 输出提取超时结果，以及从以重复提示符结尾的保留部分输出中提取结果。
+
 ## Decision
 
 客户端纯度门禁把 `@truly-private/*` 视为自有工作区作用域，保留对 `@truly-private/omdsh-*` 线路包和生成的 Remote 贡献的显式内联许可，并在应用下游作用域检查之前允许独立入库的 `@deepseek-ai` 库。
@@ -34,6 +36,8 @@ history-and-streaming 场景使用专用的 600-delta replay，并在验证并�
 
 提供方的 PowerShell 提示符安装循环会把受控提示符识别为不带换行的末尾，或后接 LF、CRLF 的末尾。回归 fixture 会验证以换行结束的 scrollback 就绪状态，并区分原生提示符成功之后的安装超时。持久工具不再增加第二个提示符安装生命周期。真实 Loader 组装会先要求明确的 `state-ready` 结果再检查持久性，在 120 秒测试预算内为 PowerShell 启动提供三十秒，并为插桩命令提供六十秒；因此，超时会在初始化处失败，而不会伪装成状态丢失。
 
+覆盖率 fixture 会先让初始化完成，再返回 `session_exit`；同时建模以下超时命令：保留 scrollback 为空、fallback 携带当前命令标记，或保留的部分输出以重复的提供方提示符结尾。这样无需排除启动或部分输出路径，也能保留逐文件 100% 门禁。
+
 ## Alternatives considered
 
 **把 fixture 改为英文。** 受影响的客户端界面有意交付中文产品文案，而测试已明确选择中文。改动 fixture 只会隐藏纳入不匹配，不能保留上游行为。
@@ -52,4 +56,4 @@ history-and-streaming 场景使用专用的 600-delta replay，并在验证并�
 
 ## Consequences
 
-下游浏览器构建会再次拒绝未声明的工作区值导入，同时入库的框架库仍然可用。包标识断言和 locale fixture 与下游运行时保持一致，基础 profile 能解析其选择的 9Router 路由，完整覆盖率门禁会分别隔离每个真实 PowerShell 或 PTY 生命周期但不会把它们从覆盖率中移除，Web snapshot 池则会保留客户端产物摘要并等待持久 UI 状态。响应式、重试、注释保活与流式检查会在发布工作进程池中保留原有行为断言；以换行结束的 PowerShell 提示符不会再使 shell 创建停滞；调度延迟也不能通过静默或前一 send 的延迟提示符把提供方已证明尚未消费的输入结算为完成。持久工具现在只有一个 PowerShell 提示符所有者，并以显式提供方提示符配置取代冗余 bootstrap。一个全新的无网络原生 ARM64 Ubuntu OrbStack 容器使用 Proto 提供的运行时与非特权测试用户，通过插桩的持久 Loader 测试和全部八项本地终端生命周期测试。另一个全新的 amd64 Ubuntu OrbStack 容器使用固定的 Proto Node 与 pnpm 版本，通过了真实提供方 PowerShell 生命周期和插桩 Loader 组装；初始化修正之前，该容器能稳定复现托管环境失败。完整无密钥 snapshot 套件通过 127 项测试，并有两项预期跳过。这些修正不会把上游纳入提升到 `candidate` 以上，也不会授权发布。
+下游浏览器构建会再次拒绝未声明的工作区值导入，同时入库的框架库仍然可用。包标识断言和 locale fixture 与下游运行时保持一致，基础 profile 能解析其选择的 9Router 路由，完整覆盖率门禁会分别隔离每个真实 PowerShell 或 PTY 生命周期但不会把它们从覆盖率中移除，Web snapshot 池则会保留客户端产物摘要并等待持久 UI 状态。响应式、重试、注释保活与流式检查会在发布工作进程池中保留原有行为断言；以换行结束的 PowerShell 提示符不会再使 shell 创建停滞；调度延迟也不能通过静默或前一 send 的延迟提示符把提供方已证明尚未消费的输入结算为完成。持久工具现在只有一个 PowerShell 提示符所有者，并以显式提供方提示符配置取代冗余 bootstrap。一个全新的无网络原生 ARM64 Ubuntu OrbStack 容器使用 Proto 提供的运行时与非特权测试用户，通过插桩的持久 Loader 测试和全部八项本地终端生命周期测试。另一个全新的 amd64 Ubuntu OrbStack 容器使用固定的 Proto Node 与 pnpm 版本，通过了真实提供方 PowerShell 生命周期和插桩 Loader 组装；初始化修正之前，该容器能稳定复现托管环境失败。完整无密钥 snapshot 套件通过 127 项测试，并有两项预期跳过。精确的四分区覆盖率命令通过 14,607 项测试，并有 114 项预期跳过；报告显示 45,813 条语句、28,109 个分支、9,749 个函数和 40,413 行代码均达到 100%。这些修正不会把上游纳入提升到 `candidate` 以上，也不会授权发布。
