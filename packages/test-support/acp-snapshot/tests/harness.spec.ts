@@ -881,11 +881,11 @@ describe('runScenario', () => {
         steps: [
           ...boot,
           { op: 'promptAndCancel', text: 'hang' },
-          { op: 'waitForSubagentTurnEnd', minimumTurn: 2, timeoutMs: 20 },
+          { op: 'waitForSubagentTurnEnd', minimumTurn: 2, timeoutMs: 500 },
         ],
       },
       { agent: AGENT, mode: 'replay', fixtureFile: closed.fixtureFile },
-    )).rejects.toThrow(/subagent child #1 did not persist closed turn 2 within 20ms/)
+    )).rejects.toThrow(/subagent child #1 did not persist closed turn 2 within 500ms/)
 
     const seedOnly = await scenario({
       prompt: 'hang-until-cancel',
@@ -915,17 +915,17 @@ describe('runScenario', () => {
         steps: [
           ...boot,
           { op: 'promptAndCancel', text: 'hang' },
-          { op: 'waitForSubagentTurnEnd', timeoutMs: 20 },
+          { op: 'waitForSubagentTurnEnd', timeoutMs: 500 },
         ],
       },
       { agent: AGENT, mode: 'replay', fixtureFile: seedOnly.fixtureFile },
-    )).rejects.toThrow(/subagent child #1 did not persist closed turn 1 within 20ms/)
+    )).rejects.toThrow(/subagent child #1 did not persist closed turn 1 within 500ms/)
 
     const missing = await scenario({})
     await expect(runScenario(
-      { steps: [...boot, { op: 'waitForSubagentTurnEnd', child: 2, timeoutMs: 20 }] },
+      { steps: [...boot, { op: 'waitForSubagentTurnEnd', child: 2, timeoutMs: 500 }] },
       { agent: AGENT, mode: 'replay', fixtureFile: missing.fixtureFile },
-    )).rejects.toThrow(/subagent child #2 did not persist closed turn 1 within 20ms/)
+    )).rejects.toThrow(/subagent child #2 did not persist closed turn 1 within 500ms/)
   })
 
   it('waitForTitleAfterTurnEnd times out when the title precedes the boundary', { timeout: 20_000 }, async () => {
@@ -946,11 +946,11 @@ describe('runScenario', () => {
         steps: [
           ...boot,
           { op: 'promptAndCancel', text: 'hang' },
-          { op: 'waitForTitleAfterTurnEnd', timeoutMs: 20 },
+          { op: 'waitForTitleAfterTurnEnd', timeoutMs: 500 },
         ],
       },
       { agent: AGENT, mode: 'replay', fixtureFile },
-    )).rejects.toThrow(/did not persist session\/title after turn\/end within 20ms/)
+    )).rejects.toThrow(/did not persist session\/title after turn\/end within 500ms/)
   })
 
   it('waitForEventAfterTurnEnd holds the app for a typed post-boundary record and times out otherwise', { timeout: 20_000 }, async () => {
