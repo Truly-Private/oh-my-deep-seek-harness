@@ -6,11 +6,11 @@ Status: implemented
 
 ## Problem
 
-上游纳入重定作用域把工作区包改为 `@truly-private/omdsh-*`，但动态客户端 bundle 纯度门禁和一项凭据不变量断言仍然选择 `@deepseek-ai/*`。因此，未声明的下游跨插件值导入会绕过构建错误，而不变量测试预期了错误的包标识。纳入适配器还把若干英文预期值改掉，却没有改动显式选择中文的 fixture，导致测试与自身设置矛盾。合并保留了下游 9Router 默认选择，却丢失了让该选择可执行的提供方配置。在完整 Linux 覆盖率工作负载下，真实 PowerShell PTY 套件与无关的插桩套件共用广域测试项目时，可能丢失持久 shell 输出。本地 node-pty 提供方还会转发 PowerShell 的光标位置查询，却不返回响应。因此，bootstrap 可能在 PSReadLine 的原生提示符接受输入之前到达；同时，子串就绪检查会把回显的 bootstrap 源码误判为已安装提示符，因为源码本身含有提示符字面量。
+上游纳入重定作用域把工作区包改为 `@truly-private/omdsh-*`，但动态客户端 bundle 纯度门禁和一项凭据不变量断言仍然选择 `@deepseek-ai/*`。因此，未声明的下游跨插件值导入会绕过构建错误，而不变量测试预期了错误的包标识。纳入适配器还把若干英文预期值改掉，却没有改动显式选择中文的 fixture，导致测试与自身设置矛盾。合并保留了下游 9Router 默认选择，却丢失了让该选择可执行的提供方配置。在完整 Linux 覆盖率工作负载下，真实 PowerShell PTY 与 Loader 组装套件在聚合插桩下跨广域和 process-bound 测试项目竞争时，可能丢失持久 shell 输出。本地 node-pty 提供方还会转发 PowerShell 的光标位置查询，却不返回响应。因此，bootstrap 可能在 PSReadLine 的原生提示符接受输入之前到达；同时，子串就绪检查会把回显的 bootstrap 源码误判为已安装提示符，因为源码本身含有提示符字面量。
 
-六工作进程 Web snapshot 作业暴露了多项互不依赖的时序与产物所有权缺陷。HMR 场景恢复了动态插件 bundle，却把 `apps/web/dist` 留在重写后的状态，使已完成构建的摘要在内置 bundle 冒烟测试加载前失效。主题检查会在 Host 设置写入完成内存提交之前先观察到持久化文件，并且在下游重定作用域后仍拦截上游 bundle 路由。引用 snapshot 可能在保存的 `trifecta` 选择到达前采集，subagent 悬浮目录可能在挂载前被查询，而双消息 steering fixture 在并发 CI 负载下没有为三次浏览器操作留下足够的流式时间。冷启动的 seeded-history 页面可能在恢复后的 Host agent 完成附加之前就渲染持久化对话，因此同一负载下直接追加实时事件会失败。
+六工作进程 Web snapshot 作业暴露了多项互不依赖的时序与产物所有权缺陷。HMR 场景恢复了动态插件 bundle，却把 `apps/web/dist` 留在重写后的状态，使已完成构建的摘要在内置 bundle 冒烟测试加载前失效。主题检查会在 Host 设置写入完成内存提交之前先观察到持久化文件，并且在下游重定作用域后仍拦截上游 bundle 路由。引用与 Markdown 图像 snapshot 可能在保存的 `trifecta` 选择到达前采集，subagent 悬浮目录可能在挂载前被查询，而双消息 steering fixture 在并发 CI 负载下没有为三次浏览器操作留下足够的流式时间。冷启动的 seeded-history 页面可能在恢复后的 Host agent 完成附加之前就渲染持久化对话，因此同一负载下直接追加实时事件会失败。
 
-其他发布形态检查依赖偶然的调度时序。history-and-streaming 场景可能在建立阅读锚点之前耗尽有限 replay；回答问题后的 transcript 采集可能仍保留离开底部的控件；响应式 queue 几何则可能在 viewport 改变后的浏览器布局完成前被测量。subagent 目录测试会在没有证明打开菜单的 effect 已安装监听器时就派发 resize。一个进程密集型 Oxlint 重试仍使用默认五秒测试超时。PowerShell scrollback 可以用 LF 或 CRLF 结束提示符，但两个提示符安装循环都只接受 scrollback 中不带换行的提示符，因此可能在 shell 已就绪后继续无限等待。
+其他发布形态检查依赖偶然的调度时序。history-and-streaming 场景可能在建立阅读锚点之前耗尽有限 replay；回答问题后的 transcript 采集可能仍保留离开底部的控件；响应式 queue 几何则可能在 viewport 改变后的浏览器布局完成前被测量。在测试完成必需的折叠区和响应式布局检查之后，Playwright 稳定子会话导航按钮时，实时 workflow fixture 可能已结束。subagent 目录测试会在没有证明打开菜单的 effect 已安装监听器时就派发 resize。一个进程密集型 Oxlint 重试仍使用默认五秒测试超时。PowerShell scrollback 可以用 LF 或 CRLF 结束提示符，但两个提示符安装循环都只接受 scrollback 中不带换行的提示符，因此可能在 shell 已就绪后继续无限等待。
 
 ## Decision
 
@@ -22,13 +22,13 @@ Status: implemented
 
 locale 测试断言各 fixture 所选的语言。将 locale 设为 `zh` 的 fixture 保留已交付的中文文案预期；当两套字典都需要验证时，测试会显式切换到 `en`。
 
-真实 `terminal-bash` 本地 PTY 套件放入既有的 process-bound Vitest 项目。它仍属于同一次覆盖率调用及其阈值，但不再与广域项目在聚合插桩下积累的进程状态共存。
+真实 `terminal-bash` 本地 PTY 与持久 PowerShell Loader 组装套件放入既有的 process-bound Vitest 项目。它们仍属于同一次覆盖率调用及其阈值，但会串行执行，不再在聚合插桩下跨广域和 process-bound 项目竞争。
 
 本地 node-pty 提供方以最小的 `CSI 1;1 R` 响应处理完整或跨数据块拆分的 `CSI 6 n` 光标位置查询。PowerShell 启动先等待可打印的原生提示符输出，再只提交一次编码与受控提示符 bootstrap；随后，只有已安装提示符位于 viewport 或 scrollback 末尾时才确认就绪。持久 PowerShell 工具在安装自己的私有提示符时使用相同的末尾匹配要求。其组装后的无密钥 snapshot 会记录精确的 `PWSH_OK` 工具结果，不含 bootstrap 源码、截断提示或凭据材料。
 
-HMR 场景会保存完整构建摘要覆盖的每个产物，在恢复前停止两个写入方，替换生成的 Web 目录，恢复全部原始字节，并在清理期间重新验证构建记录。浏览器检查等待 Host 的权威主题和模型状态，不再把文件或首次绘制当作提交完成的替代信号；同时拦截下游 `@truly-private/omdsh-client-ui-theme` 路由，并在选择条目前等待 subagent 目录树挂载。双消息 steering 场景使用为六工作进程池单独设置的 replay 间隔；其他 steering 场景继续使用较短间隔。seeded-history 场景会先等待 Host 的权威 agent 附加完成，再向冷恢复会话追加实时上下文。
+HMR 场景会保存完整构建摘要覆盖的每个产物，在恢复前停止两个写入方，替换生成的 Web 目录，恢复全部原始字节，并在清理期间重新验证构建记录。浏览器检查等待 Host 的权威主题和模型状态，不再把文件或首次绘制当作提交完成的替代信号，其中包括每个记录持久化 `trifecta` 选择的 golden；同时拦截下游 `@truly-private/omdsh-client-ui-theme` 路由，并在选择条目前等待 subagent 目录树挂载。双消息 steering 场景使用为六工作进程池单独设置的 replay 间隔；其他 steering 场景继续使用较短间隔。seeded-history 场景会先等待 Host 的权威 agent 附加完成，再向冷恢复会话追加实时上下文。
 
-history-and-streaming 场景使用专用的 600-delta replay，并在验证并发到达之前断言流式输出仍在进行。回答问题后的采集会返回 transcript 底部；queue 与上下文面板几何则在响应式布局稳定后轮询已渲染不变量。subagent 目录测试会等待打开菜单的 effect，并验证 resize 驱动的菜单定位。进程密集型 Oxlint 重试使用显式的二十秒测试超时。
+history-and-streaming 场景使用专用的 600-delta replay，并在验证并发到达之前断言流式输出仍在进行。回答问题后的采集会返回 transcript 底部；queue 与上下文面板几何则在响应式布局稳定后轮询已渲染不变量。实时 workflow 场景使用为 replay 设置的间隔，使六工作进程浏览器池在完成之前的折叠区和响应式布局断言时，仍保留子会话导航时间窗。subagent 目录测试会等待打开菜单的 effect，并验证 resize 驱动的菜单定位。进程密集型 Oxlint 重试使用显式的二十秒测试超时。
 
 两个 PowerShell 提示符安装循环都把私有提示符识别为不带换行的末尾，或后接 LF、CRLF 的末尾。回归 fixture 会验证以换行结束的 scrollback 就绪状态，并区分原生提示符成功之后的安装超时。
 
