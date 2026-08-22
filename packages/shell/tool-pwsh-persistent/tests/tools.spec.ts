@@ -96,6 +96,7 @@ type StubMode =
   | 'spawn-error'
   | 'send-error'
   | 'prompt-after-idle'
+  | 'stale-prompt-before-normal'
   | 'incremental-fallback'
   | 'empty-page-after-latest'
   | 'paged-scrollback'
@@ -179,9 +180,18 @@ class StubTerminalSession implements TerminalBackendSession {
       this.scrollback += output
       return this.operation(Promise.resolve(this.result(output, 'stdin_read')))
     }
+    if (this.mode === 'stale-prompt-before-normal') {
+      if (request.text.length > 0) {
+        this.pendingText = request.text
+        this.scrollback += this.motd
+        return this.operation(Promise.resolve(this.result(this.motd, 'stdin_read')))
+      }
+      this.mode = 'normal'
+    }
     if (this.mode === 'prompt-only' || this.mode === 'prompt-crlf') {
       const newline = this.mode === 'prompt-crlf' ? '\r\n' : '\n'
-      const output = `pwsh: syntax error${newline}${this.motd}${newline}`
+      const start = START_PATTERN.exec(request.text)?.[0]
+      const output = `${start ?? ''}${newline}pwsh: syntax error${newline}${this.motd}${newline}`
       this.scrollback += output
       return this.operation(Promise.resolve(this.result(output, 'stdin_read')))
     }
@@ -387,6 +397,17 @@ describe('tool-pwsh-persistent', () => {
 
     session.mode = 'prompt-collision'
     expect(text(await call(ctx, owner, 'complete prompt collision'))).toBe(session.motd)
+  })
+
+  it('waits past a stale prompt until the current command start marker arrives', async () => {
+    const { ctx, owner, stub } = await setup({ backendType: 'stub' })
+    await call(ctx, owner, 'warm up')
+    const session = stub.sessions[0]!
+    const sendsBefore = session.sends
+
+    session.mode = 'stale-prompt-before-normal'
+    expect(text(await call(ctx, owner, 'mutate silently'))).toBe('hello from stub')
+    expect(session.sends).toBe(sendsBefore + 2)
   })
 
   it('reports the exit path when the shell exits between send settlement and the next poll', async () => {
